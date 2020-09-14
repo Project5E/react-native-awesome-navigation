@@ -9,7 +9,7 @@
 #import "UIViewController+ALC.h"
 #import "ALCNavigationManager.h"
 
-@interface ALCNavigationController () <UINavigationControllerDelegate>
+@interface ALCNavigationController () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
 @end
 
@@ -18,12 +18,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
+    self.navigationBar.barTintColor = [UIColor whiteColor];
+    self.interactivePopGestureRecognizer.delegate = self;
 }
 
 - (void)navigationController:(UINavigationController *)navigationController
-      didShowViewController:(UIViewController *)viewController
+       didShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated {
-    [[ALCNavigationManager shared] push:viewController];
+    [[ALCNavigationManager shared] push:navigationController vc:viewController];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return self.viewControllers.count > 1;
 }
 
 @end

@@ -54,6 +54,7 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
         NSDictionary *icon = tab[@"icon"];
         UIViewController *viewController = [self.manager fetchViewController:component params:nil];
         ALCNavigationController *nav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
+        [self.manager.stacks setObject:[NSMutableArray array] forKey:nav.screenID];
         nav.title = title;
         nav.tabBarItem.image = [self.manager fetchImage:icon];
         [controllers addObject:nav];
@@ -65,7 +66,11 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
 }
 
 RCT_EXPORT_METHOD(setResult:(NSDictionary *)data) {
-    ((ALCStackModel *)self.manager.stack.lastObject).data = data;
+    UIWindow *window = RCTSharedApplication().delegate.window;
+    UITabBarController *tbc = (UITabBarController *)window.rootViewController;
+    UINavigationController *nav = tbc.selectedViewController;
+    NSMutableArray *stack = [self.manager.stacks valueForKey:nav.screenID];
+    ((ALCStackModel *)stack.lastObject).data = data;
 }
 
 RCT_EXPORT_METHOD(dispatch:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params) {

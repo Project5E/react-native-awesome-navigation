@@ -30,7 +30,9 @@
 }
 
 - (void)setResult:(NSDictionary *)data {
-    ((ALCStackModel *)[ALCNavigationManager shared].stack.lastObject).data = data;
+    UINavigationController *nav = self.navigationController;
+    NSMutableArray *stack = [[ALCNavigationManager shared].stacks valueForKey:nav.screenID];
+    ((ALCStackModel *)stack.lastObject).data = data;
 }
 
 - (void)didReceiveResultData:(NSDictionary *)data type:(NSString *)type {

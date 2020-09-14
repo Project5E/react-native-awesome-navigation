@@ -18,7 +18,7 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readonly) NSMutableDictionary *reactModules;
 
-@property (nonatomic, strong, readonly) NSMutableArray<ALCStackModel *> *stack;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray<ALCStackModel *> *> *stacks;
 
 + (void)sendEvent:(NSString *)eventName data:(NSDictionary *)data;
 
@@ -35,7 +35,7 @@
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary *)params;
 - (UIImage *)fetchImage:(NSDictionary *)json;
 
-- (void)push:(UIViewController *)vc;
+- (void)push:(UINavigationController *)nav vc:(UIViewController *)vc;
 - (void)clear;
 
 @end
