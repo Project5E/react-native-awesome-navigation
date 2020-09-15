@@ -65,6 +65,14 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
     window.rootViewController = tbc;
 }
 
+
+RCT_EXPORT_METHOD(currentRoute:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+    UIWindow *window = RCTSharedApplication().delegate.window;
+    UITabBarController *tbc = (UITabBarController *)window.rootViewController;
+    UINavigationController *nav = tbc.selectedViewController;
+    resolve(@{@"screenID" : nav.topViewController.screenID});
+}
+
 RCT_EXPORT_METHOD(setResult:(NSDictionary *)data) {
     UIWindow *window = RCTSharedApplication().delegate.window;
     UITabBarController *tbc = (UITabBarController *)window.rootViewController;

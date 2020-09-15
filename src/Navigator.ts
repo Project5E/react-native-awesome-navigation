@@ -1,70 +1,88 @@
-import { NativeModules } from 'react-native';
+import {NativeModules} from 'react-native'
+import store from './Store'
 
-const NavigationBridge = NativeModules.ALCNavigationBridge;
+const NavigationBridge = NativeModules.ALCNavigationBridge
 
 export class Navigator {
-  screenID: string;
-  moduleName: string;
-  resultListener?(data?: any): void;
+  static dispatch = (action: string, component?: string, options?: any) => {
+    NavigationBridge.dispatch(action, component, options)
+  }
 
+  static get = (screenID: string): Navigator | undefined => {
+    console.warn(screenID)
+
+    return store.getNavigator(screenID.screenID)
+  }
+
+  static async current() {
+    const routeID = await Navigator.currentRoute()
+    return Navigator.get(routeID)
+  }
+
+  static async currentRoute() {
+    return await NavigationBridge.currentRoute()
+  }
+
+  resultListener?(data?: any): void
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(screenID: string, moduleName: string) {
-    this.screenID = screenID;
-    this.moduleName = moduleName;
-    this.resultListener = undefined;
+    screenID = screenID
+    moduleName = moduleName
   }
 
   waitResult() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const listener = (data: any) => {
-        resolve(['ok', data]);
-        this.resultListener = undefined;
-      };
+        resolve(['ok', data])
+        this.resultListener = undefined
+      }
       listener.cancel = () => {
-        resolve(['cancel', null]);
-        this.resultListener = undefined;
-      };
-      this.resultListener = listener;
-    });
+        resolve(['cancel', null])
+        this.resultListener = undefined
+      }
+      this.resultListener = listener
+    })
   }
 
   excute = (data: any) => {
-    this.resultListener && this.resultListener(data);
-  };
+    if (this.resultListener) {
+      this.resultListener(data)
+    }
+  }
 
   unmount = () => {
-    this.resultListener && this.resultListener.cancel();
-  };
+    if (this.resultListener) {
+      this.resultListener.cancel()
+    }
+  }
 
   setResult = (data: any) => {
-    NavigationBridge.setResult(data);
-  };
+    NavigationBridge.setResult(data)
+  }
 
-  static dispatch = (action: string, component?: string, options?: any) => {
-    NavigationBridge.dispatch(action, component, options);
-  };
-
-  push = async (component: string, options: any) => {
-    Navigator.dispatch('push', component, options);
-    return await this.waitResult();
-  };
+  push = async (component: string, options?: any) => {
+    Navigator.dispatch('push', component, options)
+    return await this.waitResult()
+  }
 
   pop = () => {
-    Navigator.dispatch('pop');
-  };
+    Navigator.dispatch('pop')
+  }
 
   popToRoot = () => {
-    Navigator.dispatch('popToRoot');
-  };
+    Navigator.dispatch('popToRoot')
+  }
 
-  present = (component: string, options: any) => {
-    Navigator.dispatch('present', component, options);
-  };
+  present = (component: string, options?: any) => {
+    Navigator.dispatch('present', component, options)
+  }
 
   dismiss = () => {
-    Navigator.dispatch('dismiss');
-  };
+    Navigator.dispatch('dismiss')
+  }
 
   switchTab = (index: number) => {
-    Navigator.dispatch('switchTab', undefined, index);
-  };
+    Navigator.dispatch('switchTab', undefined, index)
+  }
 }

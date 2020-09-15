@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Button } from 'react-native';
+import { Navigator, router } from 'react-native-pure-navigation';
 
 const Home = (props) => {
+  useEffect(() => {
+    router.activate('hbd://')
+  }, [])
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
       <Button
+        title="log route"
+        onPress={async () => {
+          const resp = await Navigator.currentRoute()
+          console.warn(resp);
+        }}
+      />
+      <Button
         title="push detail and hide bar"
-        onPress={() => {
+        onPress={async () => {
           props.navigator.push('NoNavigationBar');
         }}
       />

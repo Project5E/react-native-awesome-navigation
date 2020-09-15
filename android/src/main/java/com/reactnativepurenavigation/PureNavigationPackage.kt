@@ -11,7 +11,7 @@ import com.facebook.react.bridge.JavaScriptModule
 
 class PureNavigationPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return Arrays.asList<NativeModule>(PureNavigationModule(reactContext))
+        return Arrays.asList<NativeModule>(ALCNavigationBridge(reactContext))
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {

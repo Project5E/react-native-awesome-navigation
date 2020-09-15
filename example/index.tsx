@@ -1,11 +1,13 @@
-import { registerComponent, setRoot } from 'react-native-pure-navigation';
+import { registerComponent, setRoot, beforeRegister } from 'react-native-pure-navigation';
 import Home from './src/Home';
 import Setting from './src/Setting';
 import Detail from './src/Detail';
 import Present from './src/Present';
 import NoNavigationBar from './src/NoNavigationBar';
 
-registerComponent('Home', Home);
+beforeRegister()
+
+registerComponent('Home', Home, "/home");
 registerComponent('Setting', Setting);
 registerComponent('Detail', Detail);
 registerComponent('Present', Present);
