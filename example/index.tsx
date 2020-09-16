@@ -6,12 +6,18 @@ import Detail from './src/Detail'
 import Present from './src/Present'
 import NoNavigationBar from './src/NoNavigationBar'
 
+import CloseIcon from './src/image/Close.png'
+import HomeIcon from './src/image/Home.png'
+import SettingIcon from './src/image/Profile.png'
+
 setStyle({
   hideBackTitle: true,
+  hideNavigationBarShadow: true,
   navigationBarColor: '#FFFFFF',
+  navigationBarItemColor: 'FF84A9',
   tabBarColor: '#FFFFFF',
-  tabBarItemColor: '#FF7151',
-  backIcon: Image.resolveAssetSource(require('./src/image/Close.png')),
+  tabBarItemColor: '#FF84A9',
+  backIcon: Image.resolveAssetSource(CloseIcon),
 })
 beforeRegister()
 
@@ -28,12 +34,12 @@ setRoot({
         {
           component: 'Home',
           title: '主页',
-          icon: Image.resolveAssetSource(require('./src/image/Home.png')),
+          icon: Image.resolveAssetSource(HomeIcon),
         },
         {
           component: 'Setting',
           title: '设置',
-          icon: Image.resolveAssetSource(require('./src/image/Profile.png')),
+          icon: Image.resolveAssetSource(SettingIcon),
         },
       ],
     },

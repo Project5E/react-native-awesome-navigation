@@ -18,13 +18,14 @@ export class Navigator {
 
   static async current() {
     const route = await Navigator.currentRoute()
-    return Navigator.get(route.screenID)
+    const navigatior = Navigator.get(route.screenID)
+    return navigatior
   }
 
   static async currentRoute(): Promise<Route> {
-    return new Promise(res => {
+    return new Promise(resolve => {
       const route: Route = NavigationBridge.currentRoute()
-      res(route)
+      resolve(route)
     })
   }
 
@@ -68,8 +69,8 @@ export class Navigator {
     NavigationBridge.setResult(data)
   }
 
-  push = async (component: string, options?: any) => {
-    Navigator.dispatch('push', component, options)
+  push = async (component: string, params?: any) => {
+    Navigator.dispatch('push', component, params)
     return await this.waitResult()
   }
 

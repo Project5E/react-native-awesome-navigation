@@ -53,7 +53,7 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
         NSString *component = tab[@"component"];
         NSString *title = tab[@"title"];
         NSDictionary *icon = tab[@"icon"];
-        UIViewController *viewController = [self.manager fetchViewController:component params:nil];
+        UIViewController *viewController = [self.manager fetchViewController:component params:@{}];
         ALCNavigationController *nav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
         [self.manager.stacks setObject:[NSMutableArray array] forKey:nav.screenID];
         nav.title = title;
@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
 }
 
 RCT_EXPORT_METHOD(setStyle:(NSDictionary *)styles) {
-    [[ALCGlobalStyle globalStyle] setStyle:styles];
+    [ALCGlobalStyle globalStyle].style = styles;
 }
 
 RCT_EXPORT_METHOD(currentRoute:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {

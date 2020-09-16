@@ -23,11 +23,11 @@
     NSNumber *hideNavigationBar = self.options[@"hideNavigationBar"];
     _hideNavigationBar = hideNavigationBar.boolValue;
     self.title = self.options[@"title"];
-    NSMutableDictionary *copied = [self.options mutableCopy];
+    NSMutableDictionary *copied = [self.props mutableCopy];
     [copied setObject:self.screenID forKey:@"screenID"];
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
                                                      moduleName:self.pageName
-                                              initialProperties:self.props];
+                                              initialProperties:copied];
     self.view = rootView;
     if ([ALCGlobalStyle globalStyle].hideBackTitle) {
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:NULL];

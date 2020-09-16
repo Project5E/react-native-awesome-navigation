@@ -4,6 +4,10 @@ import {Linking} from 'react-native'
 let active = false
 const configs = new Map<string, string>()
 
+export interface RouteConfig {
+  path: string
+}
+
 class Router {
   private uriPrefix?: string
 
@@ -25,6 +29,7 @@ class Router {
     if (!moduleName) {
       return
     }
+
     const queryParams = (queryString || '').split('&').reduce((result: any, item: string) => {
       if (item !== '') {
         const nextResult = result || {}

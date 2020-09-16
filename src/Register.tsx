@@ -44,6 +44,7 @@ const withNavigator = (moduleName: string) => {
 
 export const beforeRegister = () => {
   store.clearNavigator()
+  router.clear()
 }
 
 export const registerComponent = (appKey: string, component: any, routeConfig?: string) => {
