@@ -8,6 +8,7 @@
 #import "ALCNavigationController.h"
 #import "UIViewController+ALC.h"
 #import "ALCNavigationManager.h"
+#import "ALCGlobalStyle.h"
 
 @interface ALCNavigationController () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -18,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
-    self.navigationBar.barTintColor = [UIColor whiteColor];
+    self.navigationBar.barTintColor = [ALCGlobalStyle globalStyle].navigationBarColor;
     self.interactivePopGestureRecognizer.delegate = self;
 }
 

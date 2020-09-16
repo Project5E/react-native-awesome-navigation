@@ -5,12 +5,12 @@
 //  Created by Skylar on 2020/8/16.
 //
 
-#import <UIKit/UIKit.h>
+#import "ALCViewController.h"
 #import "UIViewController+ALC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ALCNativeViewController : UIViewController
+@interface ALCNativeViewController : ALCViewController
 
 - (instancetype)initWithModuleName:(NSString *)pageName props:(NSDictionary *)props;
 

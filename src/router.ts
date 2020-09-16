@@ -1,7 +1,7 @@
 import {Navigator} from './Navigator'
 import {Linking} from 'react-native'
 
-let active = 0
+let active = false
 const configs = new Map<string, string>()
 
 class Router {
@@ -12,7 +12,7 @@ class Router {
   }
 
   clear = () => {
-    active = 0
+    active = false
     configs.clear()
   }
 
@@ -20,11 +20,11 @@ class Router {
     if (!path) {
       return
     }
-
-    const [pathNameToResolve, queryString] = path.split('?')
-
-    const moduleName = configs.get(pathNameToResolve)
-
+    const [pathName, queryString] = path.split('?')
+    const moduleName = configs.get(pathName)
+    if (!moduleName) {
+      return
+    }
     const queryParams = (queryString || '').split('&').reduce((result: any, item: string) => {
       if (item !== '') {
         const nextResult = result || {}
@@ -35,7 +35,7 @@ class Router {
       return result
     }, {})
     const navigator = await Navigator.current()
-    if (moduleName && navigator) {
+    if (navigator) {
       navigator?.push(moduleName, queryParams)
     }
   }
@@ -44,20 +44,17 @@ class Router {
     if (!uriPrefix) {
       throw new Error('must pass `uriPrefix` when activate router.')
     }
-    if (active === 0) {
+    if (!active) {
       this.uriPrefix = uriPrefix
       Linking.addEventListener('url', this.routeEventHandler)
+      active = !active
     }
-    active++
   }
 
   inactivate = () => {
-    active--
-    if (active === 0) {
+    if (active) {
       Linking.removeEventListener('url', this.routeEventHandler)
-    }
-    if (active < 0) {
-      active = 0
+      active = !active
     }
   }
 

@@ -1,7 +1,11 @@
 import {NativeModules} from 'react-native'
-import store from './Store'
+import store from './store'
 
 const NavigationBridge = NativeModules.ALCNavigationBridge
+
+interface Route {
+  screenID: string
+}
 
 export class Navigator {
   static dispatch = (action: string, component?: string, options?: any) => {
@@ -9,26 +13,29 @@ export class Navigator {
   }
 
   static get = (screenID: string): Navigator | undefined => {
-    console.warn(screenID)
-
-    return store.getNavigator(screenID.screenID)
+    return store.getNavigator(screenID)
   }
 
   static async current() {
-    const routeID = await Navigator.currentRoute()
-    return Navigator.get(routeID)
+    const route = await Navigator.currentRoute()
+    return Navigator.get(route.screenID)
   }
 
-  static async currentRoute() {
-    return await NavigationBridge.currentRoute()
+  static async currentRoute(): Promise<Route> {
+    return new Promise(res => {
+      const route: Route = NavigationBridge.currentRoute()
+      res(route)
+    })
   }
 
+  screenID: string
+  moduleName: string
   resultListener?(data?: any): void
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(screenID: string, moduleName: string) {
-    screenID = screenID
-    moduleName = moduleName
+    this.screenID = screenID
+    this.moduleName = moduleName
   }
 
   waitResult() {
@@ -82,7 +89,7 @@ export class Navigator {
     Navigator.dispatch('dismiss')
   }
 
-  switchTab = (index: number) => {
-    Navigator.dispatch('switchTab', undefined, index)
-  }
+  // switchTab = (index: number) => {
+  //   Navigator.dispatch('switchTab', undefined, index)
+  // }
 }

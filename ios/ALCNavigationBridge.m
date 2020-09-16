@@ -13,6 +13,7 @@
 #import "ALCNavigationController.h"
 #import "ALCReactViewController.h"
 #import "ALCStackModel.h"
+#import "ALCGlobalStyle.h"
 
 @interface  ALCNavigationBridge ()
 
@@ -65,6 +66,9 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
     window.rootViewController = tbc;
 }
 
+RCT_EXPORT_METHOD(setStyle:(NSDictionary *)styles) {
+    [[ALCGlobalStyle globalStyle] setStyle:styles];
+}
 
 RCT_EXPORT_METHOD(currentRoute:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     UIWindow *window = RCTSharedApplication().delegate.window;

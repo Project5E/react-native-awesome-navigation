@@ -8,6 +8,7 @@
 #import <React/RCTRootView.h>
 #import "ALCReactViewController.h"
 #import "ALCNavigationManager.h"
+#import "ALCGlobalStyle.h"
 
 @interface ALCReactViewController () <UIAdaptivePresentationControllerDelegate>
 
@@ -17,19 +18,20 @@
 
 @implementation ALCReactViewController
 
-- (instancetype)initWithModuleName:(NSString *)pageName options:(NSDictionary *)options {
-    if (self = [super init]) {
-        NSNumber *hideNavigationBar = options[@"hideNavigationBar"];
-        _hideNavigationBar = hideNavigationBar.boolValue;
-        self.title = options[@"title"];
-        NSMutableDictionary *copied = [options mutableCopy];
-        [copied setObject:self.screenID forKey:@"screenID"];
-        RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
-                                                         moduleName:pageName
-                                                  initialProperties:copied];
-        self.view = rootView;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    NSNumber *hideNavigationBar = self.options[@"hideNavigationBar"];
+    _hideNavigationBar = hideNavigationBar.boolValue;
+    self.title = self.options[@"title"];
+    NSMutableDictionary *copied = [self.options mutableCopy];
+    [copied setObject:self.screenID forKey:@"screenID"];
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
+                                                     moduleName:self.pageName
+                                              initialProperties:self.props];
+    self.view = rootView;
+    if ([ALCGlobalStyle globalStyle].hideBackTitle) {
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:NULL];
     }
-    return self;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

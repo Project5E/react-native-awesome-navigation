@@ -81,7 +81,7 @@
         vc = [[clazz alloc] initWithModuleName:pageName props:params];
     } else {
         NSDictionary *options = [self reactModuleOptionsForKey:pageName];
-        vc = [[ALCReactViewController alloc] initWithModuleName:pageName options:options];
+        vc = [[ALCReactViewController alloc] initWithModuleName:pageName props:params options:options];
     }
     return vc;
 }

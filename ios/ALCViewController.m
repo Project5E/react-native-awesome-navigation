@@ -1,0 +1,32 @@
+//
+//  ALCViewController.m
+//  CocoaAsyncSocket
+//
+//  Created by skylar on 2020/9/16.
+//
+
+#import "ALCViewController.h"
+
+@interface ALCViewController ()
+
+@property(nonatomic, copy, readwrite) NSDictionary *props;
+
+@end
+
+@implementation ALCViewController
+
+- (instancetype)initWithModuleName:(NSString *)pageName props:(NSDictionary *)props options:(NSDictionary *)options {
+    if (self = [super init]) {
+        _pageName = pageName;
+        _props = props;
+        _options = options;
+    }
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+}
+
+@end
