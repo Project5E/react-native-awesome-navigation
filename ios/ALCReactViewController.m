@@ -23,7 +23,7 @@
     NSNumber *hideNavigationBar = self.options[@"hideNavigationBar"];
     _hideNavigationBar = hideNavigationBar.boolValue;
     self.title = self.options[@"title"];
-    NSMutableDictionary *copied = [self.props mutableCopy];
+    NSMutableDictionary *copied = self.props ? [self.props mutableCopy] : [NSMutableDictionary dictionary];
     [copied setObject:self.screenID forKey:@"screenID"];
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
                                                      moduleName:self.pageName

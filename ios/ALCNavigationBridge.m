@@ -12,6 +12,7 @@
 #import "UIViewController+ALC.h"
 #import "ALCNavigationController.h"
 #import "ALCReactViewController.h"
+#import "ALCTabBarViewController.h"
 #import "ALCStackModel.h"
 #import "ALCGlobalStyle.h"
 
@@ -53,14 +54,14 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
         NSString *component = tab[@"component"];
         NSString *title = tab[@"title"];
         NSDictionary *icon = tab[@"icon"];
-        UIViewController *viewController = [self.manager fetchViewController:component params:@{}];
+        UIViewController *viewController = [self.manager fetchViewController:component params:nil];
         ALCNavigationController *nav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
         [self.manager.stacks setObject:[NSMutableArray array] forKey:nav.screenID];
         nav.title = title;
         nav.tabBarItem.image = [self.manager fetchImage:icon];
         [controllers addObject:nav];
     }
-    UITabBarController *tbc = [[UITabBarController alloc] init];
+    ALCTabBarViewController *tbc = [[ALCTabBarViewController alloc] init];
     tbc.viewControllers = controllers;
     UIWindow *window = RCTSharedApplication().delegate.window;
     window.rootViewController = tbc;
@@ -111,7 +112,5 @@ RCT_EXPORT_METHOD(dispatch:(NSString *)action page:(NSString *)pageName params:(
 RCT_EXPORT_METHOD(registerReactComponent:(NSString *)appKey options:(NSDictionary *)options) {
     [self.manager registerReactModule:appKey options:options];
 }
-
-
 
 @end

@@ -6,10 +6,15 @@
 //
 
 #import "ALCViewController.h"
+#import "ALCNavigationManager.h"
+#import "UIViewController+ALC.h"
 
 @interface ALCViewController ()
 
-@property(nonatomic, copy, readwrite) NSDictionary *props;
+@property (nonatomic, copy, readwrite) NSDictionary *props;
+
+@property (nonatomic, assign) BOOL firstRenderCompleted;
+@property (nonatomic, assign) BOOL viewAppeared;
 
 @end
 

@@ -1,56 +1,56 @@
-import React, { useEffect } from 'react';
-import { View, Button } from 'react-native';
-import { Navigator, router } from 'react-native-pure-navigation';
+import React, {useEffect} from 'react'
+import {View, Button} from 'react-native'
+import {Navigator, router} from 'react-native-pure-navigation'
 
-const Home = (props) => {
+const Home = props => {
   useEffect(() => {
     router.activate('hbd://')
   }, [])
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+    <View style={{flex: 1, justifyContent: 'center'}}>
       <Button
-        title="log route"
         onPress={async () => {
           const resp = await Navigator.currentRoute()
-          console.warn(resp);
+          console.warn(resp)
         }}
+        title="log route"
       />
       <Button
+        onPress={async () => {
+          props.navigator.push('NoNavigationBar')
+        }}
         title="push detail and hide bar"
-        onPress={async () => {
-          props.navigator.push('NoNavigationBar');
-        }}
       />
       <Button
+        onPress={async () => {
+          const resp = await props.navigator.push('Detail')
+          console.warn(resp)
+        }}
         title="push detail"
-        onPress={async () => {
-          const resp = await props.navigator.push('Detail');
-          console.warn(resp);
-        }}
       />
       <Button
-        title="push native"
         onPress={async () => {
           const resp = await props.navigator.push('NativeViewController', {
             title: 'Native',
-          });
-          console.warn(resp);
+          })
+          console.warn(resp)
         }}
+        title="push native"
       />
 
       <Button
-        title="present"
         onPress={() => {
-          props.navigator.present('Present');
+          props.navigator.present('Present')
         }}
+        title="present"
       />
     </View>
-  );
-};
+  )
+}
 
 Home.navigationItem = {
   title: 'Home',
   hideNavigationBar: false,
-};
+}
 
-export default Home;
+export default Home

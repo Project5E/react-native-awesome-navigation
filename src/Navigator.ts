@@ -3,6 +3,11 @@ import store from './store'
 
 const NavigationBridge = NativeModules.ALCNavigationBridge
 
+interface ResultListener {
+  execute(data: any): void
+  cancel(): void
+}
+
 interface Route {
   screenID: string
 }
@@ -18,8 +23,7 @@ export class Navigator {
 
   static async current() {
     const route = await Navigator.currentRoute()
-    const navigatior = Navigator.get(route.screenID)
-    return navigatior
+    return Navigator.get(route.screenID)
   }
 
   static async currentRoute(): Promise<Route> {
@@ -31,7 +35,7 @@ export class Navigator {
 
   screenID: string
   moduleName: string
-  resultListener?(data?: any): void
+  resultListener?: ResultListener
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(screenID: string, moduleName: string) {
@@ -39,27 +43,13 @@ export class Navigator {
     this.moduleName = moduleName
   }
 
-  waitResult() {
-    return new Promise(resolve => {
-      const listener = (data: any) => {
-        resolve(['ok', data])
-        this.resultListener = undefined
-      }
-      listener.cancel = () => {
-        resolve(['cancel', null])
-        this.resultListener = undefined
-      }
-      this.resultListener = listener
-    })
-  }
-
   excute = (data: any) => {
     if (this.resultListener) {
-      this.resultListener(data)
+      this.resultListener.execute(data)
     }
   }
 
-  unmount = () => {
+  cancel = () => {
     if (this.resultListener) {
       this.resultListener.cancel()
     }
@@ -71,7 +61,19 @@ export class Navigator {
 
   push = async (component: string, params?: any) => {
     Navigator.dispatch('push', component, params)
-    return await this.waitResult()
+    return new Promise(resolve => {
+      const listener = {
+        execute: (data: any) => {
+          resolve(['ok', data])
+          this.resultListener = undefined
+        },
+        cancel: () => {
+          resolve(['cancel', null])
+          this.resultListener = undefined
+        },
+      }
+      this.resultListener = listener
+    })
   }
 
   pop = () => {
@@ -89,8 +91,4 @@ export class Navigator {
   dismiss = () => {
     Navigator.dispatch('dismiss')
   }
-
-  // switchTab = (index: number) => {
-  //   Navigator.dispatch('switchTab', undefined, index)
-  // }
 }

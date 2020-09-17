@@ -1,14 +1,15 @@
-import React, {useState} from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import {View, Text, StyleSheet, NativeEventEmitter, NativeModules} from 'react-native'
 
-interface Props {}
+const NavigationBridge = NativeModules.ALCNavigationBridge
+const EventEmitter = new NativeEventEmitter(NavigationBridge)
 
 interface Header {
   title: string
 }
 
-export const withNavigationBar = (Component: React.Component) => {
-  const NewComponent = (props: Props) => {
+export const withNavigationBar = (Component: React.ComponentType<any>) => {
+  const NewComponent = (props: any) => {
     const [header, setHeader] = useState<Header | undefined>(undefined)
     return (
       <View style={styles.container}>
@@ -21,6 +22,32 @@ export const withNavigationBar = (Component: React.Component) => {
   }
   NewComponent.navigationItem = Component.navigationItem
   return NewComponent
+}
+
+export function useResult(screenID: string, fn: (type: string, data: any) => void) {
+  useEffect(() => {
+    const subscription = EventEmitter.addListener('NavigationEvent', data => {
+      if (data.screen_id === screenID && data.event === 'component_result') {
+        fn(data.result_type, data.result_data)
+      }
+    })
+    return () => {
+      subscription.remove()
+    }
+  }, [screenID, fn])
+}
+
+export function useReClick(screenID: string, fn: () => void) {
+  useEffect(() => {
+    const subscription = EventEmitter.addListener('NavigationEvent', data => {
+      if (screenID === data.screen_id && data.event === 'did_select_tab') {
+        fn()
+      }
+    })
+    return () => {
+      subscription.remove()
+    }
+  }, [screenID, fn])
 }
 
 const styles = StyleSheet.create({

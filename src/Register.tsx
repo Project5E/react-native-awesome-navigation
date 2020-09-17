@@ -7,6 +7,11 @@ import {router} from './router'
 const NavigationBridge = NativeModules.ALCNavigationBridge
 const EventEmitter = new NativeEventEmitter(NavigationBridge)
 
+export interface NavigationProps {
+  navigator: Navigator
+  screenID: string
+}
+
 interface Props {
   screenID: string
 }
@@ -21,7 +26,7 @@ const withNavigator = (moduleName: string) => {
         const subscription = EventEmitter.addListener('NavigationEvent', data => {
           if (data.screen_id === screenID && data.event === 'component_result') {
             if (data.result_type === 'cancel') {
-              navigator.unmount()
+              navigator.cancel()
             } else {
               navigator.excute(data.result_data)
             }
