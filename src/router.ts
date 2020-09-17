@@ -11,16 +11,7 @@ export interface RouteConfig {
 class Router {
   private uriPrefix?: string
 
-  addRouteConfig(moduleName: string, routePath: string) {
-    configs.set(routePath, moduleName)
-  }
-
-  clear = () => {
-    active = false
-    configs.clear()
-  }
-
-  open = async (path: string) => {
+  static open = async (path: string) => {
     if (!path) {
       return
     }
@@ -43,6 +34,15 @@ class Router {
     if (navigator) {
       navigator?.push(moduleName, queryParams)
     }
+  }
+
+  addRouteConfig(moduleName: string, routePath: string) {
+    configs.set(routePath, moduleName)
+  }
+
+  clear = () => {
+    active = false
+    configs.clear()
   }
 
   activate = (uriPrefix: string) => {
@@ -69,9 +69,9 @@ class Router {
     if (!path.startsWith('/')) {
       path = `/${path}`
     }
-    this.open(path)
+    Router.open(path)
   }
 }
 
 const router = new Router()
-export {router}
+export {router, Router}

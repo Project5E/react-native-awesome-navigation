@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {View, Button} from 'react-native'
-import {Navigator, router} from 'react-native-pure-navigation'
+import {Navigator, router, Router} from 'react-native-pure-navigation'
 
 const Home = props => {
   useEffect(() => {
@@ -12,6 +12,7 @@ const Home = props => {
         onPress={async () => {
           const resp = await Navigator.currentRoute()
           console.warn(resp)
+          // Router.open('/home')
         }}
         title="log route"
       />
