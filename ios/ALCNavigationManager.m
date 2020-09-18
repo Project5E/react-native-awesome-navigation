@@ -74,14 +74,16 @@
 }
 
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary * __nullable)params {
-    BOOL hasNativeVC = [self hasNativeModule:pageName];
+//    BOOL hasNativeVC = [self hasNativeModule:pageName];
     UIViewController *vc;
-    if (hasNativeVC) {
+    if ([self hasNativeModule:pageName]) {
         Class clazz = [self nativeModuleClassFromName:pageName];
         vc = [[clazz alloc] initWithModuleName:pageName props:params];
-    } else {
+    } else if ([self hasReactModuleForName:pageName]) {
         NSDictionary *options = [self reactModuleOptionsForKey:pageName];
         vc = [[ALCReactViewController alloc] initWithModuleName:pageName props:params options:options];
+    } else {
+        return nil;
     }
     return vc;
 }

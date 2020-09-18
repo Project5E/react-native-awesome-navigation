@@ -115,24 +115,9 @@ RCT_EXPORT_METHOD(registerReactComponent:(NSString *)appKey options:(NSDictionar
 }
 
 RCT_EXPORT_METHOD(setTabBadge:(NSArray<NSDictionary *> *)options) {
-    for (NSDictionary *option in options) {
-        NSUInteger index = option[@"index"] ? [option[@"index"] integerValue] : 0;
-        BOOL hidden = option[@"hidden"] ? [option[@"hidden"] boolValue] : YES;
-        
-        NSString *text = hidden ? nil : (option[@"text"] ? option[@"text"] : nil);
-        BOOL dot = hidden ?  NO : (option[@"dot"] ? [option[@"dot"] boolValue] : NO);
-        
-        UIWindow *window = RCTSharedApplication().delegate.window;
-        ALCTabBarViewController *tbc = (ALCTabBarViewController *)window.rootViewController;
-        UIViewController *vc = tbc.viewControllers[index];
-        vc.tabBarItem.badgeValue = text;
-        UITabBar *tabBar = tbc.tabBar;
-        if (dot) {
-            [tabBar showDotBadgeAtIndex:index];
-        } else {
-            [tabBar hideDotBadgeAtIndex:index];
-        }
-    }
+    UIWindow *window = RCTSharedApplication().delegate.window;
+    ALCTabBarViewController *tbc = (ALCTabBarViewController *)window.rootViewController;
+    [tbc setTabBadge:options];
 }
 
 @end

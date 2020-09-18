@@ -5,10 +5,12 @@ import Setting from './src/Setting'
 import Detail from './src/Detail'
 import Present from './src/Present'
 import NoNavigationBar from './src/NoNavigationBar'
+import TabBar from './src/TabBar'
 
 import CloseIcon from './src/image/Close.png'
 import HomeIcon from './src/image/Home.png'
 import SettingIcon from './src/image/Profile.png'
+import AddButton from './src/image/Add-button.png'
 
 setStyle({
   hideBackTitle: true,
@@ -20,6 +22,7 @@ setStyle({
   backIcon: Image.resolveAssetSource(CloseIcon),
   tabBarDotColor: '#FF84A9',
 })
+
 beforeRegister()
 
 registerComponent('Home', Home, '/home')
@@ -27,6 +30,7 @@ registerComponent('Setting', Setting)
 registerComponent('Detail', Detail)
 registerComponent('Present', Present)
 registerComponent('NoNavigationBar', NoNavigationBar)
+registerComponent('TabBar', TabBar)
 
 setRoot({
   root: {

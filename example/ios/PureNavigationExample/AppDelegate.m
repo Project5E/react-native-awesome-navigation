@@ -41,15 +41,11 @@ static void InitializeFlipper(UIApplication *application) {
     InitializeFlipper(application);
   #endif
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-//  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-//                                                   moduleName:@"PureNavigationExample"
-//                                            initialProperties:nil];
   [ALCNavigationManager shared].bridge = bridge;
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//  self.window.backgroundColor = [UIColor whiteColor];
+  self.window.backgroundColor = [UIColor whiteColor];
   UIStoryboard *storyboard =  [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
   UIViewController *rootViewController = [storyboard instantiateInitialViewController];
-//  self.window.windowLevel = UIWindowLevelStatusBar;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;

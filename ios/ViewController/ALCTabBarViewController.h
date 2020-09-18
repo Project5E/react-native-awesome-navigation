@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALCTabBarViewController : UITabBarController
 
+- (instancetype)initWithTabBarOptions:(NSDictionary *)options;
+
+- (void)setTabBadge:(NSArray<NSDictionary *> *)options;
+
 @end
 
 NS_ASSUME_NONNULL_END
