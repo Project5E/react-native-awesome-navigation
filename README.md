@@ -13,8 +13,20 @@ npm install react-native-pure-navigation
 ```js
 import { registerComponent, setRoot } from 'react-native-pure-navigation';
 
-// ...
-注册组件，然后设置根页面
+// 设置全局样式
+setStyle({
+  hideBackTitle: true,
+  hideNavigationBarShadow: true,
+  navigationBarColor: '#FFFFFF',
+  navigationBarItemColor: 'FF84A9',
+  tabBarColor: '#FFFFFF',
+  tabBarItemColor: '#FF84A9',
+  backIcon: Image.resolveAssetSource(CloseIcon),
+})
+
+beforeRegister()
+
+// 注册组件，然后设置根页面
 
 registerComponent('Home', Home);
 registerComponent('Setting', Setting);
@@ -41,6 +53,64 @@ setRoot({
   },
 });
 ```
+
+## 全局样式
+目前有以下全局样式，后续会增加更多
+```
+interface GlobalStyle {
+  backIcon?: {uri: string} // 设置返回图标
+  hideNavigationBarShadow?: boolean // 隐藏导航栏底部线
+  hideBackTitle?: boolean // 是否隐藏返回按钮旁边的文字
+  navigationBarColor?: string // 导航栏背景颜色
+  navigationBarItemColor?: string // 导航栏item颜色
+
+  tabBarColor?: string // tabbar背景颜色
+  tabBarItemColor?: string // tabbar选中颜色
+}
+```
+
+使用
+```
+setStyle({
+  hideBackTitle: true,
+  hideNavigationBarShadow: true,
+  navigationBarColor: '#FFFFFF',
+  navigationBarItemColor: 'FF84A9',
+  tabBarColor: '#FFFFFF',
+  tabBarItemColor: '#FF84A9',
+  backIcon: Image.resolveAssetSource(CloseIcon),
+})
+```
+
+## 路径导航 -- 支持DeepLink
+
+注册的时候为页面加入路径
+```
+registerComponent('Home', Home, '/home')
+registerComponent('Setting', Setting)
+```
+
+使用前在首页激活
+```
+  useEffect(() => {
+    router.activate('hulaqinzi://')
+    return () => {
+      router.inactivate()
+    }
+  }, [])
+```
+
+Router.open('hulaqinzi://home?key=value')
+会解析出路径/home，以及参数 {key: value}，并push出Home页面和传惨
+
+## hooks
+
+useResult 
+用于页面返回传参
+
+useReClick
+响应重复点击tabbar事件，仅用于每一个tab的首页
+
 
 ## Contributing
 
