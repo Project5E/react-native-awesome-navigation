@@ -18,6 +18,7 @@ setStyle({
   tabBarColor: '#FFFFFF',
   tabBarItemColor: '#FF84A9',
   backIcon: Image.resolveAssetSource(CloseIcon),
+  tabBarDotColor: '#FF84A9',
 })
 beforeRegister()
 

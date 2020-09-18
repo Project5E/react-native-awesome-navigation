@@ -1,10 +1,25 @@
 import React, {useEffect} from 'react'
 import {View, Button} from 'react-native'
-import {Navigator, router, Router} from 'react-native-pure-navigation'
+import {Navigator, router, Router, setTabBadge} from 'react-native-pure-navigation'
 
 const Home = props => {
   useEffect(() => {
+    setTabBadge([
+      {
+        index: 0,
+        hidden: false,
+        dot: true,
+      },
+      {
+        index: 1,
+        text: '1199',
+        hidden: false,
+      },
+    ])
     router.activate('hbd://')
+    return () => {
+      router.inactivate()
+    }
   }, [])
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>

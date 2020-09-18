@@ -9,18 +9,21 @@ export interface RouteConfig {
 }
 
 class Router {
-  private uriPrefix?: string
+  static uriPrefix?: string
 
   static open = async (path: string) => {
     if (!path) {
       return
+    }
+    path = path.replace(Router.uriPrefix!, '')
+    if (!path.startsWith('/')) {
+      path = `/${path}`
     }
     const [pathName, queryString] = path.split('?')
     const moduleName = configs.get(pathName)
     if (!moduleName) {
       return
     }
-
     const queryParams = (queryString || '').split('&').reduce((result: any, item: string) => {
       if (item !== '') {
         const nextResult = result || {}
@@ -50,7 +53,7 @@ class Router {
       throw new Error('must pass `uriPrefix` when activate router.')
     }
     if (!active) {
-      this.uriPrefix = uriPrefix
+      Router.uriPrefix = uriPrefix
       Linking.addEventListener('url', this.routeEventHandler)
       active = !active
     }
@@ -58,18 +61,14 @@ class Router {
 
   inactivate = () => {
     if (active) {
+      Router.uriPrefix = undefined
       Linking.removeEventListener('url', this.routeEventHandler)
       active = !active
     }
   }
 
-  private readonly routeEventHandler = (event: {url: string}): void => {
-    // console.info(`deeplink: ${event.url}`)
-    let path = event.url.replace(this.uriPrefix!, '')
-    if (!path.startsWith('/')) {
-      path = `/${path}`
-    }
-    Router.open(path)
+  private readonly routeEventHandler = (event: {url: string}) => {
+    Router.open(event.url)
   }
 }
 

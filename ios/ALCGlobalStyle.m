@@ -37,6 +37,10 @@
         UIColor *tabBarItemColor = [ALCUtils colorWithHexString:[style objectForKey:@"tabBarItemColor"]];
         [[UITabBar appearance] setTintColor:tabBarItemColor];
     }
+    if ([style objectForKey:@"tabBarDotColor"]) {
+        UIColor *tabBarDotColor = [ALCUtils colorWithHexString:[style objectForKey:@"tabBarDotColor"]];
+        [[UITabBarItem appearance] setBadgeColor:tabBarDotColor];
+    }
     if ([style objectForKey:@"backIcon"]) {
         UIImage *backIcon = [ALCUtils fetchImage:[style objectForKey:@"backIcon"]];
         [[UINavigationBar appearance] setBackIndicatorImage:backIcon];

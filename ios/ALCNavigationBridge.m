@@ -10,6 +10,7 @@
 #import "ALCNavigationManager.h"
 #import <React/RCTView.h>
 #import "UIViewController+ALC.h"
+#import "UITabBar+DotBadge.h"
 #import "ALCNavigationController.h"
 #import "ALCReactViewController.h"
 #import "ALCTabBarViewController.h"
@@ -111,6 +112,27 @@ RCT_EXPORT_METHOD(dispatch:(NSString *)action page:(NSString *)pageName params:(
 
 RCT_EXPORT_METHOD(registerReactComponent:(NSString *)appKey options:(NSDictionary *)options) {
     [self.manager registerReactModule:appKey options:options];
+}
+
+RCT_EXPORT_METHOD(setTabBadge:(NSArray<NSDictionary *> *)options) {
+    for (NSDictionary *option in options) {
+        NSUInteger index = option[@"index"] ? [option[@"index"] integerValue] : 0;
+        BOOL hidden = option[@"hidden"] ? [option[@"hidden"] boolValue] : YES;
+        
+        NSString *text = hidden ? nil : (option[@"text"] ? option[@"text"] : nil);
+        BOOL dot = hidden ?  NO : (option[@"dot"] ? [option[@"dot"] boolValue] : NO);
+        
+        UIWindow *window = RCTSharedApplication().delegate.window;
+        ALCTabBarViewController *tbc = (ALCTabBarViewController *)window.rootViewController;
+        UIViewController *vc = tbc.viewControllers[index];
+        vc.tabBarItem.badgeValue = text;
+        UITabBar *tabBar = tbc.tabBar;
+        if (dot) {
+            [tabBar showDotBadgeAtIndex:index];
+        } else {
+            [tabBar hideDotBadgeAtIndex:index];
+        }
+    }
 }
 
 @end
