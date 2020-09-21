@@ -8,6 +8,7 @@
 #import "ALCNativeViewController.h"
 #import "ALCNavigationManager.h"
 #import "ALCStackModel.h"
+#import "ALCConstants.h"
 
 @interface ALCNativeViewController ()
 
@@ -36,12 +37,12 @@
 }
 
 - (void)didReceiveResultData:(NSDictionary *)data type:(NSString *)type {
-    [ALCNavigationManager sendEvent:@"NavigationEvent" data:
+    [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
     @{
-      @"event": @"component_result",
-      @"result_type" : type,
-      @"result_data": data ?: [NSNull null],
-      @"screen_id": self.screenID
+      EVENT_TYPE: COMPONENT_RESULT,
+      RESULT_TYPE : type,
+      RESULT_DATA: data ?: [NSNull null],
+      SCREEN_ID: self.screenID
     }];
 }
 

@@ -1,8 +1,15 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, StyleSheet, NativeEventEmitter, NativeModules} from 'react-native'
-
-const NavigationBridge = NativeModules.ALCNavigationBridge
-const EventEmitter = new NativeEventEmitter(NavigationBridge)
+import {View, Text, StyleSheet} from 'react-native'
+import {
+  COMPONENT_RESULT,
+  EventEmitter,
+  EVENT_TYPE,
+  NAVIGATION_EVENT,
+  RECLICK_TAB,
+  RESULT_DATA,
+  RESULT_TYPE,
+  SCREEN_ID,
+} from './NavigationModule'
 
 interface Header {
   title: string
@@ -26,9 +33,9 @@ export const withNavigationBar = (Component: React.ComponentType<any>) => {
 
 export function useResult(screenID: string, fn: (type: string, data: any) => void) {
   useEffect(() => {
-    const subscription = EventEmitter.addListener('NavigationEvent', data => {
-      if (data.screen_id === screenID && data.event === 'component_result') {
-        fn(data.result_type, data.result_data)
+    const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
+      if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === COMPONENT_RESULT) {
+        fn(data[RESULT_TYPE], data[RESULT_DATA])
       }
     })
     return () => {
@@ -39,8 +46,8 @@ export function useResult(screenID: string, fn: (type: string, data: any) => voi
 
 export function useReClick(screenID: string, fn: () => void) {
   useEffect(() => {
-    const subscription = EventEmitter.addListener('NavigationEvent', data => {
-      if (screenID === data.screen_id && data.event === 'did_select_tab') {
+    const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
+      if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === RECLICK_TAB) {
         fn()
       }
     })

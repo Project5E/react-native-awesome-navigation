@@ -1,11 +1,19 @@
 import {Navigator} from './Navigator'
 import React, {useEffect} from 'react'
-import {NativeModules, AppRegistry, NativeEventEmitter} from 'react-native'
+import {AppRegistry} from 'react-native'
 import store from './store'
 import {router} from './router'
-
-const NavigationBridge = NativeModules.ALCNavigationBridge
-const EventEmitter = new NativeEventEmitter(NavigationBridge)
+import {
+  NavigationBridge,
+  EventEmitter,
+  NAVIGATION_EVENT,
+  COMPONENT_RESULT,
+  SCREEN_ID,
+  RESULT_TYPE,
+  EVENT_TYPE,
+  RESULT_DATA,
+  RESULT_TYPE_CANCEL,
+} from './NavigationModule'
 
 export interface NavigationProps {
   navigator: Navigator
@@ -23,12 +31,12 @@ const withNavigator = (moduleName: string) => {
       const navigator = store.getNavigator(screenID) || new Navigator(screenID, moduleName)
       store.addNavigator(screenID, navigator)
       useEffect(() => {
-        const subscription = EventEmitter.addListener('NavigationEvent', data => {
-          if (data.screen_id === screenID && data.event === 'component_result') {
-            if (data.result_type === 'cancel') {
+        const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
+          if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === COMPONENT_RESULT) {
+            if (data[RESULT_TYPE] === RESULT_TYPE_CANCEL) {
               navigator.cancel()
             } else {
-              navigator.excute(data.result_data)
+              navigator.excute(data[RESULT_DATA])
             }
           }
         })

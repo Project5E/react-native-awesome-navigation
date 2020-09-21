@@ -1,6 +1,4 @@
-import {NativeModules} from 'react-native'
-
-const NavigationBridge = NativeModules.ALCNavigationBridge
+import {NavigationBridge} from './NavigationModule'
 
 interface GlobalStyle {
   backIcon?: {uri: string} // 设置返回图标

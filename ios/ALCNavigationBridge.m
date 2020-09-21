@@ -16,6 +16,7 @@
 #import "ALCTabBarViewController.h"
 #import "ALCStackModel.h"
 #import "ALCGlobalStyle.h"
+#import "ALCConstants.h"
 
 @interface  ALCNavigationBridge ()
 
@@ -43,7 +44,7 @@ RCT_EXPORT_MODULE(ALCNavigationBridge)
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"NavigationEvent"];
+    return @[NAVIGATION_EVENT];
 }
 
 RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {

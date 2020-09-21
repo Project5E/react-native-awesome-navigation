@@ -9,6 +9,7 @@
 #import "ALCNavigationManager.h"
 #import "UIViewController+ALC.h"
 #import "UITabBar+DotBadge.h"
+#import "ALCConstants.h"
 
 #import <React/RCTRootView.h>
 #import <React/RCTRootViewDelegate.h>
@@ -55,26 +56,13 @@
     self.rootView = rootView;
 }
 
-- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
-    UINavigationController *nav = (UINavigationController *)viewController;
-    if (nav.childViewControllers.count == 0) {
-        // TODO:
-        [ALCNavigationManager sendEvent:@"NavigationEvent" data:
-        @{
-          @"event": @"did_select_button_tab",
-        }];
-        return NO;
-    }
-    return YES;
-}
-
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
     if (self.previousController == viewController) {
         UINavigationController *nav = (UINavigationController *)viewController;
-        [ALCNavigationManager sendEvent:@"NavigationEvent" data:
+        [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
         @{
-          @"event": @"did_select_tab",
-          @"screen_id": nav.childViewControllers.firstObject.screenID
+          EVENT_TYPE: RECLICK_TAB,
+          SCREEN_ID: nav.childViewControllers.firstObject.screenID
         }];
     }
     self.previousController = viewController;

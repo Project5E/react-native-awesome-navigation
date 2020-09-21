@@ -12,6 +12,7 @@
 #import "ALCNativeViewController.h"
 #import "ALCReactViewController.h"
 #import "ALCStackModel.h"
+#import "ALCConstants.h"
 
 @interface ALCNavigationManager()
 
@@ -102,9 +103,9 @@
        ALCStackModel *last = stack.lastObject;
        [stack removeObjectsInRange:NSMakeRange(index + 1, self.stacks.count - 1)];
        if (last.data) {
-           [vc didReceiveResultData:last.data type:@"ok"];
+           [vc didReceiveResultData:last.data type:RESULT_TYPE_OK];
        } else {
-           [vc didReceiveResultData:@{} type:@"cancel"];
+           [vc didReceiveResultData:@{} type:RESULT_TYPE_CANCEL];
        }
     }
 }

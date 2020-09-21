@@ -1,7 +1,5 @@
-import {NativeModules} from 'react-native'
 import store from './store'
-
-const NavigationBridge = NativeModules.ALCNavigationBridge
+import {NavigationBridge} from './NavigationModule'
 
 interface ResultListener {
   execute(data: any): void
