@@ -12,16 +12,12 @@
 #import "ALCNativeViewController.h"
 #import "ALCReactViewController.h"
 #import "ALCStackModel.h"
-#import "ALCStackNavigator.h"
-#import "ALCTabBarNavigator.h"
-#import "ALCScreenNavigator.h"
 #import "ALCConstants.h"
 
 @interface ALCNavigationManager()
 
 @property (nonatomic, strong, readwrite) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *reactModules;
-@property (nonatomic, copy  , readwrite) NSArray<id<ALCNavigator>> *navigators;
 
 @end
 
@@ -49,8 +45,7 @@
     if (self = [super init]) {
         _nativeModules = [NSMutableDictionary dictionary];
         _reactModules  = [NSMutableDictionary dictionary];
-        _tabStacks     = [NSMutableDictionary dictionary];
-        _navigators    = @[[ALCScreenNavigator new], [ALCStackNavigator new], [ALCTabBarNavigator new]];
+        _stacks     = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -93,20 +88,13 @@
     return vc;
 }
 
-//- (UIViewController *)controllerWithLayout:(NSDictionary *)layout {
-//    UIViewController *vc;
-//    for (id<ALCNavigator> navigator in self.navigators) {
-//        if ((vc = [navigator createViewControllerWithLayout:layout])) {
-//            break;
-//        }
-//    }
-//    return vc;
-//}
-
-
 - (void)push:(UINavigationController *)nav vc:(UIViewController *)vc {
     ALCStackModel *model = [[ALCStackModel alloc] initWithScreenID:vc.screenID];
-    NSMutableArray *stack = [self.tabStacks valueForKey:nav.screenID];
+    NSMutableArray *stack = [self.stacks valueForKey:nav.screenID];
+    if (!stack) {
+        stack = [NSMutableArray array];
+        [self.stacks setValue:stack forKey:nav.screenID];
+    }
     if (![stack containsObject:model]) {
         [stack addObject:model];
     } else if (stack.count > 1) {
@@ -122,8 +110,12 @@
     }
 }
 
-- (void)clear {
-    [self.tabStacks removeAllObjects];
+- (void)removePresentStack:(UINavigationController *)nav {
+    [self.stacks removeObjectForKey:nav.screenID];
+}
+
+- (void)clearStack {
+    [self.stacks removeAllObjects];
 }
 
 @end

@@ -17,9 +17,9 @@
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readonly) NSMutableDictionary *reactModules;
-//@property (nonatomic, copy  , readonly) NSArray *navigators;
 
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray<ALCStackModel *> *> *tabStacks;
+// 包含tabs以及一个动态的可增可删的present导航栈
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray<ALCStackModel *> *> *stacks;
 
 + (void)sendEvent:(NSString *)eventName data:(NSDictionary *)data;
 
@@ -34,9 +34,9 @@
 - (NSDictionary *)reactModuleOptionsForKey:(NSString *)moduleName;
 
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary *)params;
-//- (UIViewController *)controllerWithLayout:(NSDictionary *)layout;
 
 - (void)push:(UINavigationController *)nav vc:(UIViewController *)vc;
-- (void)clear;
+- (void)removePresentStack:(UINavigationController *)nav;
+- (void)clearStack;
 
 @end

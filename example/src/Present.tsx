@@ -1,18 +1,30 @@
-import React from 'react';
-import { View, Button, Text } from 'react-native';
+import React from 'react'
+import {View, Button, Text} from 'react-native'
 
-const Present = (props) => {
+const Present = props => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 20 }}>This is a presented view</Text>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text style={{fontSize: 20}}>This is a presented view</Text>
       <Button
-        title="dismiss"
-        onPress={() => {
-          props.navigator.dismiss();
+        onPress={async () => {
+          const resp = await props.navigator.push('Detail')
+          console.warn(resp)
         }}
+        title="push detail"
+      />
+      <Button
+        onPress={() => {
+          props.navigator.dismiss()
+        }}
+        title="dismiss"
       />
     </View>
-  );
-};
+  )
+}
 
-export default Present;
+Present.navigationItem = {
+  title: 'Present',
+  // hideNavigationBar: false,
+}
+
+export default Present
