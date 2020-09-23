@@ -16,10 +16,9 @@
 
 @interface ALCTabBarViewController () <UITabBarControllerDelegate>
 
+@property (nonatomic, copy  ) NSDictionary *options;
 @property (nonatomic, strong) UIViewController *previousController;
-
 @property (nonatomic, strong) RCTRootView *rootView;
-
 @property (nonatomic, assign) BOOL hasCustomTabBar;
 
 @end
@@ -27,6 +26,7 @@
 @implementation ALCTabBarViewController
 
 - (instancetype)initWithTabBarOptions:(NSDictionary *)options {
+    _options = options;
     _hasCustomTabBar = YES;
     return [super init];
 }
@@ -49,7 +49,8 @@
 }
 
 - (void)customTabBar {
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge moduleName:@"TabBar" initialProperties:nil];
+    NSString *tabBar = self.options[@"tabBarModuleName"];
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge moduleName:tabBar initialProperties:nil];
     
     rootView.frame = CGRectMake(0, 1, CGRectGetWidth(self.tabBar.bounds), 48);
     [self.tabBar addSubview:rootView];

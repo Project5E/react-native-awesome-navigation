@@ -1,5 +1,5 @@
 export * from './Register'
-export * from './router'
+export * from './Router'
 export * from './Navigator'
 export * from './GlobalStyle'
 export * from './hooks'

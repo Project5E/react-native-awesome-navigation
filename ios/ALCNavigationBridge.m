@@ -17,6 +17,8 @@
 #import "ALCStackModel.h"
 #import "ALCGlobalStyle.h"
 #import "ALCConstants.h"
+#import "ALCNavigatorHelper.h"
+#import "ALCNavigator.h"
 
 @interface  ALCNavigationBridge ()
 
@@ -50,23 +52,23 @@ RCT_EXPORT_MODULE(ALCNavigationBridge)
 RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
     [self.manager clear];
     NSDictionary *root = rootTree[@"root"];
-    NSArray *tabs = root[@"tabs"][@"children"];
-    NSMutableArray *controllers = [NSMutableArray array];
-    for (NSDictionary *tab in tabs) {
-        NSString *component = tab[@"component"];
-        NSString *title = tab[@"title"];
-        NSDictionary *icon = tab[@"icon"];
-        UIViewController *viewController = [self.manager fetchViewController:component params:nil];
-        ALCNavigationController *nav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
-        [self.manager.stacks setObject:[NSMutableArray array] forKey:nav.screenID];
-        nav.title = title;
-        nav.tabBarItem.image = [self.manager fetchImage:icon];
-        [controllers addObject:nav];
+    UIViewController *viewController;
+    if (root[@"tabs"]) {
+        ALCTabBarViewController *tbc = [ALCNavigatorHelper createTabBarControllerWithLayout:root[@"tabs"]];
+        for (UIViewController *vc in tbc.viewControllers) {
+            [[ALCNavigationManager shared].tabStacks setObject:[NSMutableArray array] forKey:vc.screenID];
+        }
+        viewController = tbc;
+    } else if (root[@"stack"]) {
+        viewController = [ALCNavigatorHelper createNavigationControllerWithLayout:root[@"stack"]];
+        [[ALCNavigationManager shared].tabStacks setObject:[NSMutableArray array] forKey:viewController.screenID];
+    } else if (root[@"screen"]) {
+        viewController = [ALCNavigatorHelper createScreenControllerWithLayout:root[@"screen"]];
+    } else {
+        NSAssert(false, @"root should be tabs、 stack or screen");
     }
-    ALCTabBarViewController *tbc = [[ALCTabBarViewController alloc] init];
-    tbc.viewControllers = controllers;
     UIWindow *window = RCTSharedApplication().delegate.window;
-    window.rootViewController = tbc;
+    window.rootViewController = viewController;
 }
 
 RCT_EXPORT_METHOD(setStyle:(NSDictionary *)styles) {
@@ -84,27 +86,41 @@ RCT_EXPORT_METHOD(setResult:(NSDictionary *)data) {
     UIWindow *window = RCTSharedApplication().delegate.window;
     UITabBarController *tbc = (UITabBarController *)window.rootViewController;
     UINavigationController *nav = tbc.selectedViewController;
-    NSMutableArray *stack = [self.manager.stacks valueForKey:nav.screenID];
+    NSMutableArray *stack = [self.manager.tabStacks valueForKey:nav.screenID];
     ((ALCStackModel *)stack.lastObject).data = data;
 }
 
-RCT_EXPORT_METHOD(dispatch:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params) {
+RCT_EXPORT_METHOD(dispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params) {
     UIWindow *window = RCTSharedApplication().delegate.window;
-    UITabBarController *tbc = (UITabBarController *)window.rootViewController;
-    UINavigationController *nav = tbc.selectedViewController;
+    UIViewController *root = window.rootViewController;
+    UINavigationController *nav;
+    UITabBarController *tbc;
+    if ([root isKindOfClass:[UITabBarController class]]) {
+        tbc = (UITabBarController *)root;
+        nav = tbc.selectedViewController;
+    } else if ([root isKindOfClass:[UINavigationController class]]) {
+        nav = (UINavigationController *)root;
+    } else {
+        nav = root;
+    }
     if ([action isEqualToString:@"push"]) {
         UIViewController *viewController = [self.manager fetchViewController:pageName params:params];
         viewController.hidesBottomBarWhenPushed = YES;
         [nav pushViewController:viewController animated:true];
+        viewController.hidesBottomBarWhenPushed = NO; // wtf？
     } else if ([action isEqualToString:@"pop"]) {
         [nav popViewControllerAnimated:YES];
     } else if ([action isEqualToString:@"popToRoot"]) {
         [nav popToRootViewControllerAnimated:YES];
     } else if ([action isEqualToString:@"present"]) {
         UIViewController *viewController = [self.manager fetchViewController:pageName params:params];
+        NSNumber *index = params[@"isFullScreen"];
+        if (index.boolValue) {
+            viewController.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
         [nav presentViewController:viewController animated:YES completion:nil];
     } else if ([action isEqualToString:@"dismiss"]) {
-        [tbc dismissViewControllerAnimated:YES completion:nil];
+        [nav dismissViewControllerAnimated:YES completion:nil];
     } else if ([action isEqualToString:@"switchTab"]) {
         NSNumber *index = params[@"index"];
         tbc.selectedIndex = index.integerValue;

@@ -1,4 +1,4 @@
-import {registerComponent, setRoot, beforeRegister, setStyle} from 'react-native-pure-navigation'
+import {Register, setStyle} from 'react-native-pure-navigation'
 import {Image} from 'react-native'
 import Home from './src/Home'
 import Setting from './src/Setting'
@@ -10,7 +10,6 @@ import TabBar from './src/TabBar'
 import CloseIcon from './src/image/Close.png'
 import HomeIcon from './src/image/Home.png'
 import SettingIcon from './src/image/Profile.png'
-import AddButton from './src/image/Add-button.png'
 
 setStyle({
   hideBackTitle: true,
@@ -23,30 +22,52 @@ setStyle({
   tabBarDotColor: '#FF84A9',
 })
 
-beforeRegister()
+Register.beforeRegister()
 
-registerComponent('Home', Home, '/home')
-registerComponent('Setting', Setting)
-registerComponent('Detail', Detail)
-registerComponent('Present', Present)
-registerComponent('NoNavigationBar', NoNavigationBar)
-registerComponent('TabBar', TabBar)
+Register.registerComponent('Home', Home, '/home')
+Register.registerComponent('Setting', Setting)
+Register.registerComponent('Detail', Detail)
+Register.registerComponent('Present', Present)
+Register.registerComponent('NoNavigationBar', NoNavigationBar)
+Register.registerComponent('TabBar', TabBar)
 
-setRoot({
+Register.setRoot({
   root: {
     tabs: {
       children: [
         {
-          component: 'Home',
-          title: '主页',
-          icon: Image.resolveAssetSource(HomeIcon),
+          stack: {
+            root: {
+              screen: {
+                moduleName: 'Home',
+              },
+            },
+            options: {title: '主页', icon: Image.resolveAssetSource(HomeIcon)},
+          },
         },
         {
-          component: 'Setting',
-          title: '设置',
-          icon: Image.resolveAssetSource(SettingIcon),
+          stack: {
+            root: {
+              screen: {
+                moduleName: 'Setting',
+              },
+            },
+            options: {title: '设置', icon: Image.resolveAssetSource(SettingIcon)},
+          },
         },
       ],
+      // options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
     },
+    // stack: {
+    //   root: {
+    //     screen: {
+    //       moduleName: 'Setting',
+    //     },
+    //   },
+    //   options: {title: '设置', icon: Image.resolveAssetSource(SettingIcon)},
+    // },
+    // screen: {
+    //   moduleName: 'Home',
+    // },
   },
 })

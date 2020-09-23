@@ -32,7 +32,7 @@
 
 - (void)setResult:(NSDictionary *)data {
     UINavigationController *nav = self.navigationController;
-    NSMutableArray *stack = [[ALCNavigationManager shared].stacks valueForKey:nav.screenID];
+    NSMutableArray *stack = [[ALCNavigationManager shared].tabStacks valueForKey:nav.screenID];
     ((ALCStackModel *)stack.lastObject).data = data;
 }
 

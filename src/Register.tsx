@@ -2,7 +2,7 @@ import {Navigator} from './Navigator'
 import React, {useEffect} from 'react'
 import {AppRegistry} from 'react-native'
 import store from './store'
-import {router} from './router'
+import {router} from './Router'
 import {
   NavigationBridge,
   EventEmitter,
@@ -55,21 +55,25 @@ const withNavigator = (moduleName: string) => {
   }
 }
 
-export const beforeRegister = () => {
-  store.clearNavigator()
-  router.clear()
-}
-
-export const registerComponent = (appKey: string, component: any, routeConfig?: string) => {
-  if (routeConfig) {
-    router.addRouteConfig(appKey, routeConfig)
+export class Register {
+  static beforeRegister = () => {
+    store.clearNavigator()
+    router.clear()
   }
-  const options = component.navigationItem || {}
-  NavigationBridge.registerReactComponent(appKey, options)
-  const withComponent = withNavigator(appKey)(component)
-  AppRegistry.registerComponent(appKey, () => withComponent)
-}
 
-export const setRoot = (tree: {[key: string]: string}) => {
-  NavigationBridge.setRoot(tree)
+  static registerComponent = (appKey: string, component: any, customPath?: string) => {
+    if (customPath) {
+      router.addRoutePath(appKey, customPath)
+    } else {
+      router.addRoutePath(appKey, `/${appKey}`)
+    }
+    const options = component.navigationItem || {}
+    NavigationBridge.registerReactComponent(appKey, options)
+    const withComponent = withNavigator(appKey)(component)
+    AppRegistry.registerComponent(appKey, () => withComponent)
+  }
+
+  static setRoot = (tree: {[key: string]: string}) => {
+    NavigationBridge.setRoot(tree)
+  }
 }

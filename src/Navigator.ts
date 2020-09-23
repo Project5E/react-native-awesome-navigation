@@ -11,8 +11,8 @@ interface Route {
 }
 
 export class Navigator {
-  static dispatch = (action: string, component?: string, options?: any) => {
-    NavigationBridge.dispatch(action, component, options)
+  static dispatch = (screenID: string, action: string, component?: string, options?: any) => {
+    NavigationBridge.dispatch(screenID, action, component, options)
   }
 
   static get = (screenID: string): Navigator | undefined => {
@@ -58,7 +58,7 @@ export class Navigator {
   }
 
   push = async (component: string, params?: any) => {
-    Navigator.dispatch('push', component, params)
+    Navigator.dispatch(this.screenID, 'push', component, params)
     return new Promise(resolve => {
       const listener = {
         execute: (data: any) => {
@@ -75,18 +75,22 @@ export class Navigator {
   }
 
   pop = () => {
-    Navigator.dispatch('pop')
+    Navigator.dispatch(this.screenID, 'pop')
   }
 
   popToRoot = () => {
-    Navigator.dispatch('popToRoot')
+    Navigator.dispatch(this.screenID, 'popToRoot')
   }
 
-  present = (component: string, options?: any) => {
-    Navigator.dispatch('present', component, options)
+  present = (component: string, options?: any, isFullScreen = false) => {
+    Navigator.dispatch(this.screenID, 'present', component, {...options, isFullScreen})
   }
 
   dismiss = () => {
-    Navigator.dispatch('dismiss')
+    Navigator.dispatch(this.screenID, 'dismiss')
+  }
+
+  switchTab(index: number) {
+    return Navigator.dispatch(this.screenID, 'switchTab', undefined, {index})
   }
 }

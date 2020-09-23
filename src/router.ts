@@ -4,10 +4,6 @@ import {Linking} from 'react-native'
 let active = false
 const configs = new Map<string, string>()
 
-export interface RouteConfig {
-  path: string
-}
-
 class Router {
   static uriPrefix?: string
 
@@ -39,7 +35,7 @@ class Router {
     }
   }
 
-  addRouteConfig(moduleName: string, routePath: string) {
+  addRoutePath(moduleName: string, routePath: string) {
     configs.set(routePath, moduleName)
   }
 

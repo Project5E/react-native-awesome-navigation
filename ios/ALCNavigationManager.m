@@ -12,12 +12,16 @@
 #import "ALCNativeViewController.h"
 #import "ALCReactViewController.h"
 #import "ALCStackModel.h"
+#import "ALCStackNavigator.h"
+#import "ALCTabBarNavigator.h"
+#import "ALCScreenNavigator.h"
 #import "ALCConstants.h"
 
 @interface ALCNavigationManager()
 
 @property (nonatomic, strong, readwrite) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *reactModules;
+@property (nonatomic, copy  , readwrite) NSArray<id<ALCNavigator>> *navigators;
 
 @end
 
@@ -43,9 +47,10 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _nativeModules = [[NSMutableDictionary alloc] init];
-        _reactModules = [[NSMutableDictionary alloc] init];
-        _stacks = [[NSMutableDictionary alloc] init];
+        _nativeModules = [NSMutableDictionary dictionary];
+        _reactModules  = [NSMutableDictionary dictionary];
+        _tabStacks     = [NSMutableDictionary dictionary];
+        _navigators    = @[[ALCScreenNavigator new], [ALCStackNavigator new], [ALCTabBarNavigator new]];
     }
     return self;
 }
@@ -75,7 +80,6 @@
 }
 
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary * __nullable)params {
-//    BOOL hasNativeVC = [self hasNativeModule:pageName];
     UIViewController *vc;
     if ([self hasNativeModule:pageName]) {
         Class clazz = [self nativeModuleClassFromName:pageName];
@@ -89,19 +93,27 @@
     return vc;
 }
 
-- (UIImage *)fetchImage:(NSDictionary *)json {
-  return [RCTConvert UIImage:json];
-}
+//- (UIViewController *)controllerWithLayout:(NSDictionary *)layout {
+//    UIViewController *vc;
+//    for (id<ALCNavigator> navigator in self.navigators) {
+//        if ((vc = [navigator createViewControllerWithLayout:layout])) {
+//            break;
+//        }
+//    }
+//    return vc;
+//}
+
 
 - (void)push:(UINavigationController *)nav vc:(UIViewController *)vc {
     ALCStackModel *model = [[ALCStackModel alloc] initWithScreenID:vc.screenID];
-    NSMutableArray *stack = [self.stacks valueForKey:nav.screenID];
+    NSMutableArray *stack = [self.tabStacks valueForKey:nav.screenID];
     if (![stack containsObject:model]) {
         [stack addObject:model];
     } else if (stack.count > 1) {
        NSUInteger index = [stack indexOfObject:model];
        ALCStackModel *last = stack.lastObject;
-       [stack removeObjectsInRange:NSMakeRange(index + 1, self.stacks.count - 1)];
+        NSRange range = NSMakeRange(index + 1, stack.count - (index + 1));
+       [stack removeObjectsInRange:range];
        if (last.data) {
            [vc didReceiveResultData:last.data type:RESULT_TYPE_OK];
        } else {
@@ -111,7 +123,7 @@
 }
 
 - (void)clear {
-    [self.stacks removeAllObjects];
+    [self.tabStacks removeAllObjects];
 }
 
 @end

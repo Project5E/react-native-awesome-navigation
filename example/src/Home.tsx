@@ -4,18 +4,18 @@ import {Navigator, router, Router, setTabBadge} from 'react-native-pure-navigati
 
 const Home = props => {
   useEffect(() => {
-    setTabBadge([
-      {
-        index: 0,
-        hidden: false,
-        dot: true,
-      },
-      {
-        index: 1,
-        text: '1199',
-        hidden: false,
-      },
-    ])
+    // setTabBadge([
+    //   {
+    //     index: 0,
+    //     hidden: false,
+    //     dot: true,
+    //   },
+    //   {
+    //     index: 1,
+    //     text: '1199',
+    //     hidden: false,
+    //   },
+    // ])
     router.activate('hbd://')
     return () => {
       router.inactivate()
@@ -56,7 +56,7 @@ const Home = props => {
 
       <Button
         onPress={() => {
-          props.navigator.present('Present')
+          props.navigator.present('Present', undefined, true)
         }}
         title="present"
       />
@@ -65,7 +65,7 @@ const Home = props => {
 }
 
 Home.navigationItem = {
-  title: 'Home',
+  title: '主页',
   hideNavigationBar: false,
 }
 

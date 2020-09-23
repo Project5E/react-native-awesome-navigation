@@ -1,35 +1,36 @@
-import React from 'react';
-import { View, Button } from 'react-native';
+import React from 'react'
+import {View, Button} from 'react-native'
 
-const Setting = (props) => {
+const Setting = props => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+    <View style={{flex: 1, justifyContent: 'center'}}>
       <Button
-        title="switch tab"
         onPress={() => {
-          props.navigator.switchTab(0);
+          props.navigator.switchTab(0)
         }}
+        title="switch tab"
       />
       <Button
-        title="push native"
         onPress={() => {
           props.navigator.push('NativeViewController', {
             title: 'Native',
-          });
+          })
         }}
+        title="push native"
       />
       <Button
-        title="push detail"
         onPress={() => {
-          props.navigator.push('Detail');
+          props.navigator.push('Detail')
         }}
+        title="push detail"
       />
     </View>
-  );
-};
+  )
+}
 
 Setting.navigationItem = {
+  title: '设置',
   hideNavigationBar: true,
-};
+}
 
-export default Setting;
+export default Setting
