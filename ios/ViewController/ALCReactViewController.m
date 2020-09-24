@@ -69,9 +69,9 @@
 
 
 - (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    if (!self.viewAppeared) {
-        self.viewAppeared = YES;
+    [super viewDidDisappear:animated];
+    if (self.viewAppeared) {
+        self.viewAppeared = NO;
         if (self.firstRenderCompleted) {
             [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
             @{
