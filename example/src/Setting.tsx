@@ -1,7 +1,17 @@
-import React from 'react'
+import React, {useCallback} from 'react'
 import {View, Button} from 'react-native'
+import {useVisibleEffect} from 'react-native-pure-navigation'
 
 const Setting = props => {
+  useVisibleEffect(
+    props.screenID,
+    useCallback(() => {
+      console.log(`${props.screenID} is visible`)
+      return () => {
+        console.log(`${props.screenID} is gone`)
+      }
+    }, [])
+  )
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>
       <Button

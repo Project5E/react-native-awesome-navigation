@@ -10,10 +10,13 @@
 #import "ALCNavigationManager.h"
 #import "ALCGlobalStyle.h"
 #import "ALCConstants.h"
+#import "ALCNavigatorHelper.h"
 
 @interface ALCReactViewController () <UIAdaptivePresentationControllerDelegate>
 
 @property (nonatomic, assign) BOOL hideNavigationBar;
+@property (nonatomic, assign) BOOL firstRenderCompleted;
+@property (nonatomic, assign) BOOL viewAppeared;
 
 @end
 
@@ -21,6 +24,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleReload)
+                                                 name:RCTBridgeWillReloadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(signalFirstRenderComplete)
+                                                 name:@"FirstRenderComplete" object:nil];
     NSNumber *hideNavigationBar = self.options[@"hideNavigationBar"];
     _hideNavigationBar = hideNavigationBar.boolValue;
     self.title = self.options[@"title"];
@@ -35,9 +44,56 @@
     }
 }
 
+- (void)handleReload {
+    self.firstRenderCompleted = NO;
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:self.hideNavigationBar animated:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!self.viewAppeared) {
+        self.viewAppeared = YES;
+        if (self.firstRenderCompleted) {
+            [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
+            @{
+              EVENT_TYPE: VIEW_DID_APPEAR,
+              SCREEN_ID: self.screenID
+            }];
+        }
+    }
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (!self.viewAppeared) {
+        self.viewAppeared = YES;
+        if (self.firstRenderCompleted) {
+            [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
+            @{
+              EVENT_TYPE: VIEW_DID_DISAPPEAR,
+              SCREEN_ID: self.screenID
+            }];
+        }
+    }
+}
+
+- (void)signalFirstRenderComplete {
+    if (self.firstRenderCompleted) {
+        return;
+    }
+    self.firstRenderCompleted = YES;
+    if (self.viewAppeared) {
+        [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
+        @{
+          EVENT_TYPE: VIEW_DID_APPEAR,
+          SCREEN_ID: self.screenID
+        }];
+    }
 }
 
 - (void)didReceiveResultData:(NSDictionary *)data type:(NSString *)type {

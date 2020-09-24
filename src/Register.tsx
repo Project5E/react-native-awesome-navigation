@@ -13,6 +13,8 @@ import {
   EVENT_TYPE,
   RESULT_DATA,
   RESULT_TYPE_CANCEL,
+  VIEW_DID_APPEAR,
+  VIEW_DID_DISAPPEAR,
 } from './NavigationModule'
 
 export interface NavigationProps {
@@ -31,12 +33,20 @@ const withNavigator = (moduleName: string) => {
       const navigator = store.getNavigator(screenID) || new Navigator(screenID, moduleName)
       store.addNavigator(screenID, navigator)
       useEffect(() => {
+        navigator.signalFirstRenderComplete()
         const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
           if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === COMPONENT_RESULT) {
             if (data[RESULT_TYPE] === RESULT_TYPE_CANCEL) {
               navigator.cancel()
             } else {
               navigator.excute(data[RESULT_DATA])
+            }
+          }
+          if (data[SCREEN_ID] === screenID) {
+            if (data[EVENT_TYPE] === VIEW_DID_APPEAR) {
+              navigator.visibility = 'visible'
+            } else if (data[EVENT_TYPE] === VIEW_DID_DISAPPEAR) {
+              navigator.visibility = 'gone'
             }
           }
         })
@@ -50,13 +60,17 @@ const withNavigator = (moduleName: string) => {
       }
       return <WrappedComponent ref={ref} {...props} {...injected} />
     }
-    const FREC = React.forwardRef(FC)
-    return FREC
+    const REFC = React.forwardRef(FC)
+    return REFC
   }
 }
 
+export type HOC = (WrappedComponent: React.ComponentType<any>) => React.ComponentType<any>
+let wrap: HOC | undefined
+
 export class Register {
-  static beforeRegister = () => {
+  static beforeRegister = (hoc?: HOC) => {
+    wrap = hoc
     store.clearNavigator()
     router.clear()
   }
@@ -69,7 +83,12 @@ export class Register {
     }
     const options = component.navigationItem || {}
     NavigationBridge.registerReactComponent(appKey, options)
-    const withComponent = withNavigator(appKey)(component)
+    let withComponent: React.ComponentType<any>
+    if (wrap) {
+      withComponent = wrap(withNavigator(appKey)(component))
+    } else {
+      withComponent = withNavigator(appKey)(component)
+    }
     AppRegistry.registerComponent(appKey, () => withComponent)
   }
 

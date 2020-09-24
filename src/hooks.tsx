@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {
   COMPONENT_RESULT,
@@ -9,7 +9,10 @@ import {
   RESULT_DATA,
   RESULT_TYPE,
   SCREEN_ID,
+  VIEW_DID_APPEAR,
+  VIEW_DID_DISAPPEAR,
 } from './NavigationModule'
+import {Navigator} from './Navigator'
 
 interface Header {
   title: string
@@ -29,6 +32,47 @@ export const withNavigationBar = (Component: React.ComponentType<any>) => {
   }
   NewComponent.navigationItem = Component.navigationItem
   return NewComponent
+}
+
+export function useVisible(screenID: string) {
+  const navigator = Navigator.get(screenID)
+  const [visible, setVisible] = useState(navigator?.visibility === 'visible')
+
+  useEffect(() => {
+    const subscription = EventEmitter.addListener(NAVIGATION_EVENT, (data: any) => {
+      if (data[SCREEN_ID] === screenID) {
+        if (data[EVENT_TYPE] === VIEW_DID_APPEAR) {
+          setVisible(true)
+        } else if (data[EVENT_TYPE] === VIEW_DID_DISAPPEAR) {
+          setVisible(false)
+        }
+      }
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [])
+
+  return visible
+}
+
+export function useVisibleEffect(screenID: string, effect: React.EffectCallback) {
+  const visible = useVisible(screenID)
+  const callback = useRef<(() => void) | void>()
+
+  useEffect(() => {
+    if (visible) {
+      callback.current = effect()
+    }
+
+    return () => {
+      if (callback.current) {
+        callback.current()
+        callback.current = undefined
+      }
+    }
+  }, [effect, visible, screenID])
 }
 
 export function useResult(screenID: string, fn: (type: string, data: any) => void) {

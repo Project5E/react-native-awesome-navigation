@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ALCNavigatorHelper : NSObject
 
 @property (nonatomic, copy  ) NSString *layoutType;
-@property (nonatomic, assign) BOOL *isPresenting;
 
 + (instancetype)helper;
 

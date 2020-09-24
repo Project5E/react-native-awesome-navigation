@@ -81,6 +81,10 @@ RCT_EXPORT_METHOD(setStyle:(NSDictionary *)styles) {
     [ALCGlobalStyle globalStyle].style = styles;
 }
 
+RCT_EXPORT_METHOD(signalFirstRenderComplete:(NSString *)screenID ) {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"FirstRenderComplete" object:nil userInfo:@{@"screenID": screenID}];
+}
+
 RCT_EXPORT_METHOD(currentRoute:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
     UINavigationController *nav = [self.helper getNavigationController];
     resolve(@{@"screenID" : nav.topViewController.screenID});

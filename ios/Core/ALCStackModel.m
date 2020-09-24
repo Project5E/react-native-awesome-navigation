@@ -12,6 +12,7 @@
 - (instancetype)initWithScreenID:(NSString *)screenID {
     if (self = [super init]) {
         _screenID = screenID;
+        _type = ALCStackModelTypeTab;
     }
     return self;
 }

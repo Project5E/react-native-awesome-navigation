@@ -10,6 +10,8 @@ interface Route {
   screenID: string
 }
 
+export type Visibility = 'visible' | 'gone' | 'pending'
+
 export class Navigator {
   static dispatch = (screenID: string, action: string, component?: string, options?: any) => {
     NavigationBridge.dispatch(screenID, action, component, options)
@@ -34,6 +36,7 @@ export class Navigator {
   screenID: string
   moduleName: string
   resultListener?: ResultListener
+  visibility: Visibility = 'pending'
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(screenID: string, moduleName: string) {
@@ -92,5 +95,9 @@ export class Navigator {
 
   switchTab(index: number) {
     return Navigator.dispatch(this.screenID, 'switchTab', undefined, {index})
+  }
+
+  signalFirstRenderComplete() {
+    NavigationBridge.signalFirstRenderComplete(this.screenID)
   }
 }

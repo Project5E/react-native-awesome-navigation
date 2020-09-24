@@ -12,7 +12,7 @@
 #import <React/RCTRootView.h>
 
 #import <React/RCTLinkingManager.h>
-#import <react-native-pure-navigation/ALCNavigationManager.h>
+#import <react-native-pure-navigation/PureNavigation.h>
 
 #if DEBUG
 #import <FlipperKit/FlipperClient.h>

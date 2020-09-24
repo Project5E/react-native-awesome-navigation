@@ -15,7 +15,7 @@
 #import "UIViewController+ALC.h"
 #import "ALCUtils.h"
 
-@interface ALCNavigatorHelper ()
+@interface ALCNavigatorHelper () <UIAdaptivePresentationControllerDelegate>
 
 
 @end
@@ -119,18 +119,23 @@
             viewController.modalPresentationStyle = UIModalPresentationFullScreen;
         }
         ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
+        presentNav.presentationController.delegate = self;
         [vc presentViewController:presentNav animated:YES completion:nil];
     } else if ([action isEqualToString:@"dismiss"]) {
         if (!vc) {
             vc = window.rootViewController;
         }
-        [[ALCNavigationManager shared] removePresentStack:vc];
+//        [[ALCNavigationManager shared] removePresentStack:vc];
         [vc dismissViewControllerAnimated:YES completion:nil];
     } else if ([action isEqualToString:@"switchTab"]) {
         ALCTabBarViewController *tbc = [self getTabBarController];
         NSNumber *index = params[@"index"];
         tbc.selectedIndex = index.integerValue;
     }
+}
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+    
 }
 
 @end
