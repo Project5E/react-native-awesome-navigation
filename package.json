@@ -1,6 +1,6 @@
 {
-  "name": "react-native-pure-navigation",
-  "version": "0.1.0",
+  "name": "react-native-navigation-5e",
+  "version": "0.0.1",
   "description": "native-navigation",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "react-native-pure-navigation.podspec",
+    "react-native-navigation-5e.podspec",
     "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
@@ -34,13 +34,9 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/Alice-Theresa/react-native-pure-navigation",
-  "author": "Theresa <243671403@qq.com> (https://github.com/Alice-Theresa)",
+  "repository": "https://github.com/Project5E/react-native-navigation-5e",
+  "author": "5e",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Alice-Theresa/react-native-pure-navigation/issues"
-  },
-  "homepage": "https://github.com/Alice-Theresa/react-native-pure-navigation#readme",
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
     "@react-native-community/bob": "^0.16.2",
@@ -77,7 +73,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
+      "pre-commit": "yarn eslint && yarn typescript"
     }
   },
   "commitlint": {

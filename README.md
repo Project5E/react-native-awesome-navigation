@@ -1,17 +1,19 @@
-# react-native-pure-navigation
+# react-native-navigation-5e
 
 native-navigation
 
 ## Installation
 
 ```sh
-npm install react-native-pure-navigation
+yarn add react-native-navigation-5e
+
+# npm install react-native-navigation-5e
 ```
 
 ## Usage
 
 ```js
-import { registerComponent, setRoot } from 'react-native-pure-navigation';
+import { registerComponent, setRoot } from 'react-native-navigation-5e';
 
 // 设置全局样式
 setStyle({
