@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-pure-navigation": ["./src/index"]
+      "react-native-navigation-5e": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

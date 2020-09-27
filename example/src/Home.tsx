@@ -6,7 +6,7 @@ import {
   Router,
   setTabBadge,
   useVisibleEffect,
-} from 'react-native-pure-navigation'
+} from 'react-native-navigation-5e'
 
 const Home = props => {
   useEffect(() => {

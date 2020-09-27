@@ -1,6 +1,6 @@
 //
 //  ALCNavigator.m
-//  react-native-pure-navigation
+//  react-native-navigation-5e
 //
 //  Created by skylar on 2020/9/22.
 //

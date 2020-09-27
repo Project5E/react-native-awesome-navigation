@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react'
 import {View, Button} from 'react-native'
-import {useVisibleEffect} from 'react-native-pure-navigation'
+import {useVisibleEffect} from 'react-native-navigation-5e'
 
 const Setting = props => {
   useVisibleEffect(
