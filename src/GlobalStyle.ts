@@ -1,4 +1,4 @@
-import {NavigationBridge} from './NavigationModule'
+import {NavigationBridge} from './navigationModule'
 
 interface GlobalStyle {
   backIcon?: {uri: string} // 设置返回图标

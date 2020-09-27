@@ -1,4 +1,4 @@
-import {Navigator} from './Navigator'
+import {Navigator} from './navigator'
 import {Linking} from 'react-native'
 
 let active = false

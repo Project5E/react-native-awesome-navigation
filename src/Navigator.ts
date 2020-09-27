@@ -1,5 +1,5 @@
 import store from './store'
-import {NavigationBridge} from './NavigationModule'
+import {NavigationBridge} from './navigationModule'
 
 interface ResultListener {
   execute(data: any): void

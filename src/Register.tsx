@@ -1,8 +1,8 @@
-import {Navigator} from './Navigator'
+import {Navigator} from './navigator'
 import React, {useEffect} from 'react'
 import {AppRegistry} from 'react-native'
 import store from './store'
-import {router} from './Router'
+import {router} from './router'
 import {
   NavigationBridge,
   EventEmitter,
@@ -15,7 +15,7 @@ import {
   RESULT_TYPE_CANCEL,
   VIEW_DID_APPEAR,
   VIEW_DID_DISAPPEAR,
-} from './NavigationModule'
+} from './navigationModule'
 
 export interface NavigationProps {
   navigator: Navigator

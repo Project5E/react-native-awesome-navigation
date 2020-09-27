@@ -11,8 +11,8 @@ import {
   SCREEN_ID,
   VIEW_DID_APPEAR,
   VIEW_DID_DISAPPEAR,
-} from './NavigationModule'
-import {Navigator} from './Navigator'
+} from './navigationModule'
+import {Navigator} from './navigator'
 
 // interface Header {
 //   title: string
