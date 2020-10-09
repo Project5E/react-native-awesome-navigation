@@ -19,6 +19,25 @@
 #import "ALCConstants.h"
 #import "ALCNavigatorHelper.h"
 
+@interface Promiss : NSObject
+
+@property(nonatomic, copy) RCTPromiseResolveBlock resolve;
+@property(nonatomic, copy) RCTPromiseRejectBlock reject;
+
+@end
+
+@implementation Promiss
+
+- (instancetype)initWithResolver:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)rejecter {
+    if (self = [super init]) {
+        _resolve = resolver;
+        _reject = rejecter;
+    }
+    return self;
+}
+
+@end
+
 @interface  ALCNavigationBridge ()
 
 @property (nonatomic, strong) ALCNavigationManager *manager;
@@ -33,7 +52,7 @@ RCT_EXPORT_MODULE(ALCNavigationBridge)
 - (instancetype)init {
     if (self = [super init]) {
         _manager = [ALCNavigationManager shared];
-        _helper = [ALCNavigatorHelper helper];
+        _helper = [[ALCNavigatorHelper alloc] init];
     }
     return self;
 }
@@ -107,6 +126,16 @@ RCT_EXPORT_METHOD(registerReactComponent:(NSString *)appKey options:(NSDictionar
 RCT_EXPORT_METHOD(setTabBadge:(NSArray<NSDictionary *> *)options) {
     ALCTabBarViewController *tbc = [self.helper getTabBarController];
     [tbc setTabBadge:options];
+}
+
+- (void)currentRouteWithPromiss:(Promiss *)promiss {
+    UINavigationController *nav = [self.helper getNavigationController];
+    if (nav) {
+        promiss.resolve(@{@"screenID" : nav.topViewController.screenID});
+    } else {
+        NSLog(@"looping for route");
+        [self performSelector:@selector(currentRouteWithPromiss:) withObject:promiss afterDelay:0.016];
+    }
 }
 
 @end

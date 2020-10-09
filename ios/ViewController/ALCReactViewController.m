@@ -10,7 +10,6 @@
 #import "ALCNavigationManager.h"
 #import "ALCGlobalStyle.h"
 #import "ALCConstants.h"
-#import "ALCNavigatorHelper.h"
 
 @interface ALCReactViewController () <UIAdaptivePresentationControllerDelegate>
 
@@ -22,14 +21,20 @@
 
 @implementation ALCReactViewController
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleReload)
-                                                 name:RCTBridgeWillReloadNotification object:nil];
+                                                 name:RCTBridgeWillReloadNotification
+                                               object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(signalFirstRenderComplete)
-                                                 name:@"FirstRenderComplete" object:nil];
+                                                 name:@"FirstRenderComplete"
+                                               object:nil];
     NSNumber *hideNavigationBar = self.options[@"hideNavigationBar"];
     _hideNavigationBar = hideNavigationBar.boolValue;
     self.title = self.options[@"title"];

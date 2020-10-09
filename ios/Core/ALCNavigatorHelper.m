@@ -22,15 +22,6 @@
 
 @implementation ALCNavigatorHelper
 
-+ (instancetype)helper {
-    static ALCNavigatorHelper *helper;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        helper = [[ALCNavigatorHelper alloc] init];
-    });
-    return helper;
-}
-
 - (ALCTabBarViewController *)createTabBarControllerWithLayout:(NSDictionary *)layout {
     NSArray *tabs = layout[@"children"];
     NSDictionary *options = layout[@"options"];
@@ -77,14 +68,15 @@
 
 - (ALCNavigationController *)getNavigationController {
     UIWindow *window = RCTSharedApplication().delegate.window;
+    UIViewController *root = window.rootViewController;
     ALCNavigationController *nav;
-    if (window.rootViewController.presentedViewController) {
-        nav = (ALCNavigationController *)window.rootViewController.presentedViewController;
+    if (root.presentedViewController) {
+        nav = (ALCNavigationController *)root.presentedViewController;
     } else if ([self.layoutType isEqualToString:@"tabs"]) {
-        ALCTabBarViewController *tbc = (ALCTabBarViewController *)window.rootViewController;
+        ALCTabBarViewController *tbc = (ALCTabBarViewController *)root;
         nav = tbc.selectedViewController;
     } else if ([self.layoutType isEqualToString:@"stack"]) {
-        nav = (ALCNavigationController *)window.rootViewController;
+        nav = (ALCNavigationController *)root;
     }
     return nav;
 }

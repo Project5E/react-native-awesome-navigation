@@ -10,19 +10,19 @@ import {
 
 const Home = props => {
   useEffect(() => {
-    // setTabBadge([
-    //   {
-    //     index: 0,
-    //     hidden: false,
-    //     dot: true,
-    //   },
-    //   {
-    //     index: 1,
-    //     text: '1199',
-    //     hidden: false,
-    //   },
-    // ])
-    router.activate('hbd://')
+    setTabBadge([
+      {
+        index: 0,
+        hidden: false,
+        dot: true,
+      },
+      {
+        index: 1,
+        text: '1199',
+        hidden: false,
+      },
+    ])
+    router.activate('alc://')
     return () => {
       router.inactivate()
     }

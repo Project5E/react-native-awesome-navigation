@@ -13,7 +13,6 @@
 
 @property (nonatomic, copy, readwrite) NSDictionary *props;
 
-@property (nonatomic, assign) BOOL firstRenderCompleted;
 @property (nonatomic, assign) BOOL viewAppeared;
 
 @end

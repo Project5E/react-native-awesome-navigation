@@ -1,4 +1,4 @@
-import {Register, setStyle} from 'react-native-navigation-5e'
+import {Register, setStyle, router} from 'react-native-navigation-5e'
 import {Image} from 'react-native'
 import Home from './src/Home'
 import Setting from './src/Setting'
@@ -10,6 +10,8 @@ import TabBar from './src/TabBar'
 import CloseIcon from './src/image/Close.png'
 import HomeIcon from './src/image/Home.png'
 import SettingIcon from './src/image/Profile.png'
+
+// router.activate('alc://')
 
 setStyle({
   hideBackTitle: true,

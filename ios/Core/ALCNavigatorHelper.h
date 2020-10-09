@@ -14,9 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ALCNavigatorHelper : NSObject
 
-@property (nonatomic, copy  ) NSString *layoutType;
-
-+ (instancetype)helper;
+@property (nonatomic, copy) NSString *layoutType;
 
 - (ALCTabBarViewController *)createTabBarControllerWithLayout:(NSDictionary *)layout;
 - (ALCNavigationController *)createNavigationControllerWithLayout:(NSDictionary *)layout;
