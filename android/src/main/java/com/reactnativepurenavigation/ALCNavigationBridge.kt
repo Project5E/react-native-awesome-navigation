@@ -1,5 +1,7 @@
 package com.reactnativepurenavigation
 
+import android.R
+import androidx.fragment.app.Fragment
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -16,13 +18,24 @@ class ALCNavigationBridge(reactContext: ReactApplicationContext) : ReactContextB
     @ReactMethod
     fun setRoot(a: ReadableMap) {
       val activity = currentActivity
-      val fragment : FragmentName = FragmentName.newInstance()
-      activity.
-      FLog.w("asd", "View hierarchy is not ready now.");
+      val viewFragment: Fragment = HelloFragment()
+      activity.beginTransaction().add(R.id.container, viewFragment).commit()
+
+      FLog.w("----", "setRoot.");
+    }
+
+    @ReactMethod
+    fun signalFirstRenderComplete(screenID: String) {
+      FLog.w("----", screenID);
     }
 
     @ReactMethod
     fun registerReactComponent(appKey: String, options: ReadableMap) {
-      FLog.w("asd", "View hierarchy is not ready now.");
+      FLog.w("----", "registerReactComponent.");
+    }
+
+    @ReactMethod
+    fun setStyle(style: ReadableMap) {
+      FLog.w("----", "setStyle.");
     }
 }

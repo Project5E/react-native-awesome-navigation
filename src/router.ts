@@ -3,6 +3,7 @@ import {Linking} from 'react-native'
 
 let active = false
 const configs = new Map<string, string>()
+let hasHandleInitialURL = false
 
 class Router {
   static uriPrefix?: string
@@ -50,13 +51,16 @@ class Router {
     }
     if (!active) {
       Router.uriPrefix = uriPrefix
-      Linking.getInitialURL()
-        .then(url => {
-          if (url) {
-            Router.open(url)
-          }
-        })
-        .catch(err => console.error('An error occurred', err))
+      if (!hasHandleInitialURL) {
+        hasHandleInitialURL = true
+        Linking.getInitialURL()
+          .then(url => {
+            if (url) {
+              Router.open(url)
+            }
+          })
+          .catch(err => console.error('An error occurred', err))
+      }
       Linking.addEventListener('url', this.routeEventHandler)
       active = !active
     }
