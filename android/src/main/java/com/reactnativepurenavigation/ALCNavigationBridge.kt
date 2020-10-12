@@ -17,25 +17,21 @@ class ALCNavigationBridge(reactContext: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun setRoot(a: ReadableMap) {
-      val activity = currentActivity
-      val viewFragment: Fragment = HelloFragment()
-      activity.beginTransaction().add(R.id.container, viewFragment).commit()
-
-      FLog.w("----", "setRoot.");
+        FLog.w("----", "setRoot.");
     }
 
     @ReactMethod
     fun signalFirstRenderComplete(screenID: String) {
-      FLog.w("----", screenID);
+        FLog.w("----", screenID);
     }
 
     @ReactMethod
     fun registerReactComponent(appKey: String, options: ReadableMap) {
-      FLog.w("----", "registerReactComponent.");
+        FLog.w("----", "registerReactComponent.");
     }
 
     @ReactMethod
     fun setStyle(style: ReadableMap) {
-      FLog.w("----", "setStyle.");
+        FLog.w("----", "setStyle.");
     }
 }
