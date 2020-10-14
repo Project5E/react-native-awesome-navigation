@@ -10,11 +10,17 @@
 @class ALCNavigationController;
 @class ALCTabBarViewController;
 
+typedef NS_ENUM(NSInteger, ALCLayoutType) {
+    ALCLayoutTypeTabs,
+    ALCLayoutTypeStack,
+    ALCLayoutTypeScreen,
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ALCNavigatorHelper : NSObject
 
-@property (nonatomic, copy) NSString *layoutType;
+@property (nonatomic, assign) ALCLayoutType layoutType;
 
 - (ALCTabBarViewController *)createTabBarControllerWithLayout:(NSDictionary *)layout;
 - (ALCNavigationController *)createNavigationControllerWithLayout:(NSDictionary *)layout;

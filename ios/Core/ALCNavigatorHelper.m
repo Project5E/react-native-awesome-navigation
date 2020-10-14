@@ -72,11 +72,18 @@
     ALCNavigationController *nav;
     if (root.presentedViewController) {
         nav = (ALCNavigationController *)root.presentedViewController;
-    } else if ([self.layoutType isEqualToString:@"tabs"]) {
-        ALCTabBarViewController *tbc = (ALCTabBarViewController *)root;
-        nav = tbc.selectedViewController;
-    } else if ([self.layoutType isEqualToString:@"stack"]) {
-        nav = (ALCNavigationController *)root;
+    } else {
+        switch (self.layoutType) {
+            case ALCLayoutTypeTabs: {
+                ALCTabBarViewController *tbc = (ALCTabBarViewController *)root;
+                nav = tbc.selectedViewController;
+                break;
+            }
+            case ALCLayoutTypeStack:
+                nav = (ALCNavigationController *)root;
+            default:
+                break;
+        }
     }
     return nav;
 }
@@ -84,8 +91,12 @@
 - (ALCTabBarViewController *)getTabBarController {
     UIWindow *window = RCTSharedApplication().delegate.window;
     ALCTabBarViewController *tbc;
-    if ([self.layoutType isEqualToString:@"tabs"]) {
-        tbc = (ALCTabBarViewController *)window.rootViewController;
+    switch (self.layoutType) {
+        case ALCLayoutTypeTabs:
+            tbc = (ALCTabBarViewController *)window.rootViewController;
+            break;
+        default:
+            break;
     }
     return tbc;
 }

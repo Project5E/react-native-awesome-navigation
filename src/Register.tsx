@@ -13,8 +13,6 @@ import {
   EVENT_TYPE,
   RESULT_DATA,
   RESULT_TYPE_CANCEL,
-  VIEW_DID_APPEAR,
-  VIEW_DID_DISAPPEAR,
 } from './navigationModule'
 
 export interface NavigationProps {
@@ -40,13 +38,6 @@ const withNavigator = (moduleName: string) => {
               navigator.cancel()
             } else {
               navigator.excute(data[RESULT_DATA])
-            }
-          }
-          if (data[SCREEN_ID] === screenID) {
-            if (data[EVENT_TYPE] === VIEW_DID_APPEAR) {
-              navigator.visibility = 'visible'
-            } else if (data[EVENT_TYPE] === VIEW_DID_DISAPPEAR) {
-              navigator.visibility = 'gone'
             }
           }
         })

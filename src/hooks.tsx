@@ -12,32 +12,9 @@ import {
   VIEW_DID_APPEAR,
   VIEW_DID_DISAPPEAR,
 } from './navigationModule'
-import {Navigator} from './navigator'
-
-// interface Header {
-//   title: string
-// }
-
-// export const withNavigationBar = (Component: React.ComponentType<any>) => {
-//   const NewComponent = (props: any) => {
-//     const [header, setHeader] = useState<Header | undefined>(undefined)
-//     return (
-//       <View style={styles.container}>
-//         <View style={styles.header}>
-//           <Text> {header?.title ?? ''}</Text>
-//         </View>
-//         <Component {...props} setHeader={setHeader} />
-//       </View>
-//     )
-//   }
-//   NewComponent.navigationItem = Component.navigationItem
-//   return NewComponent
-// }
 
 export function useVisible(screenID: string) {
-  const navigator = Navigator.get(screenID)
-  const [visible, setVisible] = useState(navigator?.visibility === 'visible')
-
+  const [visible, setVisible] = useState(false)
   useEffect(() => {
     const subscription = EventEmitter.addListener(NAVIGATION_EVENT, (data: any) => {
       if (data[SCREEN_ID] === screenID) {
@@ -48,12 +25,10 @@ export function useVisible(screenID: string) {
         }
       }
     })
-
     return () => {
       subscription.remove()
     }
   }, [])
-
   return visible
 }
 
@@ -100,13 +75,3 @@ export function useReClick(screenID: string, fn: () => void) {
     }
   }, [screenID, fn])
 }
-
-// const styles = StyleSheet.create({
-//   container: {flex: 1},
-//   header: {
-//     height: 64,
-//     width: '100%',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// })

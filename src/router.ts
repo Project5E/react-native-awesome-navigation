@@ -41,7 +41,7 @@ class Router {
   }
 
   clear = () => {
-    active = false
+    this.inactivate()
     configs.clear()
   }
 
@@ -62,7 +62,7 @@ class Router {
           .catch(err => console.error('An error occurred', err))
       }
       Linking.addEventListener('url', this.routeEventHandler)
-      active = !active
+      active = true
     }
   }
 
@@ -70,7 +70,7 @@ class Router {
     if (active) {
       Router.uriPrefix = undefined
       Linking.removeEventListener('url', this.routeEventHandler)
-      active = !active
+      active = false
     }
   }
 
