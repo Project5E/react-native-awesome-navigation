@@ -7,9 +7,10 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.reactnativepurenavigation.PureNavigationPackage;
 
 import java.util.List;
+
+import io.ivan.react.navigation.bridge.PureNavigationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

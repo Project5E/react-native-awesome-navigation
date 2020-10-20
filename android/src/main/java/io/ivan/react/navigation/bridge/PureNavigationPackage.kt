@@ -1,4 +1,4 @@
-package com.reactnativepurenavigation
+package io.ivan.react.navigation.bridge
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
