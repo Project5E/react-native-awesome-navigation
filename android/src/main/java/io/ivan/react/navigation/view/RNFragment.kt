@@ -23,7 +23,7 @@ const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
 open class RNFragment : Fragment(), PermissionAwareActivity {
 
     private var mPermissionListener: PermissionListener? = null
-    private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer? = DoubleTapReloadRecognizer()
+    private var mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer? = null
 
     private lateinit var reactRootView: ReactRootView
 
@@ -40,6 +40,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
             launchOptions = it.getBundle(ARG_LAUNCH_OPTIONS)
         }
         loadApp()
+        mDoubleTapReloadRecognizer = DoubleTapReloadRecognizer()
     }
 
     private fun loadApp() {

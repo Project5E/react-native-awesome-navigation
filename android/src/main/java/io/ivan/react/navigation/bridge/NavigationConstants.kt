@@ -3,7 +3,7 @@ package io.ivan.react.navigation.bridge
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 
-class ALCConstants(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class NavigationConstants(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String {
         return "ALCConstants"

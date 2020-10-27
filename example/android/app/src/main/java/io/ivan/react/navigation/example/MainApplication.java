@@ -10,7 +10,7 @@ import com.facebook.soloader.SoLoader;
 
 import java.util.List;
 
-import io.ivan.react.navigation.bridge.PureNavigationPackage;
+import io.ivan.react.navigation.bridge.NavigationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -23,7 +23,7 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             List<ReactPackage> packages = new PackageList(this).getPackages();
-            packages.add(new PureNavigationPackage());
+            packages.add(new NavigationPackage());
             return packages;
         }
 
