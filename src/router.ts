@@ -32,7 +32,7 @@ class Router {
     }, {})
     const navigator = await Navigator.current()
     if (navigator) {
-      navigator?.push(moduleName, queryParams)
+      navigator.push(moduleName, queryParams)
     }
   }
 
