@@ -128,7 +128,7 @@
         if (!vc) {
             vc = window.rootViewController;
         }
-//        [[ALCNavigationManager shared] removePresentStack:vc];
+        [[ALCNavigationManager shared] removePresentStack:(ALCNavigationController *)vc];
         [vc dismissViewControllerAnimated:YES completion:nil];
     } else if ([action isEqualToString:@"switchTab"]) {
         ALCTabBarViewController *tbc = [self getTabBarController];
