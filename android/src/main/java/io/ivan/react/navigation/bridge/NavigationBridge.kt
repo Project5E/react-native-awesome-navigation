@@ -1,13 +1,9 @@
 package io.ivan.react.navigation.bridge
 
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.FragmentActivity
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.*
-import io.ivan.react.navigation.utils.ACTION_SET_ROOT
-import io.ivan.react.navigation.utils.Store
-import io.ivan.react.navigation.utils.toJSONObject
+import io.ivan.react.navigation.utils.*
 
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -18,6 +14,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun setRoot(root: ReadableMap) {
+        Log.d("1van", "setRoot currentActivity = $currentActivity")
         currentActivity?.let {
             val startDestinationName = getStartDestinationName(root)
             Store.dispatch(ACTION_SET_ROOT, startDestinationName)
@@ -47,23 +44,28 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     @ReactMethod
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?) {
         Log.d("1van", "$screenID $action $component ${options.toString()}")
-        Log.d("1van", "dispatch $currentActivity")
-        if (currentActivity is FragmentActivity) {
-            val fragments = (currentActivity as FragmentActivity).supportFragmentManager.fragments
-            val currentFragment = fragments.last()
-            val args = Bundle().also { args ->
-                args.putString("arg_component_name", component)
-                args.putBundle("arg_launch_options", Bundle().also { options ->
-                    options.putString("screenID", "Home")
-                })
+        Log.d("1van", "dispatch currentActivity = $currentActivity")
+        currentActivity?.let {
+            when (action) {
+                "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, component to options)
+                "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
+                "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
+                "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, component to options)
+                "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
+                "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, component to options)
+                else -> throw Exception("action error")
             }
-//            currentFragment.findNavController().navigate(R.id.action_global_globalFragment, args)
         }
     }
 
     @ReactMethod
     fun currentRoute(promise: Promise) {
+        Log.d("1van", "currentRoute currentActivity = $currentActivity")
+    }
 
+    @ReactMethod
+    fun setResult(data: ReadableMap) {
+        Log.d("1van", "setResult currentActivity = $currentActivity")
     }
 
     private fun getStartDestinationName(root: ReadableMap): String? {
