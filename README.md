@@ -134,9 +134,24 @@ Router.open('hulaqinzi://home?key=value')
 useResult 
 用于页面返回传参
 
+```
+  useResult(props.screenID, (type, data) => {
+    console.log(type);
+    console.log(data);
+  })
+```
+type为返回类型 ok 或 cancel
+ok为带值返回，cancel为普通返回
+data是返回的数据
+
 useReClick
 响应重复点击tabbar事件，仅用于每一个tab的首页
 
+```
+  useReClick(props.screenID, () => {
+    console.log('reclick');
+  })
+```
 
 ## Contributing
 
