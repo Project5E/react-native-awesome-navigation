@@ -1,30 +1,26 @@
 package io.ivan.react.navigation.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import androidx.core.view.ViewCompat
-import androidx.navigation.NavArgumentBuilder
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphNavigator
+import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.ACTION_DISPATCH_POP
-import io.ivan.react.navigation.utils.ACTION_DISPATCH_PUSH
-import io.ivan.react.navigation.utils.ACTION_SET_ROOT
-import io.ivan.react.navigation.utils.Store
+import io.ivan.react.navigation.bridge.NavigationConstants
+import io.ivan.react.navigation.utils.*
 
 
 class RNRootActivity : RNBaseActivity() {
 
     private lateinit var navHostFragment: NavHostFragment
+    private var startDestination: NavDestination? = null
 
     private val navController: NavController
         get() = navHostFragment.navController
-
-    private var testId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,27 +35,83 @@ class RNRootActivity : RNBaseActivity() {
     }
 
     private fun receive() {
-        Store.reducer(ACTION_SET_ROOT)?.observe(this, {
-            val startDestinationName = it as String
-            val startDestination = buildStartDestination(startDestinationName)
+        Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, { state ->
+            val pair = state as Pair<String, ReadableMap>
+        })
+
+        Store.reducer(ACTION_SET_ROOT)?.observe(this, { state ->
+            val startDestinationName = state as String
+            startDestination = buildStartDestination(startDestinationName)
             setStartDestination(startDestination)
         })
 
-        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, {
-            val data = it as Pair<String, ReadableMap>
+        Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
+            val promise = state as Promise
+            promise.resolve(navController.currentDestination?.id)
+        })
+
+        Store.reducer(ACTION_SET_RESULT)?.observe(this, { state ->
+            val data = state as ReadableMap
+            sendEvent(NavigationConstants.NAVIGATION_EVENT, Arguments.createMap().also { map ->
+                map.putString(NavigationConstants.EVENT_TYPE, NavigationConstants.COMPONENT_RESULT)
+                map.putString(NavigationConstants.RESULT_TYPE, NavigationConstants.RESULT_TYPE_OK)
+                map.putMap(NavigationConstants.RESULT_DATA, Arguments.createMap().also {
+                    it.merge(data)
+                })
+                navController.previousBackStackEntry?.destination?.id?.let {
+                    map.putString(NavigationConstants.SCREEN_ID, it.toString())
+                } ?: map.putNull(NavigationConstants.SCREEN_ID)
+            })
+        })
+
+        dispatch()
+    }
+
+    private fun dispatch() {
+        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
+            val data = state as Pair<String, ReadableMap>
             val destinationName = data.first
             val destination = buildDestination(destinationName)
             navController.graph.addDestination(destination)
-            Log.d("1van testId", testId.toString())
-            navHostFragment.navController.navigate(testId)
+            navController.navigate(destination.id)
         })
 
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
-            navHostFragment.navController.popBackStack()
+            navController.popBackStack()
+        })
+
+        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
+            startDestination?.let {
+                navController.navigate(it.id)
+            }
+        })
+
+        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
+            val data = state as Pair<String, ReadableMap>
+            val destinationName = data.first
+            val destination = buildDestination(destinationName)
+            navController.graph.addDestination(destination)
+            val navOptionsBuilder = navOptions {
+                anim {
+                    enter = R.anim.navigation_top_enter
+                    exit = android.R.anim.fade_out
+                    popEnter = android.R.anim.fade_in
+                    popExit = R.anim.navigation_top_exit
+                }
+            }
+            navController.navigate(destination.id, null, navOptionsBuilder)
+        })
+
+        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
+            navController.popBackStack()
+        })
+
+        Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(this, {
+
         })
     }
 
-    private fun buildStartDestination(startDestinationName: String): FragmentNavigator.Destination {
+    private fun buildStartDestination(startDestinationName: String): NavDestination {
         return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
             val viewId = ViewCompat.generateViewId()
             it.id = viewId
@@ -75,7 +127,9 @@ class RNRootActivity : RNBaseActivity() {
         }
     }
 
-    private fun setStartDestination(startDestination: FragmentNavigator.Destination) {
+    private fun setStartDestination(startDestination: NavDestination?) {
+        startDestination ?: return
+
         val graph = NavGraphNavigator(navController.navigatorProvider).createDestination().also {
             it.addDestination(startDestination)
             it.startDestination = startDestination.id
@@ -83,10 +137,9 @@ class RNRootActivity : RNBaseActivity() {
         navController.graph = graph
     }
 
-    private fun buildDestination(destinationName: String): FragmentNavigator.Destination {
+    private fun buildDestination(destinationName: String): NavDestination {
         return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
             val viewId = ViewCompat.generateViewId()
-            testId = viewId
             it.id = viewId
             it.className = RNFragment::class.java.name
             it.addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->

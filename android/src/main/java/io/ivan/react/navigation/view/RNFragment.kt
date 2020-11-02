@@ -79,9 +79,9 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     override fun onDestroy() {
         super.onDestroy()
         reactRootView.unmountReactApplication()
-        if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
-        }
+//        if (reactNativeHost.hasInstance()) {
+//            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
+//        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
