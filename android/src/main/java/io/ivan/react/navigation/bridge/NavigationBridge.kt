@@ -6,7 +6,7 @@ import com.facebook.react.bridge.*
 import io.ivan.react.navigation.utils.*
 
 
-class NavigationBridge(val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String {
         return "ALCNavigationBridge"

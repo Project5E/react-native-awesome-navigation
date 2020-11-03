@@ -52,16 +52,13 @@ class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_SET_RESULT)?.observe(this, { state ->
             val data = state as ReadableMap
-            sendEvent(NavigationConstants.NAVIGATION_EVENT, Arguments.createMap().also { map ->
-                map.putString(NavigationConstants.EVENT_TYPE, NavigationConstants.COMPONENT_RESULT)
-                map.putString(NavigationConstants.RESULT_TYPE, NavigationConstants.RESULT_TYPE_OK)
-                map.putMap(NavigationConstants.RESULT_DATA, Arguments.createMap().also {
-                    it.merge(data)
-                })
-                navController.previousBackStackEntry?.destination?.id?.let {
-                    map.putString(NavigationConstants.SCREEN_ID, it.toString())
-                } ?: map.putNull(NavigationConstants.SCREEN_ID)
-            })
+
+            sendNavigationEvent(
+                NavigationConstants.COMPONENT_RESULT,
+                navController.previousBackStackEntry?.destination?.id?.toString(),
+                Arguments.createMap().also { it.merge(data) },
+                NavigationConstants.RESULT_TYPE_OK
+            )
         })
 
         dispatch()
