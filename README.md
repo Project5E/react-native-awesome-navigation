@@ -58,7 +58,7 @@ setRoot({
 
 ## 导航
 
-目前支持push,pop,popToRoot,present,dismiss
+目前支持push,pop,popToRoot,present,dismiss,switchTab
 
 push传参
 ```
@@ -75,6 +75,15 @@ pop前设值
 props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
+
+Present，与push类似，第二个为传参，第三个为是否全屏
+```
+props.navigator.present('Present', undefined, true)
+```
+
+每一个页面都会被注入各自所属的navigator  
+navigator含有每页页面唯一的screenID以及页面的module名  
+通过navigator来进行路由操作
 
 ## 全局样式
 目前有以下全局样式，后续会增加更多
@@ -147,11 +156,6 @@ useVisibleEffect(
     }, [])
   )
 ```
-
-## Navigator
-每一个页面都会被注入各自所属的navigator  
-navigator含有每页页面唯一的screenID以及页面的module名  
-通过navigator来进行路由操作
 
 ## 路径导航 -- 支持DeepLink
 
