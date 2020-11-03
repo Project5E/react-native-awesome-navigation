@@ -88,6 +88,7 @@ interface GlobalStyle {
 
   tabBarColor?: string // tabbar背景颜色
   tabBarItemColor?: string // tabbar选中颜色
+  tabBarDotColor?: string // tabbar圆点颜色
 }
 ```
 
@@ -104,7 +105,53 @@ setStyle({
 })
 ```
 
+使用原生tabbar的时候，可以设置tabbar的Badge
+
+```
+setTabBadge([
+  {
+    index: 0,
+    hidden: false,
+    dot: true,
+  },
+  {
+    index: 1,
+    text: '1199',
+    hidden: false,
+  },
+])
+```
+其中index代表tabbar item位置，dot代表圆点，text为badge内的文字，hidden为是否显示
+
+```
+export interface TabBadge {
+  index: number
+  hidden: boolean
+  text?: string
+  dot?: boolean
+}
+```
+
 颜色只支持16进制，不支持red等字符串
+
+## 生命周期
+每一个页面都有自己是否展示的hooks
+```
+useVisibleEffect(
+    props.screenID,
+    useCallback(() => {
+      console.log(`${props.screenID} is visible`)
+      return () => {
+        console.log(`${props.screenID} is gone`)
+      }
+    }, [])
+  )
+```
+
+## Navigator
+每一个页面都会被注入各自所属的navigator  
+navigator含有每页页面唯一的screenID以及页面的module名  
+通过navigator来进行路由操作
 
 ## 路径导航 -- 支持DeepLink
 
@@ -131,7 +178,8 @@ Router.open('hulaqinzi://home?key=value')
 
 ## hooks
 
-useResult 
+### useResult
+
 用于页面返回传参
 
 ```
@@ -141,10 +189,13 @@ useResult
   })
 ```
 type为返回类型 ok 或 cancel
+
 ok为带值返回，cancel为普通返回
+
 data是返回的数据
 
-useReClick
+### useReClick
+
 响应重复点击tabbar事件，仅用于每一个tab的首页
 
 ```
