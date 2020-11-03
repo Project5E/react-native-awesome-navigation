@@ -76,10 +76,21 @@ props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
 
-Present，与push类似，第二个为传参，第三个为是否全屏
+Present，与push类似，第二个为传参，第三个为是否全屏，后两个参数可不传
 ```
 props.navigator.present('Present', undefined, true)
 ```
+
+dismiss present的反向操作
+```
+props.navigator.dismiss()
+```
+
+switchTab 用于根页面自定义tabbar切换
+```
+props.navigator.switchTab(0)
+```
+0代表第一个tab
 
 每一个页面都会被注入各自所属的navigator  
 navigator含有每页页面唯一的screenID以及页面的module名  
