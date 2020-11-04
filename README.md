@@ -56,6 +56,17 @@ setRoot({
 });
 ```
 
+支持原生页面与RN页面混搭
+
+### iOS
+需要在AppDelegate中记录bridge  
+同时注册对应原生的ViewController，该ViewController需要继承ALCNativeViewController
+```
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  [ALCNavigationManager shared].bridge = bridge;
+  [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
+```
+
 ## 导航
 
 目前支持push,pop,popToRoot,present,dismiss,switchTab
@@ -189,7 +200,7 @@ registerComponent('Setting', Setting)
 ```
 Router.open('hulaqinzi://home?key=value')
 ```
-会解析出路径/home，以及参数 {key: value}，并push出Home页面和传惨
+会解析出路径/home，以及参数 {key: value}，并push出Home页面和传参
 
 ## hooks
 
