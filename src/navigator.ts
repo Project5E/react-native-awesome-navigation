@@ -35,7 +35,6 @@ export class Navigator {
   moduleName: string
   resultListener?: ResultListener
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   constructor(screenID: string, moduleName: string) {
     this.screenID = screenID
     this.moduleName = moduleName

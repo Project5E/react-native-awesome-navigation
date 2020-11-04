@@ -118,10 +118,10 @@
         }
         UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
         NSNumber *isFullScreen = params[@"isFullScreen"];
-        if (isFullScreen.boolValue) {
-            viewController.modalPresentationStyle = UIModalPresentationFullScreen;
-        }
         ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
+        if (isFullScreen.boolValue) {
+            presentNav.modalPresentationStyle = UIModalPresentationFullScreen;
+        }
         presentNav.presentationController.delegate = self;
         [vc presentViewController:presentNav animated:YES completion:nil];
     } else if ([action isEqualToString:@"dismiss"]) {
