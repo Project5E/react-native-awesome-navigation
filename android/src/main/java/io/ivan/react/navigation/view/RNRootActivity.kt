@@ -11,6 +11,10 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.bridge.NavigationConstants
+import io.ivan.react.navigation.model.Root
+import io.ivan.react.navigation.model.RootType
+import io.ivan.react.navigation.model.Screen
+import io.ivan.react.navigation.model.Tabs
 import io.ivan.react.navigation.utils.*
 
 
@@ -40,9 +44,19 @@ class RNRootActivity : RNBaseActivity() {
         })
 
         Store.reducer(ACTION_SET_ROOT)?.observe(this, { state ->
-            val startDestinationName = state as String
-            startDestination = buildStartDestination(startDestinationName)
-            setStartDestination(startDestination)
+            with(state as Root) {
+                when {
+                    this is Tabs && type == RootType.TABS -> {
+                        val tabBarModuleName = options?.optString("tabBarModuleName")
+                    }
+                    this is Screen && type == RootType.STACK -> {
+                        setStartDestination(buildDestination(page.rootName))
+                    }
+                    this is Screen && type == RootType.SCREEN -> {
+                        setStartDestination(buildDestination(page.rootName))
+                    }
+                }
+            }
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -106,22 +120,6 @@ class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(this, {
 
         })
-    }
-
-    private fun buildStartDestination(startDestinationName: String): NavDestination {
-        return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
-            val viewId = ViewCompat.generateViewId()
-            it.id = viewId
-            it.className = RNFragment::class.java.name
-            it.addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
-                arg.defaultValue = startDestinationName
-                arg.build()
-            })
-            it.addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
-                arg.defaultValue = Bundle().also { bundle -> bundle.putString("screenID", viewId.toString()) }
-                arg.build()
-            })
-        }
     }
 
     private fun setStartDestination(startDestination: NavDestination?) {

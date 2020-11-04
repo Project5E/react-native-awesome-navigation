@@ -3,7 +3,9 @@ package io.ivan.react.navigation.bridge
 import android.util.Log
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.*
+import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
+import org.json.JSONObject
 
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -19,10 +21,9 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     @ReactMethod
-    fun setRoot(root: ReadableMap) {
-        Log.d("1van", "setRoot currentActivity = $currentActivity")
-        getStartDestinationName(root)?.let { startDestinationName ->
-            Store.dispatch(ACTION_SET_ROOT, startDestinationName)
+    fun setRoot(data: ReadableMap) {
+        parseRoot(data)?.let { root ->
+            Store.dispatch(ACTION_SET_ROOT, root)
         }
     }
 
@@ -66,12 +67,54 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
         FLog.w("1van signalFirstRenderComplete", screenID)
     }
 
-    private fun getStartDestinationName(root: ReadableMap?): String? {
+    private fun parseRoot(root: ReadableMap?): Root? {
         val rootJson = root?.toJSONObject()?.getJSONObject("root")
-        val launchPage = rootJson?.optJSONObject("screen")?.getString("moduleName")
-        rootJson?.optJSONObject("stack")?.getJSONObject("root")
-        rootJson?.optJSONObject("tabs")?.getJSONArray("children")
-        return launchPage
+        rootJson?.takeIf { it.length() == 1 } ?: throw Exception("setRoot must be only one parameter")
+        return with(rootJson) {
+            when {
+                has("tabs") -> {
+                    parseTabs(this).let { Tabs(RootType.TABS, it!!.first, it.second) }
+                }
+                has("stack") -> {
+                    parseStack(this)?.let { Screen(RootType.STACK, it) }
+                }
+                has("screen") -> {
+                    parseScreen(this)?.let { Screen(RootType.SCREEN, it) }
+                }
+                else -> throw Exception("setRoot parameter error")
+            }
+        }
+    }
+
+    private fun parseScreen(root: JSONObject?): Page? {
+        return root?.optJSONObject("screen")?.optString("moduleName")?.let {
+            Page(it)
+        }
+    }
+
+    private fun parseStack(root: JSONObject?): Page? {
+        val stack = root?.optJSONObject("stack")
+        val rootChildren = stack?.optJSONObject("root")
+        val options = stack?.optJSONObject("options")
+        return parseScreen(rootChildren)?.copy(options = options)
+    }
+
+    private fun parseTabs(root: JSONObject?): Pair<List<Page>, JSONObject?>? {
+        val tabs = root?.optJSONObject("tabs")
+        val stacks = tabs?.optJSONArray("children")
+        val options = tabs?.optJSONObject("options")
+        stacks ?: return null
+
+        val pages = mutableListOf<Page>()
+        for (index in 0 until stacks.length()) {
+            val stack = stacks.getJSONObject(index)
+            val rootChildren = stack?.optJSONObject("root")
+            val optionsChildren = stack?.optJSONObject("options")
+            parseScreen(rootChildren)?.copy(options = optionsChildren)?.let {
+                pages.add(it)
+            }
+        }
+        return pages to options
     }
 
 }
