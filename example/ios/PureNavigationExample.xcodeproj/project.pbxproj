@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		20F357B024636CDF00C146DC /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F357AF24636CDF00C146DC /* File.swift */; };
 		947B97212507A4CE00380B36 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 947B97202507A4CE00380B36 /* LaunchScreen.storyboard */; };
+		948171082552649E001EEEE7 /* ThisIsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 948171072552649E001EEEE7 /* ThisIsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		4D7192F03A36A017E887435B /* Pods-PureNavigationExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PureNavigationExample.release.xcconfig"; path = "Target Support Files/Pods-PureNavigationExample/Pods-PureNavigationExample.release.xcconfig"; sourceTree = "<group>"; };
 		871719007ECC5EAD276C345C /* Pods-PureNavigationExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PureNavigationExample.debug.xcconfig"; path = "Target Support Files/Pods-PureNavigationExample/Pods-PureNavigationExample.debug.xcconfig"; sourceTree = "<group>"; };
 		947B97202507A4CE00380B36 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		948171062552649E001EEEE7 /* ThisIsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ThisIsViewController.h; path = PureNavigationExample/ThisIsViewController.h; sourceTree = "<group>"; };
+		948171072552649E001EEEE7 /* ThisIsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ThisIsViewController.m; path = PureNavigationExample/ThisIsViewController.m; sourceTree = "<group>"; };
 		BCEA90A70F4BEAD7E9FA28B2 /* libPods-PureNavigationExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PureNavigationExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -51,6 +54,8 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				948171062552649E001EEEE7 /* ThisIsViewController.h */,
+				948171072552649E001EEEE7 /* ThisIsViewController.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				947B97202507A4CE00380B36 /* LaunchScreen.storyboard */,
@@ -241,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				948171082552649E001EEEE7 /* ThisIsViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				20F357B024636CDF00C146DC /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,

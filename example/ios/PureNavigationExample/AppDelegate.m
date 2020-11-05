@@ -14,6 +14,8 @@
 #import <React/RCTLinkingManager.h>
 #import <react-native-navigation-5e/PureNavigation.h>
 
+#import "ThisIsViewController.h"
+
 #if DEBUG
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -42,6 +44,7 @@ static void InitializeFlipper(UIApplication *application) {
   #endif
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   [ALCNavigationManager shared].bridge = bridge;
+  [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.backgroundColor = [UIColor whiteColor];
   UIStoryboard *storyboard =  [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];

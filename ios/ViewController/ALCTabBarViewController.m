@@ -50,8 +50,9 @@
 
 - (void)customTabBar {
     NSString *tabBar = self.options[@"tabBarModuleName"];
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge moduleName:tabBar initialProperties:nil];
-    
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
+                                                     moduleName:tabBar
+                                              initialProperties:@{@"screenID": self.screenID}];
     rootView.frame = CGRectMake(0, 1, CGRectGetWidth(self.tabBar.bounds), 48);
     [self.tabBar addSubview:rootView];
     self.rootView = rootView;
@@ -88,11 +89,7 @@
         NSString *text = hidden ? nil : (option[@"text"] ? option[@"text"] : nil);
         BOOL dot = hidden ?  NO : (option[@"dot"] ? [option[@"dot"] boolValue] : NO);
         
-        if (self.hasCustomTabBar) {
-//            NSMutableDictionary *tab = [self tabAtIndex:index];
-//            tab[@"dot"] = @(dot);
-//            tab[@"badgeText"] = text ?: NSNull.null;
-        } else {
+        if (!self.hasCustomTabBar) {
             UIViewController *vc = self.viewControllers[index];
             vc.tabBarItem.badgeValue = text;
             UITabBar *tabBar = self.tabBar;

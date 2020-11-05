@@ -26,7 +26,7 @@ setStyle({
 
 Register.beforeRegister()
 
-Register.registerComponent('Home', Home, '/home')
+Register.registerComponent('Home', Home)
 Register.registerComponent('Setting', Setting)
 Register.registerComponent('Detail', Detail)
 Register.registerComponent('Present', Present)
