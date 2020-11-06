@@ -1,7 +1,5 @@
 package io.ivan.react.navigation.bridge
 
-import android.util.Log
-import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.*
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
@@ -16,7 +14,6 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun registerReactComponent(componentName: String, componentOptions: ReadableMap) {
-        FLog.w("1van", "registerReactComponent. $componentName $componentOptions")
         Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, componentName to componentOptions)
     }
 
@@ -34,18 +31,14 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun setStyle(style: ReadableMap) {
-        FLog.w("1van", "setStyle.")
     }
 
     @ReactMethod
     fun setTabBadge(badge: ReadableArray) {
-        FLog.w("1van", "setTabBadge.")
     }
 
     @ReactMethod
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?) {
-        Log.d("1van", "$screenID $action $component ${options.toString()}")
-        Log.d("1van", "dispatch currentActivity = $currentActivity")
         when (action) {
             "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, component to options)
             "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
@@ -64,7 +57,6 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun signalFirstRenderComplete(screenID: String) {
-        FLog.w("1van signalFirstRenderComplete", screenID)
     }
 
     private fun parseRoot(root: ReadableMap?): Root? {
@@ -107,9 +99,9 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
         val pages = mutableListOf<Page>()
         for (index in 0 until stacks.length()) {
-            val stack = stacks.getJSONObject(index)
-            val rootChildren = stack?.optJSONObject("root")
-            val optionsChildren = stack?.optJSONObject("options")
+            val stack = stacks.getJSONObject(index).getJSONObject("stack")
+            val rootChildren = stack.optJSONObject("root")
+            val optionsChildren = stack.optJSONObject("options")
             parseScreen(rootChildren)?.copy(options = optionsChildren)?.let {
                 pages.add(it)
             }

@@ -3,6 +3,8 @@ package io.ivan.react.navigation.view
 import android.os.Bundle
 import android.view.Window
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
@@ -18,10 +20,12 @@ import io.ivan.react.navigation.model.RootType
 import io.ivan.react.navigation.model.Screen
 import io.ivan.react.navigation.model.Tabs
 import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.view.model.RootViewModel
 
 
 class RNRootActivity : RNBaseActivity() {
 
+    private lateinit var viewModel: RootViewModel
     private lateinit var navHostFragment: NavHostFragment
     private var startDestination: NavDestination? = null
 
@@ -30,6 +34,7 @@ class RNRootActivity : RNBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(RootViewModel::class.java)
         navHostFragment = createNavHostFragmentWithoutGraph()
 
         supportFragmentManager.beginTransaction()
@@ -49,17 +54,23 @@ class RNRootActivity : RNBaseActivity() {
             with(state as Root) {
                 when {
                     this is Tabs && type == RootType.TABS -> {
-                        val tabBarModuleName = options?.optString("tabBarModuleName")
-                        navController.setStartDestination(buildDestinationWithTabBar())
+                        viewModel.tabs = this
+                        options?.optString("tabBarModuleName")?.let {
+                            startDestination = buildDestinationWithTabBar(it)
+                        }
+                        // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况
                     }
                     this is Screen && type == RootType.STACK -> {
-                        navController.setStartDestination(buildDestination(page.rootName))
+                        startDestination = buildDestination(page.rootName)
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        navController.setStartDestination(buildDestination(page.rootName))
+                        startDestination = buildDestination(page.rootName)
+                    }
+                    else -> {
                     }
                 }
             }
+            navController.setStartDestination(startDestination)
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -125,11 +136,14 @@ class RNRootActivity : RNBaseActivity() {
         return buildDestination(this, supportFragmentManager, destinationName)
     }
 
-    private fun buildDestinationWithTabBar(): NavDestination {
+    private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination {
         return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
-            val viewId = ViewCompat.generateViewId()
-            it.id = viewId
+            it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
+            it.addArgument(ARG_TAB_BAR_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
+                arg.defaultValue = tabBarComponentName
+                arg.build()
+            })
         }
     }
 

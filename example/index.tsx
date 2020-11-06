@@ -58,7 +58,7 @@ Register.setRoot({
           },
         },
       ],
-      // options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
+      options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
     },
     // stack: {
     //   root: {
