@@ -52,7 +52,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
             "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
             "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, component to options)
             "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
-            "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, component to options)
+            "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
             else -> throw Exception("action error")
         }
     }

@@ -3,9 +3,11 @@ package io.ivan.react.navigation.view
 import android.os.Bundle
 import android.view.Window
 import androidx.core.view.ViewCompat
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
@@ -28,7 +30,7 @@ class RNRootActivity : RNBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navHostFragment = NavHostFragment.create(0)
+        navHostFragment = createNavHostFragmentWithoutGraph()
 
         supportFragmentManager.beginTransaction()
             .add(Window.ID_ANDROID_CONTENT, navHostFragment)
@@ -48,12 +50,13 @@ class RNRootActivity : RNBaseActivity() {
                 when {
                     this is Tabs && type == RootType.TABS -> {
                         val tabBarModuleName = options?.optString("tabBarModuleName")
+                        navController.setStartDestination(buildDestinationWithTabBar())
                     }
                     this is Screen && type == RootType.STACK -> {
-                        setStartDestination(buildDestination(page.rootName))
+                        navController.setStartDestination(buildDestination(page.rootName))
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        setStartDestination(buildDestination(page.rootName))
+                        navController.setStartDestination(buildDestination(page.rootName))
                     }
                 }
             }
@@ -116,35 +119,17 @@ class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
             navController.popBackStack()
         })
-
-        Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(this, {
-
-        })
-    }
-
-    private fun setStartDestination(startDestination: NavDestination?) {
-        startDestination ?: return
-
-        val graph = NavGraphNavigator(navController.navigatorProvider).createDestination().also {
-            it.addDestination(startDestination)
-            it.startDestination = startDestination.id
-        }
-        navController.graph = graph
     }
 
     private fun buildDestination(destinationName: String): NavDestination {
+        return buildDestination(this, supportFragmentManager, destinationName)
+    }
+
+    private fun buildDestinationWithTabBar(): NavDestination {
         return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
             val viewId = ViewCompat.generateViewId()
             it.id = viewId
-            it.className = RNFragment::class.java.name
-            it.addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
-                arg.defaultValue = destinationName
-                arg.build()
-            })
-            it.addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
-                arg.defaultValue = Bundle().also { bundle -> bundle.putString("screenID", viewId.toString()) }
-                arg.build()
-            })
+            it.className = RNTabBarFragment::class.java.name
         }
     }
 
