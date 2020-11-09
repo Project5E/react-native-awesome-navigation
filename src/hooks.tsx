@@ -7,7 +7,6 @@ import {
   NAVIGATION_EVENT,
   RECLICK_TAB,
   RESULT_DATA,
-  RESULT_TYPE,
   SCREEN_ID,
   VIEW_DID_APPEAR,
   VIEW_DID_DISAPPEAR,
@@ -50,11 +49,11 @@ export function useVisibleEffect(screenID: string, effect: React.EffectCallback)
   }, [effect, visible, screenID])
 }
 
-export function useResult(screenID: string, fn: (type: string, data: any) => void) {
+export function useResult(screenID: string, fn: (data: any) => void) {
   useEffect(() => {
     const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
       if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === COMPONENT_RESULT) {
-        fn(data[RESULT_TYPE], data[RESULT_DATA])
+        fn(data[RESULT_DATA])
       }
     })
     return () => {

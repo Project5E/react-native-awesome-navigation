@@ -9,10 +9,8 @@ import {
   NAVIGATION_EVENT,
   COMPONENT_RESULT,
   SCREEN_ID,
-  RESULT_TYPE,
   EVENT_TYPE,
   RESULT_DATA,
-  RESULT_TYPE_CANCEL,
 } from './navigationModule'
 
 export interface NavigationProps {
