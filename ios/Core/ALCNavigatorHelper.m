@@ -17,7 +17,6 @@
 
 @interface ALCNavigatorHelper () <UIAdaptivePresentationControllerDelegate>
 
-
 @end
 
 @implementation ALCNavigatorHelper
@@ -110,6 +109,7 @@
         [(ALCNavigationController *)vc pushViewController:viewController animated:true];
     } else if ([action isEqualToString:@"pop"]) {
         [(ALCNavigationController *)vc popViewControllerAnimated:YES];
+        [[ALCNavigationManager shared] popAndSendDataToViewController:vc.childViewControllers.lastObject];
     } else if ([action isEqualToString:@"popToRoot"]) {
         [(ALCNavigationController *)vc popToRootViewControllerAnimated:NO];
     } else if ([action isEqualToString:@"present"]) {
@@ -128,7 +128,6 @@
         if (!vc) {
             vc = window.rootViewController;
         }
-        [[ALCNavigationManager shared] removePresentStack:(ALCNavigationController *)vc];
         [vc dismissViewControllerAnimated:YES completion:nil];
     } else if ([action isEqualToString:@"switchTab"]) {
         ALCTabBarViewController *tbc = [self getTabBarController];

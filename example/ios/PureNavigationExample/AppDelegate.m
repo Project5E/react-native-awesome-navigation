@@ -43,7 +43,7 @@ static void InitializeFlipper(UIApplication *application) {
     InitializeFlipper(application);
   #endif
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  [ALCNavigationManager shared].bridge = bridge;
+  [[ALCNavigationManager shared] registerBridge:bridge];
   [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.backgroundColor = [UIColor whiteColor];

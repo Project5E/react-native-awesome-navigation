@@ -20,7 +20,7 @@
      return obj;
 }
 
-- (void)didReceiveResultData:(NSDictionary *)data type:(nonnull NSString *)type {
+- (void)didReceiveResultData:(NSDictionary *)data {
   
 }
 

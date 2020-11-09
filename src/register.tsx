@@ -9,10 +9,8 @@ import {
   NAVIGATION_EVENT,
   COMPONENT_RESULT,
   SCREEN_ID,
-  RESULT_TYPE,
   EVENT_TYPE,
   RESULT_DATA,
-  RESULT_TYPE_CANCEL,
 } from './navigationModule'
 
 export interface NavigationProps {
@@ -34,11 +32,7 @@ const withNavigator = (moduleName: string) => {
         navigator.signalFirstRenderComplete()
         const subscription = EventEmitter.addListener(NAVIGATION_EVENT, data => {
           if (data[SCREEN_ID] === screenID && data[EVENT_TYPE] === COMPONENT_RESULT) {
-            if (data[RESULT_TYPE] === RESULT_TYPE_CANCEL) {
-              navigator.cancel()
-            } else {
-              navigator.excute(data[RESULT_DATA])
-            }
+            navigator.excute(data[RESULT_DATA])
           }
         })
         return () => {

@@ -1,24 +1,33 @@
 package io.ivan.react.navigation.utils
 
+import android.os.Bundle
 import com.facebook.react.bridge.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+fun ReadableMap?.toBundle(): Bundle? {
+    return Arguments.toBundle(this)
+}
 
-fun ReadableMap.toJSONObject(): JSONObject {
+fun Bundle?.toRNMap(): WritableMap? {
+    return Arguments.fromBundle(this)
+}
+
+fun ReadableMap?.toJSONObject(): JSONObject? {
+    this ?: return null
+
     return try {
-        mapOf<Any, Any>().toMutableMap()
-        val it = keySetIterator()
+        val iterator = keySetIterator()
         val result = JSONObject()
-        while (it.hasNextKey()) {
-            val key = it.nextKey()
+        while (iterator.hasNextKey()) {
+            val key = iterator.nextKey()
             when (getType(key)) {
                 ReadableType.String -> result.put(key, getString(key))
                 ReadableType.Number -> result.put(key, parseNumber(this, key))
                 ReadableType.Boolean -> result.put(key, getBoolean(key))
-                ReadableType.Array -> result.put(key, getArray(key)!!.toJSONObject())
-                ReadableType.Map -> result.put(key, getMap(key)!!.toJSONObject())
+                ReadableType.Array -> result.put(key, getArray(key)?.toJSONObject())
+                ReadableType.Map -> result.put(key, getMap(key)?.toJSONObject())
                 else -> {
                 }
             }
@@ -29,25 +38,9 @@ fun ReadableMap.toJSONObject(): JSONObject {
     }
 }
 
-fun ReadableArray.toJSONObject(): JSONArray {
-    val result = JSONArray()
-    for (i in 0 until size()) {
-        when (getType(i)) {
-            ReadableType.String -> result.put(getString(i))
-            ReadableType.Number -> result.put(
-                parseNumber(this, i)
-            )
-            ReadableType.Boolean -> result.put(getBoolean(i))
-            ReadableType.Array -> result.put(getArray(i)!!.toJSONObject())
-            ReadableType.Map -> result.put(getMap(i)!!.toJSONObject())
-            else -> {
-            }
-        }
-    }
-    return result
-}
+fun JSONObject?.toRNMap(): WritableMap? {
+    this ?: return null
 
-fun JSONObject.toRNMap(): WritableMap {
     val map: WritableMap = WritableNativeMap()
     val iterator = keys()
     while (iterator.hasNext()) {
@@ -79,7 +72,38 @@ fun JSONObject.toRNMap(): WritableMap {
     return map
 }
 
-fun JSONArray.toRNArray(): WritableArray {
+fun Array<Any>?.toRNArray(): WritableArray? {
+    return this?.let { Arguments.fromArray(it) }
+}
+
+fun List<Any>?.toRNArray(): WritableArray? {
+    return this?.let { Arguments.fromList(it) }
+}
+
+fun ReadableArray?.toJSONObject(): JSONArray? {
+    this ?: return null
+
+    val result = JSONArray()
+    for (i in 0 until size()) {
+        when (getType(i)) {
+            ReadableType.String -> result.put(getString(i))
+            ReadableType.Number -> result.put(
+                parseNumber(this, i)
+            )
+            ReadableType.Boolean -> result.put(getBoolean(i))
+            ReadableType.Array -> result.put(getArray(i)!!.toJSONObject())
+            ReadableType.Map -> result.put(getMap(i)!!.toJSONObject())
+            else -> {
+            }
+        }
+    }
+    return result
+}
+
+
+fun JSONArray?.toRNArray(): WritableArray? {
+    this ?: return null
+
     val array: WritableArray = WritableNativeArray()
     for (i in 0 until length()) {
         when (val value = opt(i)) {

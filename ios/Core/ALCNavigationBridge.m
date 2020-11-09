@@ -70,19 +70,15 @@ RCT_EXPORT_MODULE(ALCNavigationBridge)
 }
 
 RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
-    [self.manager clearStack];
+    [self.manager clearData];
     NSDictionary *root = rootTree[@"root"];
     UIViewController *viewController;
     if (root[@"tabs"]) {
         ALCTabBarViewController *tbc = [self.helper createTabBarControllerWithLayout:root[@"tabs"]];
-        for (UIViewController *vc in tbc.viewControllers) {
-            [self.manager.stacks setObject:[NSMutableArray array] forKey:vc.screenID];
-        }
         viewController = tbc;
         self.helper.layoutType = ALCLayoutTypeTabs;
     } else if (root[@"stack"]) {
         ALCNavigationController *nav = [self.helper createNavigationControllerWithLayout:root[@"stack"]];
-        [self.manager.stacks setObject:[NSMutableArray array] forKey:nav.screenID];
         viewController = nav;
         self.helper.layoutType = ALCLayoutTypeStack;
     } else if (root[@"screen"]) {
@@ -110,9 +106,7 @@ RCT_EXPORT_METHOD(currentRoute:(RCTPromiseResolveBlock)resolve reject:(RCTPromis
 }
 
 RCT_EXPORT_METHOD(setResult:(NSDictionary *)data) {
-    UINavigationController *nav = [self.helper getNavigationController];
-    NSMutableArray *stack       = [self.manager.stacks valueForKey:nav.screenID];
-    ((ALCStackModel *)stack.lastObject).data = data;
+    self.manager.resultData = data;
 }
 
 RCT_EXPORT_METHOD(dispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params) {

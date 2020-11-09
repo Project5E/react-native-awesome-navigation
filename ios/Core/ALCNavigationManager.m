@@ -16,6 +16,7 @@
 
 @interface ALCNavigationManager()
 
+@property (nonatomic, strong, readwrite) RCTBridge *bridge;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *reactModules;
 
@@ -45,9 +46,12 @@
     if (self = [super init]) {
         _nativeModules = [NSMutableDictionary dictionary];
         _reactModules  = [NSMutableDictionary dictionary];
-        _stacks     = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
+- (void)registerBridge:(RCTBridge *)bridge {
+    self.bridge = bridge;
 }
 
 - (void)registerNativeModule:(NSString *)moduleName forController:(Class)clazz {
@@ -88,34 +92,15 @@
     return vc;
 }
 
-- (void)push:(UINavigationController *)nav vc:(UIViewController *)vc {
-    ALCStackModel *model = [[ALCStackModel alloc] initWithScreenID:vc.screenID];
-    NSMutableArray *stack = [self.stacks valueForKey:nav.screenID];
-    if (!stack) {
-        stack = [NSMutableArray array];
-        [self.stacks setValue:stack forKey:nav.screenID];
-    }
-    if (![stack containsObject:model]) {
-        [stack addObject:model];
-    } else if (stack.count > 1) {
-       NSUInteger index = [stack indexOfObject:model];
-       ALCStackModel *last = stack.lastObject;
-        NSRange range = NSMakeRange(index + 1, stack.count - (index + 1));
-       [stack removeObjectsInRange:range];
-       if (last.data) {
-           [vc didReceiveResultData:last.data type:RESULT_TYPE_OK];
-       } else {
-           [vc didReceiveResultData:@{} type:RESULT_TYPE_CANCEL];
-       }
+- (void)popAndSendDataToViewController:(UIViewController *)vc {
+    if (self.resultData) {
+        [vc didReceiveResultData:self.resultData];
+        self.resultData = nil;
     }
 }
 
-- (void)removePresentStack:(UINavigationController *)nav {
-    [self.stacks removeObjectForKey:nav.screenID];
-}
-
-- (void)clearStack {
-    [self.stacks removeAllObjects];
+- (void)clearData {
+    self.resultData = nil;
 }
 
 @end

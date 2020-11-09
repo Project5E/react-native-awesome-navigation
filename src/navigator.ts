@@ -3,7 +3,6 @@ import {NavigationBridge} from './navigationModule'
 
 interface ResultListener {
   execute(data: any): void
-  cancel(): void
 }
 
 interface Route {
@@ -19,12 +18,12 @@ export class Navigator {
     return store.getNavigator(screenID)
   }
 
-  static async current() {
+  static current = async () => {
     const route = await Navigator.currentRoute()
     return Navigator.get(route.screenID)
   }
 
-  static async currentRoute(): Promise<Route> {
+  static currentRoute = async (): Promise<Route> => {
     return new Promise(resolve => {
       const route: Route = NavigationBridge.currentRoute()
       resolve(route)
@@ -46,12 +45,6 @@ export class Navigator {
     }
   }
 
-  cancel = () => {
-    if (this.resultListener) {
-      this.resultListener.cancel()
-    }
-  }
-
   setResult = (data: any) => {
     NavigationBridge.setResult(data)
   }
@@ -62,10 +55,6 @@ export class Navigator {
       const listener = {
         execute: (data: any) => {
           resolve(['ok', data])
-          this.resultListener = undefined
-        },
-        cancel: () => {
-          resolve(['cancel', null])
           this.resultListener = undefined
         },
       }

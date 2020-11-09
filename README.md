@@ -58,6 +58,16 @@ setRoot({
 
 支持原生页面与RN页面混搭
 
+目前提供两个原生页面样式设置  
+设置标题以及是否隐藏导航栏
+```
+Home.navigationItem = {
+  title: '主页',
+  hideNavigationBar: false,
+}
+
+```
+
 ### iOS
 需要在AppDelegate中记录bridge  
 同时注册对应原生的ViewController，该ViewController需要继承ALCNativeViewController

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.facebook.infer.annotation.Assertions
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
@@ -16,6 +17,8 @@ import com.facebook.react.devsupport.DoubleTapReloadRecognizer
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
+import io.ivan.react.navigation.bridge.NavigationConstants
+import io.ivan.react.navigation.utils.sendNavigationEvent
 
 const val ARG_COMPONENT_NAME = "arg_component_name"
 const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
@@ -67,6 +70,10 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
                 )
             }
         }
+        requireActivity().sendNavigationEvent(
+            NavigationConstants.VIEW_DID_APPEAR,
+            findNavController().currentBackStackEntry?.destination?.id?.toString()
+        )
     }
 
     override fun onPause() {
@@ -74,14 +81,18 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         if (reactNativeHost.hasInstance()) {
             reactNativeHost.reactInstanceManager.onHostPause(requireActivity())
         }
+        requireActivity().sendNavigationEvent(
+            NavigationConstants.VIEW_DID_DISAPPEAR,
+            findNavController().currentBackStackEntry?.destination?.id?.toString()
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
         reactRootView.unmountReactApplication()
-        if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
-        }
+//        if (reactNativeHost.hasInstance()) {
+//            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
+//        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
