@@ -31,16 +31,13 @@
 }
 
 - (void)setResult:(NSDictionary *)data {
-    UINavigationController *nav = self.navigationController;
-    NSMutableArray *stack = [[ALCNavigationManager shared].stacks valueForKey:nav.screenID];
-    ((ALCStackModel *)stack.lastObject).data = data;
+    [ALCNavigationManager shared].resultData = data;
 }
 
-- (void)didReceiveResultData:(NSDictionary *)data type:(NSString *)type {
+- (void)didReceiveResultData:(NSDictionary *)data {
     [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
     @{
       EVENT_TYPE: COMPONENT_RESULT,
-      RESULT_TYPE : type,
       RESULT_DATA: data ?: [NSNull null],
       SCREEN_ID: self.screenID
     }];

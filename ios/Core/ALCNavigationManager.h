@@ -13,17 +13,18 @@
 
 @interface ALCNavigationManager : NSObject
 
-@property (nonatomic, strong) RCTBridge *bridge;
+@property (nonatomic, strong, readonly) RCTBridge *bridge;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *nativeModules;
 @property (nonatomic, strong, readonly) NSMutableDictionary *reactModules;
 
-// 包含tabs以及一个动态的可增可删的present导航栈
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray<ALCStackModel *> *> *stacks;
+@property (nonatomic, copy) NSDictionary *resultData;
 
 + (void)sendEvent:(NSString *)eventName data:(NSDictionary *)data;
 
 + (instancetype)shared;
+
+- (void)registerBridge:(RCTBridge *)bridge;
 
 - (void)registerNativeModule:(NSString *)moduleName forController:(Class)clazz;
 - (BOOL)hasNativeModule:(NSString *)moduleName;
@@ -35,8 +36,7 @@
 
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary *)params;
 
-- (void)push:(UINavigationController *)nav vc:(UIViewController *)vc;
-- (void)removePresentStack:(UINavigationController *)nav;
-- (void)clearStack;
+- (void)popAndSendDataToViewController:(UIViewController *)vc;
+- (void)clearData;
 
 @end

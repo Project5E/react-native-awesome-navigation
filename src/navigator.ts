@@ -64,10 +64,10 @@ export class Navigator {
           resolve(['ok', data])
           this.resultListener = undefined
         },
-        cancel: () => {
-          resolve(['cancel', null])
-          this.resultListener = undefined
-        },
+        // cancel: () => {
+        //   resolve(['cancel', null])
+        //   this.resultListener = undefined
+        // },
       }
       this.resultListener = listener
     })

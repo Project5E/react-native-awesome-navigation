@@ -9,7 +9,7 @@
 #import "UIViewController+ALC.h"
 #import "ALCNavigationManager.h"
 
-@interface ALCNavigationController () <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
+@interface ALCNavigationController () <UIGestureRecognizerDelegate>
 
 @end
 
@@ -17,14 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.delegate = self;
     self.interactivePopGestureRecognizer.delegate = self;
-}
-
-- (void)navigationController:(UINavigationController *)navigationController
-       didShowViewController:(UIViewController *)viewController
-                    animated:(BOOL)animated {
-    [[ALCNavigationManager shared] push:navigationController vc:viewController];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
