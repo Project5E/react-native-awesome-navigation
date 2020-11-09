@@ -31,9 +31,6 @@ RCT_EXPORT_MODULE(ALCConstants);
              @"VIEW_DID_APPEAR": VIEW_DID_APPEAR,
              @"VIEW_DID_DISAPPEAR": VIEW_DID_DISAPPEAR,
              @"COMPONENT_RESULT": COMPONENT_RESULT,
-             @"RESULT_TYPE": RESULT_TYPE,
-             @"RESULT_TYPE_OK": RESULT_TYPE_OK,
-             @"RESULT_TYPE_CANCEL": RESULT_TYPE_CANCEL,
              @"RESULT_DATA": RESULT_DATA,
              @"SCREEN_ID": SCREEN_ID,
             };

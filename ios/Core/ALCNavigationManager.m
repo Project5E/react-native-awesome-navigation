@@ -11,7 +11,6 @@
 #import "ALCNavigationManager.h"
 #import "ALCNativeViewController.h"
 #import "ALCReactViewController.h"
-#import "ALCStackModel.h"
 #import "ALCConstants.h"
 
 @interface ALCNavigationManager()

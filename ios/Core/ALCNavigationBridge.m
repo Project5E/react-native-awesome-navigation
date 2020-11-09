@@ -74,16 +74,13 @@ RCT_EXPORT_METHOD(setRoot:(NSDictionary *)rootTree) {
     NSDictionary *root = rootTree[@"root"];
     UIViewController *viewController;
     if (root[@"tabs"]) {
-        ALCTabBarViewController *tbc = [self.helper createTabBarControllerWithLayout:root[@"tabs"]];
-        viewController = tbc;
+        viewController = [self.helper createTabBarControllerWithLayout:root[@"tabs"]];
         self.helper.layoutType = ALCLayoutTypeTabs;
     } else if (root[@"stack"]) {
-        ALCNavigationController *nav = [self.helper createNavigationControllerWithLayout:root[@"stack"]];
-        viewController = nav;
+        viewController = [self.helper createNavigationControllerWithLayout:root[@"stack"]];
         self.helper.layoutType = ALCLayoutTypeStack;
     } else if (root[@"screen"]) {
-        UIViewController *screen = [self.helper createScreenControllerWithLayout:root[@"screen"]];
-        viewController = screen;
+        viewController = [self.helper createScreenControllerWithLayout:root[@"screen"]];
         self.helper.layoutType = ALCLayoutTypeScreen;
     } else {
         NSAssert(false, @"root should be tabs、 stack or screen");

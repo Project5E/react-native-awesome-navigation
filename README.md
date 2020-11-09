@@ -12,7 +12,7 @@ yarn add react-native-navigation-5e
 
 ## Usage
 
-```js
+```ts
 import { registerComponent, setRoot } from 'react-native-navigation-5e';
 
 // 设置全局样式
@@ -60,7 +60,7 @@ setRoot({
 
 目前提供两个原生页面样式设置  
 设置标题以及是否隐藏导航栏
-```
+```ts
 Home.navigationItem = {
   title: '主页',
   hideNavigationBar: false,
@@ -82,23 +82,23 @@ Home.navigationItem = {
 目前支持push,pop,popToRoot,present,dismiss,switchTab
 
 push传参
-```
+```ts
 props.navigator.push('NativeViewController', { title: 'Native' })
 ```
 
 push接收返回传值
-```
+```ts
 const resp = await props.navigator.push('Detail')
 ```
 
 pop前设值
-```
+```ts
 props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
 
 Present，与push类似，第二个为传参，第三个为是否全屏，后两个参数可不传
-```
+```ts
 props.navigator.present('Present', undefined, true)
 ```
 
@@ -119,7 +119,7 @@ navigator含有每页页面唯一的screenID以及页面的module名
 
 ## 全局样式
 目前有以下全局样式，后续会增加更多
-```
+```ts
 interface GlobalStyle {
   backIcon?: {uri: string} // 设置返回图标
   hideNavigationBarShadow?: boolean // 隐藏导航栏底部线
@@ -134,7 +134,7 @@ interface GlobalStyle {
 ```
 
 使用
-```
+```ts
 setStyle({
   hideBackTitle: true,
   hideNavigationBarShadow: true,
@@ -148,7 +148,7 @@ setStyle({
 
 使用原生tabbar的时候，可以设置tabbar的Badge
 
-```
+```ts
 setTabBadge([
   {
     index: 0,
@@ -164,7 +164,7 @@ setTabBadge([
 ```
 其中index代表tabbar item位置，dot代表圆点，text为badge内的文字，hidden为是否显示
 
-```
+```ts
 export interface TabBadge {
   index: number
   hidden: boolean
@@ -177,7 +177,7 @@ export interface TabBadge {
 
 ## 生命周期
 每一个页面都有自己是否展示的hooks
-```
+```ts
 useVisibleEffect(
     props.screenID,
     useCallback(() => {
@@ -192,13 +192,13 @@ useVisibleEffect(
 ## 路径导航 -- 支持DeepLink
 
 注册的时候为页面加入路径
-```
+```ts
 registerComponent('Home', Home, '/home')
 registerComponent('Setting', Setting)
 ```
 
 使用前在首页激活
-```
+```ts
   useEffect(() => {
     router.activate('hulaqinzi://')
     return () => {
@@ -207,7 +207,7 @@ registerComponent('Setting', Setting)
   }, [])
 ```
 
-```
+```ts
 Router.open('hulaqinzi://home?key=value')
 ```
 会解析出路径/home，以及参数 {key: value}，并push出Home页面和传参
@@ -218,9 +218,8 @@ Router.open('hulaqinzi://home?key=value')
 
 用于页面返回传参
 
-```
-  useResult(props.screenID, (type, data) => {
-    console.log(type);
+```ts
+  useResult(props.screenID, (data) => {
     console.log(data);
   })
 ```
@@ -234,7 +233,7 @@ data是返回的数据
 
 响应重复点击tabbar事件，仅用于每一个tab的首页
 
-```
+```ts
   useReClick(props.screenID, () => {
     console.log('reclick');
   })
