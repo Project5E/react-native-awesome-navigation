@@ -54,7 +54,7 @@ export class Navigator {
     return new Promise(resolve => {
       const listener = {
         execute: (data: any) => {
-          resolve(['ok', data])
+          resolve(data)
           this.resultListener = undefined
         },
       }
