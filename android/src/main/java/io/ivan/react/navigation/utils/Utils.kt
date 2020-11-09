@@ -28,13 +28,12 @@ fun Context.sendEvent(eventName: String, data: Any?) {
         ?.emit(eventName, data)
 }
 
-fun Context.sendNavigationEvent(eventType: String, screenId: String?, data: Any? = null, resultType: String? = null) {
+fun Context.sendNavigationEvent(eventType: String, screenId: String?, data: Any? = null) {
     reactNativeHost.reactInstanceManager.currentReactContext
         ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
         ?.emit(NavigationConstants.NAVIGATION_EVENT, JSONObject().also { args ->
             args.put(NavigationConstants.EVENT_TYPE, eventType)
             args.putOpt(NavigationConstants.SCREEN_ID, screenId)
             args.putOpt(NavigationConstants.RESULT_DATA, data)
-            args.putOpt(NavigationConstants.RESULT_TYPE, resultType)
         }.toRNMap())
 }

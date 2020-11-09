@@ -12,9 +12,6 @@ class NavigationConstants(reactContext: ReactApplicationContext) : ReactContextB
         const val VIEW_DID_APPEAR = "VIEW_DID_APPEAR"
         const val VIEW_DID_DISAPPEAR = "VIEW_DID_DISAPPEAR"
         const val COMPONENT_RESULT = "COMPONENT_RESULT"
-        const val RESULT_TYPE = "RESULT_TYPE"
-        const val RESULT_TYPE_OK = "RESULT_TYPE_OK"
-        const val RESULT_TYPE_CANCEL = "RESULT_TYPE_CANCEL"
         const val RESULT_DATA = "RESULT_DATA"
         const val SCREEN_ID = "SCREEN_ID"
     }
@@ -31,9 +28,6 @@ class NavigationConstants(reactContext: ReactApplicationContext) : ReactContextB
             it[VIEW_DID_APPEAR] = VIEW_DID_APPEAR
             it[VIEW_DID_DISAPPEAR] = VIEW_DID_DISAPPEAR
             it[COMPONENT_RESULT] = COMPONENT_RESULT
-            it[RESULT_TYPE] = RESULT_TYPE
-            it[RESULT_TYPE_OK] = RESULT_TYPE_OK
-            it[RESULT_TYPE_CANCEL] = RESULT_TYPE_CANCEL
             it[RESULT_DATA] = RESULT_DATA
             it[SCREEN_ID] = SCREEN_ID
         }

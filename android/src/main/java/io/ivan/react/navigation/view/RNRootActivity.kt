@@ -84,8 +84,7 @@ class RNRootActivity : RNBaseActivity() {
             sendNavigationEvent(
                 NavigationConstants.COMPONENT_RESULT,
                 navController.previousBackStackEntry?.destination?.id?.toString(),
-                Arguments.createMap().also { it.merge(data) },
-                NavigationConstants.RESULT_TYPE_OK
+                Arguments.createMap().also { it.merge(data) }
             )
         })
 
