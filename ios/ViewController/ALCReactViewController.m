@@ -27,6 +27,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationController.navigationBar.translucent = NO;
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleReload)
                                                  name:RCTBridgeWillReloadNotification

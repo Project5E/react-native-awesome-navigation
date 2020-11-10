@@ -40,8 +40,8 @@
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
     if (self.hasCustomTabBar) {
         [self removeTabBarAboriginal];
         [self.tabBar bringSubviewToFront:self.rootView];
@@ -72,7 +72,7 @@
 
 - (void)removeTabBarAboriginal {
     NSUInteger count = self.tabBar.subviews.count;
-    for (NSInteger i = count -1; i > -1; i --) {
+    for (NSInteger i = count -1; i > -1; i--) {
         UIView *view = self.tabBar.subviews[i];
         NSString *viewName = [[[view classForCoder] description] stringByReplacingOccurrencesOfString:@"_" withString:@""];
         if ([viewName isEqualToString:@"UITabBarButton"]) {

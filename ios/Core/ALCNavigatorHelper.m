@@ -103,15 +103,27 @@
 - (void)handleDispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params {
     UIWindow *window = RCTSharedApplication().delegate.window;
     UIViewController *vc = [self getNavigationController];
+    // push
     if ([action isEqualToString:@"push"]) {
         UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
         viewController.hidesBottomBarWhenPushed = YES;
         [(ALCNavigationController *)vc pushViewController:viewController animated:true];
+        // pop
     } else if ([action isEqualToString:@"pop"]) {
         [(ALCNavigationController *)vc popViewControllerAnimated:YES];
         [[ALCNavigationManager shared] popAndSendDataToViewController:vc.childViewControllers.lastObject];
+        // popPages
+    } else if ([action isEqualToString:@"popPages"]) {
+        NSNumber *count = params[@"count"];
+        if (((ALCNavigationController *)vc).childViewControllers.count > count.intValue) {
+            NSUInteger index = ((ALCNavigationController *)vc).childViewControllers.count - count.intValue - 1;
+            UIViewController *targetVC = (ALCNavigationController *)vc.childViewControllers[index];
+            [(ALCNavigationController *)vc popToViewController:targetVC animated:YES];
+        }
+        // popToRoot
     } else if ([action isEqualToString:@"popToRoot"]) {
-        [(ALCNavigationController *)vc popToRootViewControllerAnimated:NO];
+        [(ALCNavigationController *)vc popToRootViewControllerAnimated:YES];
+        // present
     } else if ([action isEqualToString:@"present"]) {
         if (!vc) {
             vc = window.rootViewController;
@@ -124,11 +136,13 @@
         }
         presentNav.presentationController.delegate = self;
         [vc presentViewController:presentNav animated:YES completion:nil];
+        // dismiss
     } else if ([action isEqualToString:@"dismiss"]) {
         if (!vc) {
             vc = window.rootViewController;
         }
         [vc dismissViewControllerAnimated:YES completion:nil];
+        // switchTab
     } else if ([action isEqualToString:@"switchTab"]) {
         ALCTabBarViewController *tbc = [self getTabBarController];
         NSNumber *index = params[@"index"];

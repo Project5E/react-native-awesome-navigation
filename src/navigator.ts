@@ -66,6 +66,10 @@ export class Navigator {
     Navigator.dispatch(this.screenID, 'pop')
   }
 
+  popPages = (count: number) => {
+    Navigator.dispatch(this.screenID, 'popPages', undefined, {count})
+  }
+
   popToRoot = () => {
     Navigator.dispatch(this.screenID, 'popToRoot')
   }
