@@ -25,10 +25,12 @@
     NSArray *tabs = layout[@"children"];
     NSDictionary *options = layout[@"options"];
     NSMutableArray *controllers = [NSMutableArray array];
+    NSMutableArray *tabOptions = [NSMutableArray array];
     for (NSDictionary *tab in tabs) {
         NSDictionary *stack = tab[@"stack"];
         NSDictionary *screen = tab[@"screen"];
         NSDictionary *icon = stack[@"options"][@"icon"];
+        [tabOptions addObject:stack[@"options"]];
         UIViewController *vc;
         if (stack) {
             vc = [self createNavigationControllerWithLayout:stack];
@@ -43,7 +45,9 @@
     }
     ALCTabBarViewController *tbc;
     if (options) {
-        tbc = [[ALCTabBarViewController alloc] initWithTabBarOptions:options];
+        NSMutableDictionary *copied = [options mutableCopy];
+        copied[@"tabs"] = [tabOptions copy];
+        tbc = [[ALCTabBarViewController alloc] initWithTabBarOptions:copied];
     } else {
         tbc = [[ALCTabBarViewController alloc] init];
     }

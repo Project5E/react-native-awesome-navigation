@@ -49,10 +49,12 @@
 }
 
 - (void)customTabBar {
+    NSMutableDictionary *copied = [self.options mutableCopy];
+    copied[@"screenID"] = self.screenID;
     NSString *tabBar = self.options[@"tabBarModuleName"];
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
                                                      moduleName:tabBar
-                                              initialProperties:@{@"screenID": self.screenID}];
+                                              initialProperties:[copied copy]];
     rootView.frame = CGRectMake(0, 1, CGRectGetWidth(self.tabBar.bounds), 48);
     [self.tabBar addSubview:rootView];
     self.rootView = rootView;
