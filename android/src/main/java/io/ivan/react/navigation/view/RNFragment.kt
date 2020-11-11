@@ -1,5 +1,6 @@
 package io.ivan.react.navigation.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -25,13 +26,14 @@ const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
 
 open class RNFragment : Fragment(), PermissionAwareActivity {
 
+    open var mainComponentName: String? = null
+    open var launchOptions: Bundle? = null
+
     private var mPermissionListener: PermissionListener? = null
-    private var mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer? = null
 
     private lateinit var reactRootView: ReactRootView
 
-    open var mainComponentName: String? = null
-    open var launchOptions: Bundle? = null
+    private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
     private val reactNativeHost
         get() = (requireActivity().application as ReactApplication).reactNativeHost
@@ -42,18 +44,22 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
             mainComponentName = it.getString(ARG_COMPONENT_NAME)
             launchOptions = it.getBundle(ARG_LAUNCH_OPTIONS)
         }
-        loadApp()
-        mDoubleTapReloadRecognizer = DoubleTapReloadRecognizer()
-    }
-
-    private fun loadApp() {
-        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
-        reactRootView = ReactRootView(context)
-        reactRootView.startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        if (!this::reactRootView.isInitialized) {
+            reactRootView = createReactRootView(inflater.context)
+        } else {
+            (reactRootView.parent as? ViewGroup)?.removeView(reactRootView)
+        }
         return reactRootView
+    }
+
+    private fun createReactRootView(context: Context): ReactRootView {
+        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
+        return ReactRootView(context).apply {
+            startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
+        }
     }
 
     override fun onResume() {

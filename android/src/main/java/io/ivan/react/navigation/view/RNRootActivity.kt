@@ -22,27 +22,29 @@ import io.ivan.react.navigation.model.Tabs
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 
-
 class RNRootActivity : RNBaseActivity() {
 
-    private lateinit var viewModel: RootViewModel
-    private lateinit var navHostFragment: NavHostFragment
     private var startDestination: NavDestination? = null
+
+    private val viewModel: RootViewModel by lazy { ViewModelProvider(this).get(RootViewModel::class.java) }
+    private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
 
     private val navController: NavController
         get() = navHostFragment.navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(RootViewModel::class.java)
-        navHostFragment = createNavHostFragmentWithoutGraph()
-
         supportFragmentManager.beginTransaction()
             .add(Window.ID_ANDROID_CONTENT, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
 
         receive()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navController.navigateUp()
     }
 
     private fun receive() {
@@ -101,7 +103,7 @@ class RNRootActivity : RNBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
-            navController.popBackStack()
+            navController.navigateUp()
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
@@ -127,16 +129,15 @@ class RNRootActivity : RNBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
-            navController.popBackStack()
+            navController.navigateUp()
         })
     }
 
-    private fun buildDestination(destinationName: String): NavDestination {
-        return buildDestination(this, supportFragmentManager, destinationName)
-    }
+    private fun buildDestination(destinationName: String): NavDestination =
+        buildDestination(this, supportFragmentManager, destinationName)
 
-    private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination {
-        return FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
+    private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
+        FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
             it.addArgument(ARG_TAB_BAR_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
@@ -144,6 +145,5 @@ class RNRootActivity : RNBaseActivity() {
                 arg.build()
             })
         }
-    }
 
 }

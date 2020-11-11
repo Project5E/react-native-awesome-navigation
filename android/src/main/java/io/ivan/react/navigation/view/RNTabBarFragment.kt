@@ -21,35 +21,26 @@ const val ARG_TAB_BAR_COMPONENT_NAME = "arg_tab_bar_component_name"
 
 class RNTabBarFragment : Fragment() {
 
-    private lateinit var viewModel: RootViewModel
-    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var view: ViewGroup
 
     private val tabBarHeight = PixelUtil.toPixelFromDIP(56f).toInt()
     private val tabsId = mutableListOf<Int>()
-    private var tabBarComponentName: String? = null
+
+    private val viewModel: RootViewModel by lazy { ViewModelProvider(requireActivity()).get(RootViewModel::class.java) }
+    private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
+    private val tabBarContainerId by lazy { View.generateViewId() }
+    private val contextContainerId by lazy { View.generateViewId() }
 
     private val navController: NavController
         get() = navHostFragment.navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(RootViewModel::class.java)
-        arguments?.let {
-            tabBarComponentName = it.getString(ARG_TAB_BAR_COMPONENT_NAME)
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return with(inflater.context) {
-            FrameLayout(this).also {
-                it.addView(createTabBarContainer(this))
-                it.addView(createContentContainer(this))
-            }
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.beginTransaction()
+            .setPrimaryNavigationFragment(navHostFragment)
+            .add(contextContainerId, navHostFragment)
+            .add(tabBarContainerId, createTabBarFragment())
+            .commitNowAllowingStateLoss()
 
         viewModel.tabs?.pages?.first()?.let {
             val startDestination = buildDestination(it.rootName)
@@ -61,7 +52,22 @@ class RNTabBarFragment : Fragment() {
             navController.graph.addDestinations(destination)
             tabsId.add(destination.id)
         }
+    }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        if (!this::view.isInitialized) {
+            view = with(inflater.context) {
+                FrameLayout(this).also {
+                    it.addView(createTabBarContainer(this))
+                    it.addView(createContentContainer(this))
+                }
+            }
+        }
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), { state ->
             val data = state as ReadableMap
             val index = data.getInt("index")
@@ -69,42 +75,38 @@ class RNTabBarFragment : Fragment() {
         })
     }
 
-    private fun createTabBarContainer(context: Context) =
-        FrameLayout(context).apply {
-            id = View.generateViewId()
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, tabBarHeight, Gravity.BOTTOM)
-            val tabBarFragment = RNFragment().apply {
-                mainComponentName = tabBarComponentName
-                launchOptions = Bundle().also { bundle ->
-                    bundle.putString("screenID", id.toString())
-                }
+    private fun createTabBarFragment(): RNFragment =
+        RNFragment().also { rnFragment ->
+            arguments?.getString(ARG_TAB_BAR_COMPONENT_NAME)?.let {
+                rnFragment.mainComponentName = it
             }
-            childFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(id, tabBarFragment)
-                .commitNowAllowingStateLoss()
+            rnFragment.launchOptions = Bundle().also { bundle ->
+                bundle.putString("screenID", id.toString())
+            }
+        }
+
+    private fun createTabBarContainer(context: Context) =
+        FrameLayout(context).also { viewGroup ->
+            viewGroup.id = tabBarContainerId
+            viewGroup.layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                tabBarHeight,
+                Gravity.BOTTOM
+            )
         }
 
     private fun createContentContainer(context: Context) =
-        FrameLayout(context).apply {
-            id = View.generateViewId()
-            layoutParams = FrameLayout.LayoutParams(
+        FrameLayout(context).also { viewGroup ->
+            viewGroup.id = contextContainerId
+            viewGroup.layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             ).apply {
                 setMargins(0, 0, 0, tabBarHeight)
-
-                navHostFragment = createNavHostFragmentWithoutGraph()
-
-                childFragmentManager.beginTransaction()
-                    .setPrimaryNavigationFragment(navHostFragment)
-                    .add(id, navHostFragment)
-                    .commitNowAllowingStateLoss()
             }
         }
 
-    private fun buildDestination(destinationName: String): NavDestination {
-        return buildDestination(requireContext(), childFragmentManager, destinationName)
-    }
+    private fun buildDestination(destinationName: String): NavDestination =
+        buildDestination(requireContext(), childFragmentManager, destinationName)
 
 }

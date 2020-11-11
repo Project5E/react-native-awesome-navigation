@@ -13,16 +13,14 @@ import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.ivan.react.navigation.utils.reactNativeHost
 
-
 open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, PermissionAwareActivity {
 
     private var mPermissionListener: PermissionListener? = null
-    private var mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer? = null
+    private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         reactNativeHost.reactInstanceManager.createReactContextInBackground()
-        mDoubleTapReloadRecognizer = DoubleTapReloadRecognizer()
     }
 
     override fun onResume() {
