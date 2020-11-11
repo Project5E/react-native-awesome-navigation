@@ -1,18 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "react-native-navigation-5e": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "esModuleInterop": true,
     "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": ["esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -20,9 +14,20 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext",
+    "rootDirs": ["."],
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "jsx": "react-native",
+    "target": "es6",
+    "importHelpers": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "declarationDir": "lib",
+    "outDir": "lib",
+    "lib": ["es6"]
   },
-  "exclude": ["example"]
+  "exclude": ["example", "src/__tests__"],
+  "include": ["src"]
 }
