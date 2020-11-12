@@ -3429,6 +3429,11 @@ react-is@^16.12.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-navigation-5e@^0.0.9:
+  version "0.0.9"
+  resolved "http://dev.moumoux.com:9088/react-native-navigation-5e/-/react-native-navigation-5e-0.0.9.tgz#219980fe9d7bdfafadafa23a96299288dc44efd4"
+  integrity sha512-r4FVQXAbtYaWEYPsh/GiPp+IXrrsjObs4IpzSpnQd7f4EoACwySplH/vINVzr1BMlgph1OthG51izV3zZIsgvA==
+
 react-native@0.62.2:
   version "0.62.2"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.62.2.tgz#d831e11a3178705449142df19a70ac2ca16bad10"

@@ -106,6 +106,14 @@ class RNRootActivity : RNBaseActivity() {
             navController.navigateUp()
         })
 
+        Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, { state ->
+            val data = state as ReadableMap
+            val count = data.getInt("count")
+            for (i in 0 until count) {
+                navController.navigateUp()
+            }
+        })
+
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
             startDestination?.let {
                 navController.navigate(it.id)

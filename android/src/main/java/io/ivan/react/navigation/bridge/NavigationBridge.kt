@@ -42,6 +42,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
         when (action) {
             "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, component to options)
             "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
+            "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
             "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
             "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, component to options)
             "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
