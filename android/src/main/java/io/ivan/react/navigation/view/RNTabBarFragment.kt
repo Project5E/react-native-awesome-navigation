@@ -76,19 +76,19 @@ class RNTabBarFragment : Fragment() {
     }
 
     private fun createTabBarFragment(): RNFragment =
-        RNFragment().also { rnFragment ->
-            arguments?.getString(ARG_TAB_BAR_COMPONENT_NAME)?.let {
-                rnFragment.mainComponentName = it
+        RNFragment().apply {
+            this@RNTabBarFragment.arguments?.getString(ARG_TAB_BAR_COMPONENT_NAME)?.let {
+                mainComponentName = it
             }
-            rnFragment.launchOptions = Bundle().also { bundle ->
+            launchOptions = Bundle().also { bundle ->
                 bundle.putString("screenID", id.toString())
             }
         }
 
     private fun createTabBarContainer(context: Context) =
-        FrameLayout(context).also { viewGroup ->
-            viewGroup.id = tabBarContainerId
-            viewGroup.layoutParams = FrameLayout.LayoutParams(
+        FrameLayout(context).apply {
+            id = tabBarContainerId
+            layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 tabBarHeight,
                 Gravity.BOTTOM
@@ -96,9 +96,9 @@ class RNTabBarFragment : Fragment() {
         }
 
     private fun createContentContainer(context: Context) =
-        FrameLayout(context).also { viewGroup ->
-            viewGroup.id = contextContainerId
-            viewGroup.layoutParams = FrameLayout.LayoutParams(
+        FrameLayout(context).apply {
+            id = contextContainerId
+            layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
             ).apply {

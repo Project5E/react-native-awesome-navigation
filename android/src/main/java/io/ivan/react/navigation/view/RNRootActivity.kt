@@ -1,8 +1,14 @@
 package io.ivan.react.navigation.view
 
+import android.content.res.Resources
 import android.os.Bundle
-import android.view.Window
+import android.util.TypedValue
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavController
@@ -10,6 +16,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
+import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
@@ -25,26 +32,37 @@ import io.ivan.react.navigation.view.model.RootViewModel
 class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
+    private lateinit var toolbar: Toolbar
 
     private val viewModel: RootViewModel by lazy { ViewModelProvider(this).get(RootViewModel::class.java) }
     private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
+    private val contextContainerId by lazy { View.generateViewId() }
 
     private val navController: NavController
         get() = navHostFragment.navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.beginTransaction()
-            .add(Window.ID_ANDROID_CONTENT, navHostFragment)
-            .setPrimaryNavigationFragment(navHostFragment)
-            .commit()
-
+        setContentView()
         receive()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         navController.navigateUp()
+    }
+
+    private fun setContentView() {
+        supportFragmentManager.beginTransaction()
+            .add(contextContainerId, navHostFragment)
+            .setPrimaryNavigationFragment(navHostFragment)
+            .commit()
+        setContentView(LinearLayout(this).also {
+            it.orientation = LinearLayout.VERTICAL
+            it.addView(createToolbar())
+            it.addView(createNavHostFragmentContainer())
+        })
+        setSupportActionBar(toolbar)
     }
 
     private fun receive() {
@@ -73,6 +91,7 @@ class RNRootActivity : RNBaseActivity() {
                 }
             }
             navController.setStartDestination(startDestination)
+            toolbar.setupWithNavController(navController)
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -152,6 +171,28 @@ class RNRootActivity : RNBaseActivity() {
                 arg.defaultValue = tabBarComponentName
                 arg.build()
             })
+        }
+
+    private fun getActionBarHeight(): Int =
+        TypedValue().let {
+            return if (theme.resolveAttribute(android.R.attr.actionBarSize, it, true)) {
+                TypedValue.complexToDimensionPixelSize(it.data, Resources.getSystem().displayMetrics)
+            } else 0
+        }
+
+    private fun createNavHostFragmentContainer() =
+        FragmentContainerView(this).apply {
+            id = contextContainerId
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+
+    private fun createToolbar() =
+        Toolbar(this).apply {
+            toolbar = this
+            layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, getActionBarHeight())
         }
 
 }
