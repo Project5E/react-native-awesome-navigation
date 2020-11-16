@@ -3,7 +3,6 @@ package io.ivan.react.navigation.bridge
 import com.facebook.react.bridge.*
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
-import org.json.JSONObject
 
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -47,7 +46,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
             "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, component to options)
             "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
             "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
-            else -> throw Exception("action error")
+            else -> throw RNNavigationException("action error")
         }
     }
 
@@ -61,49 +60,52 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     private fun parseRoot(root: ReadableMap?): Root? {
-        val rootJson = root?.toJSONObject()?.getJSONObject("root")
-        rootJson?.takeIf { it.length() == 1 } ?: throw Exception("setRoot must be only one parameter")
-        return with(rootJson) {
+        val rootMap = root?.getMap("root")?.takeIf { it.toHashMap().size > 0 }
+            ?: throw RNNavigationException("setRoot must be only one parameter")
+        return with(rootMap) {
             when {
-                has("tabs") -> {
+                hasKey("tabs") -> {
                     parseTabs(this).let { Tabs(RootType.TABS, it!!.first, it.second) }
                 }
-                has("stack") -> {
+                hasKey("stack") -> {
                     parseStack(this)?.let { Screen(RootType.STACK, it) }
                 }
-                has("screen") -> {
-                    parseScreen(this)?.let { Screen(RootType.SCREEN, it) }
+                hasKey("screen") -> {
+                    parseNameInScreen(this)?.let { Screen(RootType.SCREEN, it) }
                 }
-                else -> throw Exception("setRoot parameter error")
+                else -> throw RNNavigationException("setRoot parameter error")
             }
         }
     }
 
-    private fun parseScreen(root: JSONObject?): Page? {
-        return root?.optJSONObject("screen")?.optString("moduleName")?.let {
+    private fun parseNameInScreen(root: ReadableMap?): Page? {
+        return root?.getMap("screen")?.getString("moduleName")?.let {
             Page(it)
         }
     }
 
-    private fun parseStack(root: JSONObject?): Page? {
-        val stack = root?.optJSONObject("stack")
-        val rootChildren = stack?.optJSONObject("root")
-        val options = stack?.optJSONObject("options")
-        return parseScreen(rootChildren)?.copy(options = options)
+    private fun parseStack(root: ReadableMap?): Page? {
+        return root?.getMap("stack")?.let {
+            parseRootInStack(it)
+        }
     }
 
-    private fun parseTabs(root: JSONObject?): Pair<List<Page>, JSONObject?>? {
-        val tabs = root?.optJSONObject("tabs")
-        val stacks = tabs?.optJSONArray("children")
-        val options = tabs?.optJSONObject("options")
-        stacks ?: return null
+    private fun parseRootInStack(stack: ReadableMap?): Page? {
+        val root = stack?.getMap("root")
+        val options = stack?.getMap("options")
+        return parseNameInScreen(root)?.copy(options = options)
+    }
+
+    private fun parseTabs(root: ReadableMap?): Pair<List<Page>, ReadableMap?>? {
+        val tabs = root?.getMap("tabs")
+        val stacks = tabs?.getArray("children")
+        val options = tabs?.getMap("options")
+        stacks ?: throw RNNavigationException("setRoot parameter error, children is undefined")
 
         val pages = mutableListOf<Page>()
-        for (index in 0 until stacks.length()) {
-            val stack = stacks.getJSONObject(index).getJSONObject("stack")
-            val rootChildren = stack.optJSONObject("root")
-            val optionsChildren = stack.optJSONObject("options")
-            parseScreen(rootChildren)?.copy(options = optionsChildren)?.let {
+        for (index in 0 until stacks.size()) {
+            val stack = stacks.getMap(index)?.getMap("stack")
+            parseRootInStack(stack)?.let {
                 pages.add(it)
             }
         }

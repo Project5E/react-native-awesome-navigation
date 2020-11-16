@@ -1,6 +1,6 @@
 package io.ivan.react.navigation.model
 
-import org.json.JSONObject
+import com.facebook.react.bridge.ReadableMap
 
 enum class RootType {
     TABS, STACK, SCREEN
@@ -13,7 +13,7 @@ interface Root {
 data class Tabs(
     override val type: RootType,
     val pages: List<Page>,
-    val options: JSONObject? = null,
+    val options: ReadableMap? = null,
 ) : Root
 
 data class Screen(
@@ -23,5 +23,5 @@ data class Screen(
 
 data class Page(
     val rootName: String,
-    val options: JSONObject? = null,
+    val options: ReadableMap? = null,
 )

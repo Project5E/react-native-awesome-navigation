@@ -74,7 +74,7 @@ class RNRootActivity : RNBaseActivity() {
                 when {
                     this is Tabs && type == RootType.TABS -> {
                         viewModel.tabs = this
-                        options?.optString("tabBarModuleName")?.let {
+                        options?.getString("tabBarModuleName")?.let {
                             startDestination = buildDestinationWithTabBar(it)
                         }
                         // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况

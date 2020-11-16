@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
 import io.ivan.react.navigation.utils.*
@@ -109,6 +110,6 @@ class RNTabBarFragment : Fragment() {
         buildDestination(requireContext(), childFragmentManager, destinationName)
 
     private fun pageOptionList(): ArrayList<Bundle?> =
-        (viewModel.tabs?.pages?.map { it.options.toRNMap().toBundle() } ?: mutableListOf()) as ArrayList
+        (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList
 
 }
