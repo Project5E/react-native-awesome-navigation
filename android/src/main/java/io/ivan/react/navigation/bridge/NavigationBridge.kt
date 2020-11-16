@@ -39,16 +39,17 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     @ReactMethod
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?) {
         when (action) {
-            "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, component to options)
+            "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options))
             "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
             "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
             "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
-            "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, component to options)
+            "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, requirePage(component, options))
             "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
             "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
             else -> throw RNNavigationException("action error")
         }
     }
+
 
     @ReactMethod
     fun setResult(data: ReadableMap) {
@@ -111,5 +112,8 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
         }
         return pages to options
     }
+
+    private fun requirePage(component: String?, options: ReadableMap?) =
+        component?.let { Page(it, options) } ?: throw RNNavigationException("componentName is null")
 
 }

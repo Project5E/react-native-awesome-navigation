@@ -21,10 +21,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.bridge.NavigationConstants
-import io.ivan.react.navigation.model.Root
-import io.ivan.react.navigation.model.RootType
-import io.ivan.react.navigation.model.Screen
-import io.ivan.react.navigation.model.Tabs
+import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 
@@ -80,10 +77,10 @@ class RNRootActivity : RNBaseActivity() {
                         // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况
                     }
                     this is Screen && type == RootType.STACK -> {
-                        startDestination = buildDestination(page.rootName)
+                        startDestination = buildDestination(page)
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        startDestination = buildDestination(page.rootName)
+                        startDestination = buildDestination(page)
                     }
                     else -> {
                     }
@@ -113,11 +110,15 @@ class RNRootActivity : RNBaseActivity() {
 
     private fun dispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
-            val data = state as Pair<String, ReadableMap>
-            val destinationName = data.first
-            val destination = buildDestination(destinationName)
+            val page = state as Page
+            val destination = buildDestination(page)
             navController.graph.addDestination(destination)
-            navController.navigate(destination.id)
+            navController.navigate(destination.id, null, navOptions {
+                anim {
+                    enter = R.anim.navigation_slide_in_right
+                    popExit = R.anim.navigation_slide_out_right
+                }
+            })
         })
 
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
@@ -139,19 +140,17 @@ class RNRootActivity : RNBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
-            val data = state as Pair<String, ReadableMap>
-            val destinationName = data.first
-            val destination = buildDestination(destinationName)
+            val page = state as Page
+            val destination = buildDestination(page)
             navController.graph.addDestination(destination)
-            val navOptionsBuilder = navOptions {
+            navController.navigate(destination.id, null, navOptions {
                 anim {
                     enter = R.anim.navigation_top_enter
                     exit = android.R.anim.fade_out
                     popEnter = android.R.anim.fade_in
                     popExit = R.anim.navigation_top_exit
                 }
-            }
-            navController.navigate(destination.id, null, navOptionsBuilder)
+            })
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
@@ -159,8 +158,8 @@ class RNRootActivity : RNBaseActivity() {
         })
     }
 
-    private fun buildDestination(destinationName: String): NavDestination =
-        buildDestination(this, supportFragmentManager, destinationName)
+    private fun buildDestination(page: Page): NavDestination =
+        buildDestination(this, supportFragmentManager, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
         FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {

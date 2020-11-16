@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
+import io.ivan.react.navigation.model.Page
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 import java.util.*
@@ -44,12 +45,12 @@ class RNTabBarFragment : Fragment() {
             .commitNowAllowingStateLoss()
 
         viewModel.tabs?.pages?.first()?.let {
-            val startDestination = buildDestination(it.rootName)
+            val startDestination = buildDestination(it)
             navController.setStartDestination(startDestination)
             tabsId.add(startDestination.id)
         }
         viewModel.tabs?.pages?.listIterator(1)?.forEach {
-            val destination = buildDestination(it.rootName)
+            val destination = buildDestination(it)
             navController.graph.addDestinations(destination)
             tabsId.add(destination.id)
         }
@@ -106,8 +107,8 @@ class RNTabBarFragment : Fragment() {
             }
         }
 
-    private fun buildDestination(destinationName: String): NavDestination =
-        buildDestination(requireContext(), childFragmentManager, destinationName)
+    private fun buildDestination(page: Page): NavDestination =
+        buildDestination(requireContext(), childFragmentManager, page.rootName, Arguments.toBundle(page.options))
 
     private fun pageOptionList(): ArrayList<Bundle?> =
         (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList

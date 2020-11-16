@@ -26,17 +26,19 @@ fun NavController.setStartDestination(startDestination: NavDestination?) {
     }
 }
 
-fun buildDestination(context: Context, fm: FragmentManager, destinationName: String): NavDestination {
-    return FragmentNavigator(context, fm, R.id.content).createDestination().also {
+fun buildDestination(context: Context, fm: FragmentManager, destinationName: String, options: Bundle?): NavDestination {
+    return FragmentNavigator(context, fm, R.id.content).createDestination().apply {
         val viewId = ViewCompat.generateViewId()
-        it.id = viewId
-        it.className = RNFragment::class.java.name
-        it.addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
+        id = viewId
+        className = RNFragment::class.java.name
+        addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
             arg.defaultValue = destinationName
             arg.build()
         })
-        it.addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
-            arg.defaultValue = Bundle().also { bundle -> bundle.putString("screenID", viewId.toString()) }
+        addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
+            arg.defaultValue = (options ?: Bundle()).also {
+                it.putString("screenID", viewId.toString())
+            }
             arg.build()
         })
     }
