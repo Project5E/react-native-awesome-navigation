@@ -8,13 +8,13 @@ const TabBar = props => {
         onPress={() => {
           props.navigator.switchTab(0)
         }}
-        title="1111"
+        title={props.tabs[0].title}
       />
       <Button
         onPress={() => {
           props.navigator.switchTab(1)
         }}
-        title="2222"
+        title={props.tabs[1].title}
       />
     </View>
   )

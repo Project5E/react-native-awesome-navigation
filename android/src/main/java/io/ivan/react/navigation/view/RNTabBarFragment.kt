@@ -16,8 +16,8 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
+import java.util.*
 
-const val ARG_TAB_BAR_COMPONENT_NAME = "arg_tab_bar_component_name"
 
 class RNTabBarFragment : Fragment() {
 
@@ -77,11 +77,10 @@ class RNTabBarFragment : Fragment() {
 
     private fun createTabBarFragment(): RNFragment =
         RNFragment().apply {
-            this@RNTabBarFragment.arguments?.getString(ARG_TAB_BAR_COMPONENT_NAME)?.let {
-                mainComponentName = it
-            }
-            launchOptions = Bundle().also { bundle ->
-                bundle.putString("screenID", id.toString())
+            mainComponentName = viewModel.tabBarComponentName
+            launchOptions = Bundle().also {
+                it.putString("screenID", id.toString())
+                it.putSerializable("tabs", pageOptionList())
             }
         }
 
@@ -108,5 +107,8 @@ class RNTabBarFragment : Fragment() {
 
     private fun buildDestination(destinationName: String): NavDestination =
         buildDestination(requireContext(), childFragmentManager, destinationName)
+
+    private fun pageOptionList(): ArrayList<Bundle?> =
+        (viewModel.tabs?.pages?.map { it.options.toRNMap().toBundle() } ?: mutableListOf()) as ArrayList
 
 }

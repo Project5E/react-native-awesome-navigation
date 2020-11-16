@@ -72,12 +72,12 @@ fun JSONObject?.toRNMap(): WritableMap? {
     return map
 }
 
-fun Array<Any>?.toRNArray(): WritableArray? {
+fun Array<Any?>?.toRNArray(): WritableArray? {
     return this?.let { Arguments.fromArray(it) }
 }
 
-fun List<Any>?.toRNArray(): WritableArray? {
-    return this?.let { Arguments.fromList(it) }
+fun List<Any?>?.toRNArray(): WritableArray? {
+    return this?.let { Arguments.makeNativeArray(it) }
 }
 
 fun ReadableArray?.toJSONObject(): JSONArray? {

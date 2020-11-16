@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
@@ -167,10 +166,7 @@ class RNRootActivity : RNBaseActivity() {
         FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
-            it.addArgument(ARG_TAB_BAR_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
-                arg.defaultValue = tabBarComponentName
-                arg.build()
-            })
+            viewModel.tabBarComponentName = tabBarComponentName
         }
 
     private fun getActionBarHeight(): Int =
