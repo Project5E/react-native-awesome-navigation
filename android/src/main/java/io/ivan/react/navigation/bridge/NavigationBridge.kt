@@ -40,11 +40,11 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?) {
         when (action) {
             "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options))
-            "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
-            "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
-            "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
             "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, requirePage(component, options))
+            "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
+            "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
             "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
+            "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
             "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
             else -> throw RNNavigationException("action error")
         }

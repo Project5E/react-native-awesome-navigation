@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
@@ -111,17 +112,27 @@ class RNRootActivity : RNBaseActivity() {
     private fun dispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
             val page = state as Page
-            val destination = buildDestination(page)
-            navController.graph.addDestination(destination)
-            navController.navigate(destination.id, null, navOptions {
-                anim {
-                    enter = R.anim.navigation_slide_in_right
-                    popExit = R.anim.navigation_slide_out_right
-                }
+            addDestinationAndNavigate(page)
+        })
+
+        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
+            val page = state as Page
+            addDestinationAndNavigate(page, null, navOptions {
+                anim(anim_top_enter_top_exit)
             })
         })
 
+        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
+            startDestination?.let {
+                navController.navigate(it.id)
+            }
+        })
+
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
+            navController.navigateUp()
+        })
+
+        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
             navController.navigateUp()
         })
 
@@ -131,30 +142,6 @@ class RNRootActivity : RNBaseActivity() {
             for (i in 0 until count) {
                 navController.navigateUp()
             }
-        })
-
-        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
-            startDestination?.let {
-                navController.navigate(it.id)
-            }
-        })
-
-        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
-            val page = state as Page
-            val destination = buildDestination(page)
-            navController.graph.addDestination(destination)
-            navController.navigate(destination.id, null, navOptions {
-                anim {
-                    enter = R.anim.navigation_top_enter
-                    exit = android.R.anim.fade_out
-                    popEnter = android.R.anim.fade_in
-                    popExit = R.anim.navigation_top_exit
-                }
-            })
-        })
-
-        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
-            navController.navigateUp()
         })
     }
 
@@ -167,6 +154,16 @@ class RNRootActivity : RNBaseActivity() {
             it.className = RNTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName
         }
+
+    private fun addDestinationAndNavigate(
+        page: Page,
+        args: Bundle? = null,
+        navOptions: NavOptions? = navOptions { anim(anim_slide_in_right_out_right) }
+    ) {
+        val destination = buildDestination(page)
+        navController.graph.addDestination(destination)
+        navController.navigate(destination.id, args, navOptions)
+    }
 
     private fun getActionBarHeight(): Int =
         TypedValue().let {
