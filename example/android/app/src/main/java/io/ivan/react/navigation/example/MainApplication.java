@@ -10,7 +10,7 @@ import com.facebook.soloader.SoLoader;
 
 import java.util.List;
 
-import io.ivan.react.navigation.bridge.NavigationPackage;
+import io.ivan.react.navigation.NavigationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

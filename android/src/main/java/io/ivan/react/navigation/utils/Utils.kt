@@ -7,7 +7,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import io.ivan.react.navigation.bridge.NavigationConstants
+import io.ivan.react.navigation.NavigationConstants
 
 
 val Context.reactNativeHost: ReactNativeHost get() = (applicationContext as ReactApplication).reactNativeHost

@@ -1,4 +1,4 @@
-package io.ivan.react.navigation.bridge
+package io.ivan.react.navigation
 
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule

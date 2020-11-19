@@ -13,15 +13,15 @@ interface Root {
 data class Tabs(
     override val type: RootType,
     val pages: List<Page>,
-    val options: ReadableMap? = null,
+    val options: ReadableMap? = null
 ) : Root
 
 data class Screen(
     override val type: RootType,
-    val page: Page,
+    val page: Page
 ) : Root
 
 data class Page(
     val rootName: String,
-    val options: ReadableMap? = null,
+    val options: ReadableMap? = null
 )

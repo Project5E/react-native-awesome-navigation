@@ -18,7 +18,7 @@ import com.facebook.react.devsupport.DoubleTapReloadRecognizer
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
-import io.ivan.react.navigation.bridge.NavigationConstants
+import io.ivan.react.navigation.NavigationConstants
 import io.ivan.react.navigation.utils.sendNavigationEvent
 
 const val ARG_COMPONENT_NAME = "arg_component_name"

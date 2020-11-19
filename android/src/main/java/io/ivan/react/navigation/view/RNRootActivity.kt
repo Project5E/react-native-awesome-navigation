@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -20,13 +21,13 @@ import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
+import io.ivan.react.navigation.NavigationConstants
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.bridge.NavigationConstants
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 
-class RNRootActivity : RNBaseActivity() {
+open class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
     private lateinit var toolbar: Toolbar
@@ -63,11 +64,11 @@ class RNRootActivity : RNBaseActivity() {
     }
 
     private fun receive() {
-        Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, { state ->
+        Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, Observer { state ->
             val pair = state as Pair<String, ReadableMap>
         })
 
-        Store.reducer(ACTION_SET_ROOT)?.observe(this, { state ->
+        Store.reducer(ACTION_SET_ROOT)?.observe(this, Observer { state ->
             with(state as Root) {
                 when {
                     this is Tabs && type == RootType.TABS -> {
@@ -91,12 +92,12 @@ class RNRootActivity : RNBaseActivity() {
             toolbar.setupWithNavController(navController)
         })
 
-        Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
+        Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, Observer { state ->
             val promise = state as Promise
             promise.resolve(navController.currentDestination?.id)
         })
 
-        Store.reducer(ACTION_SET_RESULT)?.observe(this, { state ->
+        Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
             val data = state as ReadableMap
 
             sendNavigationEvent(
@@ -110,33 +111,33 @@ class RNRootActivity : RNBaseActivity() {
     }
 
     private fun dispatch() {
-        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
+        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
             val page = state as Page
             addDestinationAndNavigate(page)
         })
 
-        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
+        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
             addDestinationAndNavigate(page, null, navOptions {
                 anim(anim_top_enter_top_exit)
             })
         })
 
-        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
+        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
             startDestination?.let {
                 navController.navigate(it.id)
             }
         })
 
-        Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
+        Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
             navController.navigateUp()
         })
 
-        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, {
+        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer {
             navController.navigateUp()
         })
 
-        Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, { state ->
+        Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, Observer { state ->
             val data = state as ReadableMap
             val count = data.getInt("count")
             for (i in 0 until count) {
