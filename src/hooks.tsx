@@ -12,7 +12,7 @@ import {
   VIEW_DID_DISAPPEAR,
 } from './navigationModule'
 
-function useVisible(screenID: string) {
+export function useVisible(screenID: string) {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const subscription = EventEmitter.addListener(NAVIGATION_EVENT, (data: any) => {

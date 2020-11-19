@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-5e",
-  "version": "0.0.9",
+  "version": "0.0.14",
   "description": "native-navigation",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
