@@ -35,6 +35,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
+    self.tabBar.translucent = NO;
     if (self.hasCustomTabBar) {
         [self customTabBar];
     }
