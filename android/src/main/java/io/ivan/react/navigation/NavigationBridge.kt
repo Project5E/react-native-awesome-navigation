@@ -61,7 +61,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     private fun parseRoot(root: ReadableMap?): Root? {
-        val rootMap = root?.getMap("root")?.takeIf { it.toHashMap().size > 0 }
+        val rootMap = root?.optMap("root")?.takeIf { it.toHashMap().size > 0 }
             ?: throw RNNavigationException("setRoot must be only one parameter")
         return with(rootMap) {
             when {
@@ -80,32 +80,32 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     private fun parseNameInScreen(root: ReadableMap?): Page? {
-        return root?.getMap("screen")?.getString("moduleName")?.let {
+        return root?.optMap("screen")?.optString("moduleName")?.let {
             Page(it)
         }
     }
 
     private fun parseStack(root: ReadableMap?): Page? {
-        return root?.getMap("stack")?.let {
+        return root?.optMap("stack")?.let {
             parseRootInStack(it)
         }
     }
 
     private fun parseRootInStack(stack: ReadableMap?): Page? {
-        val root = stack?.getMap("root")
-        val options = stack?.getMap("options")
+        val root = stack?.optMap("root")
+        val options = stack?.optMap("options")
         return parseNameInScreen(root)?.copy(options = options)
     }
 
     private fun parseTabs(root: ReadableMap?): Pair<List<Page>, ReadableMap?>? {
-        val tabs = root?.getMap("tabs")
-        val stacks = tabs?.getArray("children")
-        val options = tabs?.getMap("options")
+        val tabs = root?.optMap("tabs")
+        val stacks = tabs?.optArray("children")
+        val options = tabs?.optMap("options")
         stacks ?: throw RNNavigationException("setRoot parameter error, children is undefined")
 
         val pages = mutableListOf<Page>()
         for (index in 0 until stacks.size()) {
-            val stack = stacks.getMap(index)?.getMap("stack")
+            val stack = stacks.getMap(index)?.optMap("stack")
             parseRootInStack(stack)?.let {
                 pages.add(it)
             }
