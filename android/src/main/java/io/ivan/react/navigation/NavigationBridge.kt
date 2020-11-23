@@ -13,7 +13,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun registerReactComponent(componentName: String, componentOptions: ReadableMap) {
-        Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, componentName to componentOptions)
+        Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, requirePage(componentName, componentOptions))
     }
 
     @ReactMethod

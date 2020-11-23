@@ -61,11 +61,13 @@ open class RNRootActivity : RNBaseActivity() {
             it.addView(createNavHostFragmentContainer())
         })
         setSupportActionBar(toolbar)
+        supportActionBar?.hide()
     }
 
     private fun receive() {
         Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, Observer { state ->
-            val pair = state as Pair<String, ReadableMap>
+            val page = state as Page
+            viewModel.navigationOptionCache[page.rootName] = page.options
         })
 
         Store.reducer(ACTION_SET_ROOT)?.observe(this, Observer { state ->
@@ -89,6 +91,7 @@ open class RNRootActivity : RNBaseActivity() {
                 }
             }
             navController.setStartDestination(startDestination)
+            observeNavigationBarStyle()
             toolbar.setupWithNavController(navController)
         })
 
@@ -164,6 +167,32 @@ open class RNRootActivity : RNBaseActivity() {
         val destination = buildDestination(page)
         navController.graph.addDestination(destination)
         navController.navigate(destination.id, args, navOptions)
+    }
+
+    private fun setNavigationBarStyle(pageRootName: String) {
+        val navigationOption = viewModel.navigationOptionCache[pageRootName]
+        when (navigationOption?.getBoolean("hideNavigationBar")) {
+            true -> {
+                supportActionBar?.hide()
+            }
+            false -> {
+                supportActionBar?.title = navigationOption.getString("title") ?: ""
+                supportActionBar?.show()
+            }
+            else -> {
+            }
+        }
+    }
+
+    private fun observeNavigationBarStyle() {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination is FragmentNavigator.Destination && destination.className != RNTabBarFragment::class.java.name) {
+                val navArgument = destination.arguments[ARG_COMPONENT_NAME]
+                navArgument?.defaultValue?.let {
+                    setNavigationBarStyle(it as String)
+                }
+            }
+        }
     }
 
     private fun getActionBarHeight(): Int =
