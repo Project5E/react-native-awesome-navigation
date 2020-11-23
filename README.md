@@ -8,6 +8,12 @@ native-navigation
 yarn add react-native-navigation-5e
 
 # npm install react-native-navigation-5e
+
+Android 在settings.gradle 中需要添加:
+
+include ':app', ':react-native-navigation-5e-android'
+
+project(':react-native-navigation-5e-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-navigation-5e/android')
 ```
 
 ## Usage
