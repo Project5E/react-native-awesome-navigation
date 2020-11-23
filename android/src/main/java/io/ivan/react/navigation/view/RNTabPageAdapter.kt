@@ -2,13 +2,16 @@ package io.ivan.react.navigation.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import io.ivan.react.navigation.model.Tabs
 
-class RNTabPageAdapter(fragment: Fragment, private val tabs: Tabs) : FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = tabs.pages.size
+class RNTabPageAdapter(fm: FragmentManager, private val tabs: Tabs) :
+    FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    override fun createFragment(position: Int): Fragment = RNFragment().apply {
+    override fun getCount(): Int = tabs.pages.size
+
+    override fun getItem(position: Int): Fragment = RNFragment().apply {
         mainComponentName = tabs.pages[position].rootName
         launchOptions = Bundle().also {
             it.putString("screenID", "$id#$position")
