@@ -89,7 +89,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         }
         requireActivity().sendNavigationEvent(
             NavigationConstants.VIEW_DID_DISAPPEAR,
-            findNavController().currentBackStackEntry?.destination?.id?.toString()
+            findNavController().previousBackStackEntry?.destination?.id?.toString()
         )
     }
 

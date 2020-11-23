@@ -15,8 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
-import io.ivan.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
-import io.ivan.react.navigation.utils.Store
+import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 import java.util.*
 
@@ -63,7 +62,7 @@ class RNTabBarFragment : Fragment() {
 
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
             val data = state as ReadableMap
-            val index = data.getInt("index")
+            val index = data.optInt("index")
             viewPager.currentItem = index
         })
     }
@@ -105,15 +104,13 @@ class RNTabBarFragment : Fragment() {
     private fun setNavigationBarStyle(pageRootName: String) {
         val navigationOption = viewModel.navigationOptionCache[pageRootName]
         with(activity as AppCompatActivity) {
-            when (navigationOption?.getBoolean("hideNavigationBar")) {
+            when (navigationOption?.optBoolean("hideNavigationBar")) {
                 true -> {
                     supportActionBar?.hide()
                 }
-                false -> {
-                    supportActionBar?.show()
-                    supportActionBar?.title = navigationOption.getString("title") ?: ""
-                }
                 else -> {
+                    supportActionBar?.show()
+                    supportActionBar?.title = navigationOption?.optString("title") ?: ""
                 }
             }
         }

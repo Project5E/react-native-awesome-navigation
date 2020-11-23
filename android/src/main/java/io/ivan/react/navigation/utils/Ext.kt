@@ -3,27 +3,27 @@ package io.ivan.react.navigation.utils
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 
-fun ReadableMap.optBoolean(name: String): Boolean? {
+fun ReadableMap.optBoolean(name: String): Boolean {
     return if (hasKey(name) && !(isNull(name))) {
         getBoolean(name)
     } else {
-        null
+        false
     }
 }
 
-fun ReadableMap.optDouble(name: String): Double? {
+fun ReadableMap.optDouble(name: String): Double {
     return if (hasKey(name) && !(isNull(name))) {
         getDouble(name)
     } else {
-        null
+        Double.NaN
     }
 }
 
-fun ReadableMap.optInt(name: String): Int? {
+fun ReadableMap.optInt(name: String): Int {
     return if (hasKey(name) && !(isNull(name))) {
         getInt(name)
     } else {
-        null
+        -1
     }
 }
 

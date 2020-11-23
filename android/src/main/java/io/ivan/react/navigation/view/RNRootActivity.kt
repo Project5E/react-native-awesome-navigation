@@ -66,8 +66,7 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun receive() {
         Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, Observer { state ->
-            val page = state as Page
-            viewModel.navigationOptionCache[page.rootName] = page.options
+            viewModel.navigationOptionCache.putAll(state as MutableMap<String, ReadableMap?>)
         })
 
         Store.reducer(ACTION_SET_ROOT)?.observe(this, Observer { state ->
@@ -75,7 +74,7 @@ open class RNRootActivity : RNBaseActivity() {
                 when {
                     this is Tabs && type == RootType.TABS -> {
                         viewModel.tabs = this
-                        options?.getString("tabBarModuleName")?.let {
+                        options?.optString("tabBarModuleName")?.let {
                             startDestination = buildDestinationWithTabBar(it)
                         }
                         // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况
@@ -142,7 +141,7 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, Observer { state ->
             val data = state as ReadableMap
-            val count = data.getInt("count")
+            val count = data.optInt("count")
             for (i in 0 until count) {
                 navController.navigateUp()
             }
@@ -171,15 +170,13 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun setNavigationBarStyle(pageRootName: String) {
         val navigationOption = viewModel.navigationOptionCache[pageRootName]
-        when (navigationOption?.getBoolean("hideNavigationBar")) {
+        when (navigationOption?.optBoolean("hideNavigationBar")) {
             true -> {
                 supportActionBar?.hide()
             }
-            false -> {
-                supportActionBar?.title = navigationOption.getString("title") ?: ""
-                supportActionBar?.show()
-            }
             else -> {
+                supportActionBar?.title = navigationOption?.optString("title") ?: ""
+                supportActionBar?.show()
             }
         }
     }

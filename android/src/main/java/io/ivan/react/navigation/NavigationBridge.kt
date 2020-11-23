@@ -7,17 +7,21 @@ import io.ivan.react.navigation.utils.*
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
+    private val optionsCache: MutableMap<String, ReadableMap?> = mutableMapOf()
+
     override fun getName(): String {
         return "ALCNavigationBridge"
     }
 
     @ReactMethod
     fun registerReactComponent(componentName: String, componentOptions: ReadableMap) {
-        Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, requirePage(componentName, componentOptions))
+        optionsCache[componentName] = componentOptions
     }
 
     @ReactMethod
     fun setRoot(data: ReadableMap) {
+        Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, optionsCache)
+
         parseRoot(data)?.let { root ->
             Store.dispatch(ACTION_SET_ROOT, root)
         }
