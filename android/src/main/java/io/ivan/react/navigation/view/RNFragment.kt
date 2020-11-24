@@ -27,7 +27,7 @@ const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
 open class RNFragment : Fragment(), PermissionAwareActivity {
 
     open var mainComponentName: String? = null
-    open var launchOptions: Bundle? = null
+    open var launchOptions: Bundle = Bundle()
 
     private var mPermissionListener: PermissionListener? = null
 
@@ -40,10 +40,11 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            mainComponentName = it.getString(ARG_COMPONENT_NAME)
-            launchOptions = it.getBundle(ARG_LAUNCH_OPTIONS)
+        arguments?.apply {
+            getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
+            getBundle(ARG_LAUNCH_OPTIONS)?.let { launchOptions = it }
         }
+        launchOptions.getBundle("screenID") ?: launchOptions.putString("screenID", View.generateViewId().toString())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

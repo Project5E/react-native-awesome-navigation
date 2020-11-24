@@ -75,7 +75,6 @@ class RNTabBarFragment : Fragment() {
         RNFragment().apply {
             mainComponentName = viewModel.tabBarComponentName
             launchOptions = Bundle().also {
-                it.putString("screenID", id.toString())
                 it.putSerializable("tabs", pageOptionList())
             }
         }
