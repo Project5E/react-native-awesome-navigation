@@ -1,5 +1,6 @@
 package io.ivan.react.navigation.view
 
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.TypedValue
@@ -27,6 +28,7 @@ import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RootViewModel
 
+
 open class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
@@ -47,7 +49,11 @@ open class RNRootActivity : RNBaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        navController.navigateUp()
+        navController.previousBackStackEntry?.apply { navController.navigateUp() }
+            ?: startActivity(Intent(Intent.ACTION_MAIN).also {
+                it.addCategory(Intent.CATEGORY_HOME)
+                it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            })
     }
 
     private fun setContentView() {
