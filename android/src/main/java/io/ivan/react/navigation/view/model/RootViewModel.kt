@@ -5,7 +5,7 @@ import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.model.Tabs
 
 class RootViewModel : ViewModel() {
-    var tabBarComponentName: String? = null
+    var tabBarComponentName: String = ""
     var tabs: Tabs? = null
     val navigationOptionCache: MutableMap<String, ReadableMap?> = mutableMapOf()
 }

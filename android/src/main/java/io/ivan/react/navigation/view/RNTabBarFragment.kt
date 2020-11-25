@@ -7,15 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
-import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
+import io.ivan.react.navigation.utils.Store
+import io.ivan.react.navigation.utils.optInt
 import io.ivan.react.navigation.view.model.RootViewModel
 import io.ivan.react.navigation.view.widget.SwipeControllableViewPager
 import java.util.*
@@ -25,10 +25,10 @@ class RNTabBarFragment : Fragment() {
     private lateinit var view: ViewGroup
     private lateinit var viewPager: SwipeControllableViewPager
 
-    private val tabBarHeight = PixelUtil.toPixelFromDIP(56f).toInt()
-
     private val viewModel: RootViewModel by lazy { ViewModelProvider(requireActivity()).get(RootViewModel::class.java) }
     private val tabBarContainerId by lazy { View.generateViewId() }
+
+    private val tabBarHeight = PixelUtil.toPixelFromDIP(56f).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +52,6 @@ class RNTabBarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.tabs?.let { viewPager.adapter = RNTabPageAdapter(childFragmentManager, it) }
-        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                val page = viewModel.tabs?.pages?.get(position)
-                page?.let { setNavigationBarStyle(it.rootName) }
-            }
-        })
 
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
             val data = state as ReadableMap
@@ -104,21 +98,5 @@ class RNTabBarFragment : Fragment() {
 
     private fun pageOptionList(): ArrayList<Bundle?> =
         (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList
-
-
-    private fun setNavigationBarStyle(pageRootName: String) {
-        val navigationOption = viewModel.navigationOptionCache[pageRootName]
-        with(activity as AppCompatActivity) {
-            when (navigationOption?.optBoolean("hideNavigationBar")) {
-                true -> {
-                    supportActionBar?.hide()
-                }
-                else -> {
-                    supportActionBar?.show()
-                    supportActionBar?.title = navigationOption?.optString("title") ?: ""
-                }
-            }
-        }
-    }
 
 }

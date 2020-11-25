@@ -2,15 +2,23 @@ package io.ivan.react.navigation.view
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.facebook.infer.annotation.Assertions
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
@@ -19,20 +27,25 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.utils.optBoolean
+import io.ivan.react.navigation.utils.optString
 import io.ivan.react.navigation.utils.sendNavigationEvent
+import io.ivan.react.navigation.view.model.RootViewModel
 
 const val ARG_COMPONENT_NAME = "arg_component_name"
 const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
 
 open class RNFragment : Fragment(), PermissionAwareActivity {
 
-    open var mainComponentName: String? = null
+    open var mainComponentName: String = ""
     open var launchOptions: Bundle = Bundle()
 
-    private var mPermissionListener: PermissionListener? = null
-
     private lateinit var reactRootView: ReactRootView
+    private lateinit var toolbar: Toolbar
 
+    private val viewModel: RootViewModel by lazy { ViewModelProvider(requireActivity()).get(RootViewModel::class.java) }
+
+    private var mPermissionListener: PermissionListener? = null
     private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
     private val reactNativeHost
@@ -53,13 +66,21 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         } else {
             (reactRootView.parent as? ViewGroup)?.removeView(reactRootView)
         }
-        return reactRootView
+        return if (mainComponentName == viewModel.tabBarComponentName) {
+            reactRootView
+        } else {
+            LinearLayout(inflater.context).also {
+                it.orientation = LinearLayout.VERTICAL
+                it.addView(createToolbar(inflater.context))
+                it.addView(reactRootView)
+            }
+        }
     }
 
-    private fun createReactRootView(context: Context): ReactRootView {
-        checkNotNull(mainComponentName) { "Cannot loadApp if component name is null" }
-        return ReactRootView(context).apply {
-            startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (this::toolbar.isInitialized) {
+            setupToolbar()
         }
     }
 
@@ -181,6 +202,44 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     override fun requestPermissions(permissions: Array<out String>, requestCode: Int, listener: PermissionListener) {
         mPermissionListener = listener
         requestPermissions(permissions, requestCode)
+    }
+
+    private fun getActionBarHeight(): Int =
+        TypedValue().let {
+            return if (requireActivity().theme.resolveAttribute(android.R.attr.actionBarSize, it, true)) {
+                TypedValue.complexToDimensionPixelSize(it.data, Resources.getSystem().displayMetrics)
+            } else 0
+        }
+
+    private fun setupToolbar() {
+        with(requireActivity() as AppCompatActivity) {
+            setSupportActionBar(toolbar)
+            toolbar.setupWithNavController(findNavController())
+
+            val navigationOption = viewModel.navigationOptionCache[mainComponentName]
+            when (navigationOption?.optBoolean("hideNavigationBar")) {
+                true -> {
+                    supportActionBar?.hide()
+                }
+                else -> {
+                    supportActionBar?.show()
+                    supportActionBar?.title = navigationOption?.optString("title") ?: ""
+                }
+            }
+        }
+    }
+
+    private fun createToolbar(context: Context) =
+        Toolbar(context).apply {
+            toolbar = this
+            layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, getActionBarHeight())
+        }
+
+    private fun createReactRootView(context: Context): ReactRootView {
+        check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
+        return ReactRootView(context).apply {
+            startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
+        }
     }
 
 }

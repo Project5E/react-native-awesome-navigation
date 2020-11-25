@@ -4,7 +4,6 @@ import com.facebook.react.bridge.*
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
 
-
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     private val optionsCache: MutableMap<String, ReadableMap?> = mutableMapOf()
