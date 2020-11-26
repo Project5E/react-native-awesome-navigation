@@ -116,7 +116,7 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
             addDestinationAndNavigate(page, null, navOptions {
-                anim(anim_top_enter_top_exit)
+                anim(anim_bottom_enter_bottom_exit)
             })
         })
 
@@ -156,7 +156,7 @@ open class RNRootActivity : RNBaseActivity() {
     private fun addDestinationAndNavigate(
         page: Page,
         args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(anim_slide_in_right_out_right) }
+        navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
     ) {
         val destination = buildDestination(page)
         navController.graph.addDestination(destination)
