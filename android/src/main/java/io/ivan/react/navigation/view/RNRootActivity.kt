@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -21,13 +20,14 @@ import io.ivan.react.navigation.NavigationConstants
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
-import io.ivan.react.navigation.view.model.RootViewModel
+import io.ivan.react.navigation.view.model.RNViewModel
+import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
 
-    private val viewModel: RootViewModel by lazy { ViewModelProvider(this).get(RootViewModel::class.java) }
+    private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
     private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
     private val contextContainerId by lazy { View.generateViewId() }
 

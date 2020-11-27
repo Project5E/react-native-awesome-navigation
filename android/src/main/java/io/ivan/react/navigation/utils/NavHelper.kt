@@ -8,9 +8,10 @@ import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.view.ARG_COMPONENT_NAME
-import io.ivan.react.navigation.view.ARG_LAUNCH_OPTIONS
 import io.ivan.react.navigation.view.RNFragment
+
+const val ARG_COMPONENT_NAME = "arg_component_name"
+const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
 
 fun createNavHostFragmentWithoutGraph() = NavHostFragment.create(0)
 

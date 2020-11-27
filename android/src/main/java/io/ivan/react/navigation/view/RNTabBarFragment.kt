@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.PixelUtil
 import io.ivan.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
 import io.ivan.react.navigation.utils.Store
 import io.ivan.react.navigation.utils.optInt
-import io.ivan.react.navigation.view.model.RootViewModel
+import io.ivan.react.navigation.view.model.RNViewModel
+import io.ivan.react.navigation.view.model.createRNViewModel
 import io.ivan.react.navigation.view.widget.SwipeControllableViewPager
 import java.util.*
 
@@ -25,9 +25,9 @@ class RNTabBarFragment : Fragment() {
     private lateinit var view: ViewGroup
     private lateinit var viewPager: SwipeControllableViewPager
 
-    private val viewModel: RootViewModel by lazy { ViewModelProvider(requireActivity()).get(RootViewModel::class.java) }
-    private val tabBarContainerId by lazy { View.generateViewId() }
+    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
+    private val tabBarContainerId by lazy { View.generateViewId() }
     private val tabBarHeight = PixelUtil.toPixelFromDIP(56f).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {

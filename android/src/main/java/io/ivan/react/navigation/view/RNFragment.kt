@@ -3,6 +3,7 @@ package io.ivan.react.navigation.view
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,7 +17,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.infer.annotation.Assertions
@@ -27,13 +27,9 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.ivan.react.navigation.NavigationConstants
-import io.ivan.react.navigation.utils.optBoolean
-import io.ivan.react.navigation.utils.optString
-import io.ivan.react.navigation.utils.sendNavigationEvent
-import io.ivan.react.navigation.view.model.RootViewModel
-
-const val ARG_COMPONENT_NAME = "arg_component_name"
-const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
+import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.view.model.RNViewModel
+import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNFragment : Fragment(), PermissionAwareActivity {
 
@@ -43,7 +39,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     private lateinit var reactRootView: ReactRootView
     private lateinit var toolbar: Toolbar
 
-    private val viewModel: RootViewModel by lazy { ViewModelProvider(requireActivity()).get(RootViewModel::class.java) }
+    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
     private var mPermissionListener: PermissionListener? = null
     private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
@@ -233,6 +229,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         Toolbar(context).apply {
             toolbar = this
             layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, getActionBarHeight())
+            setBackgroundColor(Color.WHITE)
         }
 
     private fun createReactRootView(context: Context): ReactRootView {
