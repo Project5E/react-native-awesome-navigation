@@ -73,7 +73,7 @@
     UIWindow *window = RCTSharedApplication().delegate.window;
     UIViewController *root = window.rootViewController;
     ALCNavigationController *nav;
-    if (root.presentedViewController) {
+    if ([root.presentedViewController isKindOfClass:[ALCNavigationController class]]) {
         nav = (ALCNavigationController *)root.presentedViewController;
     } else {
         switch (self.layoutType) {
