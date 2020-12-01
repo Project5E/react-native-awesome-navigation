@@ -1,15 +1,13 @@
 package io.ivan.react.navigation.view
 
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
+import io.ivan.react.navigation.R
 import io.ivan.react.navigation.utils.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.utils.ARG_LAUNCH_OPTIONS
 import io.ivan.react.navigation.utils.optBoolean
@@ -32,27 +30,24 @@ open class RNActivity : RNBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.component_container)
+
+        toolbar = findViewById(R.id.toolbar)
+        reactRootView = ReactRootView(this)
+
         intent.extras?.apply {
             getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
             getBundle(ARG_LAUNCH_OPTIONS)?.let { launchOptions = it }
         }
         launchOptions.getBundle("screenID") ?: launchOptions.putString("screenID", View.generateViewId().toString())
 
-        reactRootView = createReactRootView()
+        loadApp()
 
-        setContentView(
-            if (mainComponentName == viewModel.tabBarComponentName) {
-                reactRootView
-            } else {
-                LinearLayout(this).also {
-                    it.orientation = LinearLayout.VERTICAL
-                    it.addView(createToolbar())
-                    it.addView(reactRootView)
-                }
-            }
-        )
-
-        setupToolbar()
+        toolbar.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
+            visibility = View.VISIBLE
+            setBackgroundColor(Color.WHITE)
+            setupToolbar()
+        }
     }
 
     override fun onBackPressed() {
@@ -63,13 +58,6 @@ open class RNActivity : RNBaseActivity() {
     private fun navigationUp() {
         finish()
     }
-
-    private fun getActionBarHeight(): Int =
-        TypedValue().let {
-            return if (theme.resolveAttribute(android.R.attr.actionBarSize, it, true)) {
-                TypedValue.complexToDimensionPixelSize(it.data, Resources.getSystem().displayMetrics)
-            } else 0
-        }
 
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
@@ -90,17 +78,8 @@ open class RNActivity : RNBaseActivity() {
         }
     }
 
-    private fun createToolbar() =
-        Toolbar(this).apply {
-            toolbar = this
-            layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, getActionBarHeight())
-            setBackgroundColor(Color.WHITE)
-        }
-
-    private fun createReactRootView(): ReactRootView {
+    private fun loadApp() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        return ReactRootView(this).apply {
-            startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
-        }
+        reactRootView.startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
     }
 }

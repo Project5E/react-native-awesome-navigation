@@ -34,7 +34,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     open var launchOptions: Bundle = Bundle()
 
     private var reactRootView: ReactRootView? = null
-    private var toolbar: Toolbar? = null
+    private lateinit var toolbar: Toolbar
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
@@ -68,7 +68,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar?.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
+        toolbar.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
             visibility = View.VISIBLE
             setBackgroundColor(Color.WHITE)
             setupToolbar()
@@ -204,7 +204,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     private fun setupToolbar() {
         with(requireActivity() as AppCompatActivity) {
             setSupportActionBar(toolbar)
-            toolbar?.setupWithNavController(findNavController())
+            toolbar.setupWithNavController(findNavController())
 
             val navigationOption = viewModel.navigationOptionCache[mainComponentName]
             when (navigationOption?.optBoolean("hideNavigationBar")) {
