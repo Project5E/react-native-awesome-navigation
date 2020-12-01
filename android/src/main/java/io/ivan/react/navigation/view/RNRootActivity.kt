@@ -2,10 +2,7 @@ package io.ivan.react.navigation.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -29,25 +26,18 @@ open class RNRootActivity : RNBaseActivity() {
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
     private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
-    private val contextContainerId by lazy { View.generateViewId() }
 
     private val navController: NavController
         get() = navHostFragment.navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_root)
+
         supportFragmentManager.beginTransaction()
-            .add(contextContainerId, navHostFragment)
+            .add(R.id.container, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
-
-        setContentView(FragmentContainerView(this).apply {
-            id = contextContainerId
-            layoutParams = FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        })
 
         receive()
     }
