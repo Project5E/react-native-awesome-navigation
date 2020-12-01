@@ -1,18 +1,14 @@
 package io.ivan.react.navigation.view
 
-import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -27,6 +23,7 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.R
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
@@ -36,8 +33,8 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     open var mainComponentName: String = ""
     open var launchOptions: Bundle = Bundle()
 
-    private lateinit var reactRootView: ReactRootView
-    private lateinit var toolbar: Toolbar
+    private var reactRootView: ReactRootView? = null
+    private var toolbar: Toolbar? = null
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
@@ -57,25 +54,23 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (!this::reactRootView.isInitialized) {
-            reactRootView = createReactRootView(inflater.context)
+        val parent = inflater.inflate(R.layout.component_container, container, false) as ViewGroup
+        toolbar = parent.findViewById(R.id.toolbar)
+        if (reactRootView == null) {
+            reactRootView = ReactRootView(inflater.context)
+            loadApp()
         } else {
-            (reactRootView.parent as? ViewGroup)?.removeView(reactRootView)
+            (reactRootView?.parent as? ViewGroup)?.removeView(reactRootView)
         }
-        return if (mainComponentName == viewModel.tabBarComponentName) {
-            reactRootView
-        } else {
-            LinearLayout(inflater.context).also {
-                it.orientation = LinearLayout.VERTICAL
-                it.addView(createToolbar(inflater.context))
-                it.addView(reactRootView)
-            }
-        }
+        parent.addView(reactRootView)
+        return parent
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (this::toolbar.isInitialized) {
+        toolbar?.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
+            visibility = View.VISIBLE
+            setBackgroundColor(Color.WHITE)
             setupToolbar()
         }
     }
@@ -113,10 +108,11 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
 
     override fun onDestroy() {
         super.onDestroy()
-        reactRootView.unmountReactApplication()
-//        if (reactNativeHost.hasInstance()) {
-//            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
-//        }
+        reactRootView?.unmountReactApplication()
+        reactRootView = null
+        if (reactNativeHost.hasInstance()) {
+            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -200,17 +196,15 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         requestPermissions(permissions, requestCode)
     }
 
-    private fun getActionBarHeight(): Int =
-        TypedValue().let {
-            return if (requireActivity().theme.resolveAttribute(android.R.attr.actionBarSize, it, true)) {
-                TypedValue.complexToDimensionPixelSize(it.data, Resources.getSystem().displayMetrics)
-            } else 0
-        }
+    private fun loadApp() {
+        check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
+        reactRootView?.startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
+    }
 
     private fun setupToolbar() {
         with(requireActivity() as AppCompatActivity) {
             setSupportActionBar(toolbar)
-            toolbar.setupWithNavController(findNavController())
+            toolbar?.setupWithNavController(findNavController())
 
             val navigationOption = viewModel.navigationOptionCache[mainComponentName]
             when (navigationOption?.optBoolean("hideNavigationBar")) {
@@ -222,20 +216,6 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
                     supportActionBar?.title = navigationOption?.optString("title") ?: ""
                 }
             }
-        }
-    }
-
-    private fun createToolbar(context: Context) =
-        Toolbar(context).apply {
-            toolbar = this
-            layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, getActionBarHeight())
-            setBackgroundColor(Color.WHITE)
-        }
-
-    private fun createReactRootView(context: Context): ReactRootView {
-        check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        return ReactRootView(context).apply {
-            startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
         }
     }
 

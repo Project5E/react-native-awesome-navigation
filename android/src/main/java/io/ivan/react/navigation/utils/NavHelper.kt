@@ -44,6 +44,7 @@ fun buildDestination(context: Context, fm: FragmentManager, destinationName: Str
 
 val anim_right_enter_right_exit: AnimBuilder.() -> Unit = {
     enter = R.anim.navigation_slide_in_right
+    exit = R.anim.navigation_fade_out
     popExit = R.anim.navigation_slide_out_right
 }
 
