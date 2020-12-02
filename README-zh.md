@@ -1,29 +1,27 @@
-# react-native-navigation-5e
+# react-native-navigation-5e 使用文档
 
 native-navigation
 
-##[中文文档](https://github.com/Project5E/react-native-navigation-5e/wiki/原生路由使用文档)
-
-## Installation
+## 安装
 
 ```sh
 yarn add react-native-navigation-5e
 
 # npm install react-native-navigation-5e
 
-For Android link package dependencies in settings.gradle
+Android 在settings.gradle 中需要添加:
 
 include ':app', ':react-native-navigation-5e-android'
 
 project(':react-native-navigation-5e-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-navigation-5e/android')
 ```
 
-## Usage
+## 使用
 
 ```ts
 import { registerComponent, setRoot } from 'react-native-navigation-5e';
 
-// setting global style
+// 设置全局样式
 setStyle({
   hideBackTitle: true,
   hideNavigationBarShadow: true,
@@ -36,7 +34,7 @@ setStyle({
 
 beforeRegister()
 
-// register component，and set root page
+// 注册组件，然后设置根页面
 
 registerComponent('Home', Home);
 registerComponent('Setting', Setting);
@@ -50,12 +48,12 @@ setRoot({
       children: [
         {
           component: 'Home',
-          title: 'MainPage',
+          title: '主页',
           icon: Image.resolveAssetSource(require('./src/image/Home.png')),
         },
         {
           component: 'Setting',
-          title: 'Setting',
+          title: '设置',
           icon: Image.resolveAssetSource(require('./src/image/Profile.png')),
         },
       ],
@@ -64,80 +62,84 @@ setRoot({
 });
 ```
 
-Support native page and RN page mash up
-Currently offer two native style setting
-Setting title bar title and whether hide title bar or not 
+支持原生页面与RN页面混搭
+
+目前提供两个原生页面样式设置  
+设置标题以及是否隐藏导航栏
 ```ts
 Home.navigationItem = {
-  title: 'MainPage',
+  title: '主页',
   hideNavigationBar: false,
 }
 
 ```
 
 ### iOS
-Bridge should be record in AppDelegate.   
-At same time register relevant native ViewController，the ViewController should inherit ALCNativeViewController.
+需要在AppDelegate中记录bridge  
+同时注册对应原生的ViewController，该ViewController需要继承ALCNativeViewController
 ```
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   [ALCNavigationManager shared].bridge = bridge;
   [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
 ```
 
-## Navigation
+## 导航
 
-Currently support push, pop, popToRoot, present, dismiss, switchTab
+目前支持push,pop,popToRoot,present,dismiss,switchTab
 
-push pass parameter
+push传参
 ```ts
 props.navigator.push('NativeViewController', { title: 'Native' })
 ```
 
-push receive parameter
+push接收返回传值
 ```ts
 const resp = await props.navigator.push('Detail')
 ```
 
-Set value before pop
+pop前设值
 ```ts
 props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
-Present is similar with push, the 2nd is parameter, 3rd parameter is full screen or not.
+
+Present，与push类似，第二个为传参，第三个为是否全屏，后两个参数可不传
 ```ts
 props.navigator.present('Present', undefined, true)
 ```
 
-dismiss present
+dismiss present的反向操作
 ```
 props.navigator.dismiss()
 ```
 
-switchTab is for switch tab to position.
+switchTab 用于根页面自定义tabbar切换
 ```
 props.navigator.switchTab(0)
 ```
+0代表第一个tab
 
-Every page will be enrolled their own navigator  
-navigator have a unique screenID and module name  
-through navigator to manipulate page.
+每一个页面都会被注入各自所属的navigator  
+navigator含有每页页面唯一的screenID以及页面的module名  
+通过navigator来进行路由操作
 
-## Global style
-Currently include styles follows，continue updating.
+## 全局样式
+目前有以下全局样式，后续会增加更多
 ```ts
 interface GlobalStyle {
-  backIcon?: {uri: string} // set back icon
-  hideNavigationBarShadow?: boolean // if hide tool bar shadow
-  hideBackTitle?: boolean // if hide title next to back icon
-  navigationBarColor?: string // tool bar background color
-  navigationBarItemColor?: string // tool bar item color
-  tabBarColor?: string // tabbar background color
-  tabBarItemColor?: string // tabbar picked color
-  tabBarDotColor?: string // tabbar dot color
+  backIcon?: {uri: string} // 设置返回图标
+  hideNavigationBarShadow?: boolean // 隐藏导航栏底部线
+  hideBackTitle?: boolean // 是否隐藏返回按钮旁边的文字
+  navigationBarColor?: string // 导航栏背景颜色
+  navigationBarItemColor?: string // 导航栏item颜色
+
+  tabBarColor?: string // tabbar背景颜色
+  tabBarItemColor?: string // tabbar选中颜色
+  tabBarDotColor?: string // tabbar圆点颜色
 }
 ```
 
-Example
+使用
 ```ts
 setStyle({
   hideBackTitle: true,
@@ -150,7 +152,7 @@ setStyle({
 })
 ```
 
-Toolbar can be set Badge as well.
+使用原生tabbar的时候，可以设置tabbar的Badge
 
 ```ts
 setTabBadge([
@@ -166,6 +168,7 @@ setTabBadge([
   },
 ])
 ```
+其中index代表tabbar item位置，dot代表圆点，text为badge内的文字，hidden为是否显示
 
 ```ts
 export interface TabBadge {
@@ -176,11 +179,10 @@ export interface TabBadge {
 }
 ```
 
-Color is only support hexadecimal string, not support color string like 'red'.
+颜色只支持16进制，不支持red等字符串
 
-## Lifecycle
-
-Each page has their own hooks to check if the page is focused.
+## 生命周期
+每一个页面都有自己是否展示的hooks
 ```ts
 useVisibleEffect(
     props.screenID,
@@ -193,15 +195,15 @@ useVisibleEffect(
   )
 ```
 
-## Support DeepLink
+## 路径导航 -- 支持DeepLink
 
-Adding route when register
+注册的时候为页面加入路径
 ```ts
 registerComponent('Home', Home, '/home')
 registerComponent('Setting', Setting)
 ```
 
-Activiting at first page
+使用前在首页激活
 ```ts
   useEffect(() => {
     router.activate('hulaqinzi://')
@@ -214,28 +216,28 @@ Activiting at first page
 ```ts
 Router.open('hulaqinzi://home?key=value')
 ```
- Link address will be parsed as /home，paramter {key: value}，and push to Home page and pass parameter.
+会解析出路径/home，以及参数 {key: value}，并push出Home页面和传参
 
 ## hooks
 
 ### useResult
 
-This is for pass parameter when a page pop back.
+用于页面返回传参
 
 ```ts
   useResult(props.screenID, (data) => {
     console.log(data);
   })
 ```
-Type can be return ok or cancel.
+type为返回类型 ok 或 cancel
 
-Ok means back with value，cancel normal back.
+ok为带值返回，cancel为普通返回
 
-Data is back value.
+data是返回的数据
 
 ### useReClick
 
-Resopse click tabbar repeatly，this is only for each tab bar first page.
+响应重复点击tabbar事件，仅用于每一个tab的首页
 
 ```ts
   useReClick(props.screenID, () => {
@@ -250,3 +252,4 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 MIT
+
