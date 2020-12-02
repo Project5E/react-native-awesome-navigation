@@ -1,6 +1,6 @@
 # react-native-navigation-5e
 
-native-navigation
+The react-native-navigation-5e is a native navigation based on iOS UIViewController and Android Activity/Fragment. The purpose we are doing this is that the popular [react-navigation](https://reactnavigation.org)'s performance cannot satify our react-navie based application, especially on Android. Thanks to Khan Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) give us inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will be keep optimizing and updating.
 
 [中文文档](https://github.com/Project5E/react-native-navigation-5e/blob/master/README-zh.md)
 
@@ -118,9 +118,7 @@ switchTab is for switch tab to position.
 props.navigator.switchTab(0)
 ```
 
-Every page will be enrolled their own navigator  
-navigator have a unique screenID and module name  
-through navigator to manipulate page.
+Every page will be enrolled their own navigator, navigator have a unique screenID and module name ,through navigator to manipulate page.
 
 ## Global style
 Currently include styles follows，continue updating.
