@@ -106,6 +106,11 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         )
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (view as ViewGroup).removeAllViews()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         reactRootView?.unmountReactApplication()

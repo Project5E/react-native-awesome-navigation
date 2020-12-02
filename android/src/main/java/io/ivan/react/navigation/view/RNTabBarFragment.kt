@@ -50,6 +50,7 @@ class RNTabBarFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewPager.clearOnPageChangeListeners()
+        (view as ViewGroup).removeAllViews()
     }
 
     private fun createTabBarFragment(): RNFragment =
