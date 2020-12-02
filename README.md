@@ -2,7 +2,7 @@
 
 native-navigation
 
-##[中文文档](https://github.com/Project5E/react-native-navigation-5e/wiki/原生路由使用文档)
+[中文文档](https://github.com/Project5E/react-native-navigation-5e/blob/master/README-zh.md)
 
 ## Installation
 
