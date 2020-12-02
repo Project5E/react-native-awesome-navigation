@@ -25,10 +25,11 @@ class Router {
       if (item !== '') {
         const nextResult = result || {}
         const [key, value] = item.split('=')
-        if (value.includes('{') && value.includes('}')) {
-          nextResult[key] = JSON.parse(value)
+        const decodeValue = decodeURIComponent(value)
+        if (decodeValue.includes('{') && decodeValue.includes('}')) {
+          nextResult[key] = JSON.parse(decodeValue)
         } else {
-          nextResult[key] = value
+          nextResult[key] = decodeValue
         }
         return nextResult
       }
