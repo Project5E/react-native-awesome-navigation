@@ -1,7 +1,5 @@
-<h2 align="center">
-  <img src="logo.png"/><br/>
-</h2>
 <h1 align="center">
+  <img src="logo.png"/><br/>
   React Native Navigation 5E
 </h1>
 
