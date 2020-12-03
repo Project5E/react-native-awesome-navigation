@@ -260,6 +260,8 @@ data是返回的数据
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
+[Logo designed by jemastock / Freepik](http://www.freepik.com)
+
 ## License
 
 [MIT LISCENSE](https://github.com/Project5E/react-native-navigation-5e/blob/master/LICENSE)
