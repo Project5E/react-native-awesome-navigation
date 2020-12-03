@@ -88,34 +88,34 @@ At same time register relevant native ViewController，the ViewController should
 
 ## Navigation
 
-Currently support push, pop, popToRoot, present, dismiss, switchTab
+Currently support `push`, `pop`, `popToRoot`, `present`, `dismiss`, `switchTab`
 
-push pass parameter
+`push` pass parameter
 ```ts
 props.navigator.push('NativeViewController', { title: 'Native' })
 ```
 
-push receive parameter
+`push` receive parameter
 ```ts
 const resp = await props.navigator.push('Detail')
 ```
 
-Set value before pop
+Set value before `pop`
 ```ts
 props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
-Present is similar with push, the 2nd is parameter, 3rd parameter is full screen or not.
+The `present` is similar with push, the 2nd is parameter, 3rd parameter is full screen or not.
 ```ts
 props.navigator.present('Present', undefined, true)
 ```
 
-dismiss present
+`dismiss` present
 ```
 props.navigator.dismiss()
 ```
 
-switchTab is for switch tab to position.
+`switchTab` is for switch tab to position.
 ```
 props.navigator.switchTab(0)
 ```
@@ -245,9 +245,9 @@ Resopse click tabbar repeatly，this is only for each tab bar first page.
 
 ### Usage on commercial application
 
-<h1 align="center">
+<h3 align="center">
   <img src="barcode.png"/><br/>
-</h1>
+</h3>
 
 ## Contributing
 
