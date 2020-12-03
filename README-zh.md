@@ -247,11 +247,17 @@ data是返回的数据
   })
 ```
 
+### 商业App 中的应用
+
+<h1 align="center">
+  <img src="barcode.png"/><br/>
+</h1>
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
 
-MIT
+[MIT LISCENSE](https://github.com/Project5E/react-native-navigation-5e/blob/master/LICENSE)
 

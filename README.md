@@ -243,10 +243,16 @@ Resopse click tabbar repeatly，this is only for each tab bar first page.
   })
 ```
 
+### Usage on commercial application
+
+<h1 align="center">
+  <img src="barcode.png"/><br/>
+</h1>
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## License
 
-MIT
+[MIT LISCENSE](https://github.com/Project5E/react-native-navigation-5e/blob/master/LICENSE)
