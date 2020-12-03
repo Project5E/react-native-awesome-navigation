@@ -1,4 +1,6 @@
-# react-native-navigation-5e 使用文档
+<h1 align="center">
+  React Native Navigation 5E
+</h1>
 
 react-native-navigation-5e 是基于iOS UIViewController 和 Android Activity/Fragment 开发的一款原生路由库。 我们开发这个库的原因是当今流行[react-navigation](https://reactnavigation.org) 在性能方面达不到我们React Native App 的要求尤其是在Android App 体验很差。 感谢可汗学院的 [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) 这篇文章给予我们一些灵感, 我们决定开发这个项目, 并且这个项目已经全量应用在我们的商业App 中, 我们还会对该项目持续优化更新。
 
