@@ -249,9 +249,9 @@ data是返回的数据
 
 ### 商业App 中的应用
 
-<h1 align="center">
+<h3 align="center">
   <img src="barcode.png"/><br/>
-</h1>
+</h3>
 
 ## Contributing
 
