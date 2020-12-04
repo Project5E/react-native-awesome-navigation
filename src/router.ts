@@ -12,7 +12,7 @@ class Router {
     if (!path) {
       return
     }
-    path = path.replace(Router.uriPrefix!, '')
+    path = path.replace(Router.uriPrefix, '')
     if (!path.startsWith('/')) {
       path = `/${path}`
     }
@@ -25,7 +25,12 @@ class Router {
       if (item !== '') {
         const nextResult = result || {}
         const [key, value] = item.split('=')
-        nextResult[key] = value
+        const decodeValue = decodeURIComponent(value)
+        if (decodeValue.includes('{') && decodeValue.includes('}')) {
+          nextResult[key] = JSON.parse(decodeValue)
+        } else {
+          nextResult[key] = decodeValue
+        }
         return nextResult
       }
       return result
