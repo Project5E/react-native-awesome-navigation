@@ -35,7 +35,7 @@ open class RNRootActivity : RNBaseActivity() {
         setContentView(R.layout.activity_root)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.container, navHostFragment)
+            .replace(R.id.container, navHostFragment)
             .setPrimaryNavigationFragment(navHostFragment)
             .commit()
 

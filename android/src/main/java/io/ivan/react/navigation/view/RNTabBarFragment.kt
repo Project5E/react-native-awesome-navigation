@@ -32,7 +32,7 @@ class RNTabBarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         childFragmentManager.beginTransaction()
-            .add(R.id.tab_bar_container, createTabBarFragment())
+            .replace(R.id.tab_bar_container, createTabBarFragment())
             .commitNowAllowingStateLoss()
 
         // swipe enable
