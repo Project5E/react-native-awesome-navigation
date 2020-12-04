@@ -43,6 +43,7 @@ class RNTabBarFragment : Fragment() {
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
             val data = state as ReadableMap
             val index = data.optInt("index")
+            viewModel.currentTabIndex = index
             viewPager.setCurrentItem(index, false)
         })
     }

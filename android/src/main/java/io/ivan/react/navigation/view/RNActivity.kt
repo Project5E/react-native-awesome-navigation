@@ -43,9 +43,7 @@ open class RNActivity : RNBaseActivity() {
 
         loadApp()
 
-        toolbar.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
-            visibility = View.VISIBLE
-            setBackgroundColor(Color.WHITE)
+        if (isNotTabBarComponent()) {
             setupToolbar()
         }
     }
@@ -60,6 +58,9 @@ open class RNActivity : RNBaseActivity() {
     }
 
     private fun setupToolbar() {
+        toolbar.visibility = View.VISIBLE
+        toolbar.setBackgroundColor(Color.WHITE)
+
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener {
             navigationUp()
@@ -82,4 +83,7 @@ open class RNActivity : RNBaseActivity() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
         reactRootView.startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
     }
+
+    private fun isNotTabBarComponent() = mainComponentName != viewModel.tabBarComponentName
+
 }

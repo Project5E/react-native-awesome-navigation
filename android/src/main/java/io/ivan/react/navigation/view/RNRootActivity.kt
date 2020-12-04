@@ -81,7 +81,22 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, Observer { state ->
             val promise = state as Promise
-            promise.resolve(navController.currentDestination?.id)
+            val currentScreenId = viewModel.tabs?.pages?.size
+                // with tab bar
+                ?.let { tabSize ->
+                    if (viewModel.screenIdStack.size == tabSize) {
+                        viewModel.screenIdStack[viewModel.currentTabIndex]
+                    } else {
+                        viewModel.screenIdStack.last()
+                    }
+                }
+            // without tab bar
+                ?: let {
+                    viewModel.screenIdStack.last()
+                }
+            promise.resolve(Arguments.createMap().also {
+                it.putString("screenID", currentScreenId)
+            })
         })
 
         Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
@@ -112,15 +127,18 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
             startDestination?.let {
+                removeScreenIdStackWithNavigateToStartDestination()
                 navController.navigate(it.id)
             }
         })
 
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
+            removeCurrentScreenIdToStack()
             navController.navigateUp()
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer {
+            removeCurrentScreenIdToStack()
             navController.navigateUp()
         })
 
@@ -128,6 +146,7 @@ open class RNRootActivity : RNBaseActivity() {
             val data = state as ReadableMap
             val count = data.optInt("count")
             for (i in 0 until count) {
+                removeCurrentScreenIdToStack()
                 navController.navigateUp()
             }
         })
@@ -151,6 +170,25 @@ open class RNRootActivity : RNBaseActivity() {
         val destination = buildDestination(page)
         navController.graph.addDestination(destination)
         navController.navigate(destination.id, args, navOptions)
+    }
+
+    private fun removeCurrentScreenIdToStack() {
+        navController.currentDestination?.id?.toString()?.let {
+            if (!viewModel.screenIdStack.contains(it)) {
+                throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
+            }
+            viewModel.screenIdStack.remove(it)
+        }
+    }
+
+    private fun removeScreenIdStackWithNavigateToStartDestination() {
+        viewModel.screenIdStack =
+            viewModel.tabs?.pages?.size
+                // with tab bar
+                ?.let { it -> viewModel.screenIdStack.subList(0, it) }
+                    // without tab bar
+                ?: viewModel.screenIdStack.subList(0, 1)
+
     }
 
 }

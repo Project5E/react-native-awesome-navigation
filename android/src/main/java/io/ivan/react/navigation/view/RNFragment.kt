@@ -50,7 +50,14 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
             getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
             getBundle(ARG_LAUNCH_OPTIONS)?.let { launchOptions = it }
         }
-        launchOptions.getBundle("screenID") ?: launchOptions.putString("screenID", View.generateViewId().toString())
+        val screenId = launchOptions.getString("screenID") ?: run {
+            View.generateViewId().toString().also {
+                launchOptions.putString("screenID", it)
+            }
+        }
+        if (isNotTabBarComponent()) {
+            viewModel.screenIdStack.add(screenId)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,9 +75,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.takeIf { mainComponentName != viewModel.tabBarComponentName }?.apply {
-            visibility = View.VISIBLE
-            setBackgroundColor(Color.WHITE)
+        if (isNotTabBarComponent()) {
             setupToolbar()
         }
     }
@@ -115,9 +120,10 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         super.onDestroy()
         reactRootView?.unmountReactApplication()
         reactRootView = null
-        if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
-        }
+        // TODO: 下面注释代码会导致 reactInstanceManager 与 currentActivity 解绑
+//        if (reactNativeHost.hasInstance()) {
+//            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
+//        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -207,6 +213,9 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     }
 
     private fun setupToolbar() {
+        toolbar.visibility = View.VISIBLE
+        toolbar.setBackgroundColor(Color.WHITE)
+
         with(requireActivity() as AppCompatActivity) {
             setSupportActionBar(toolbar)
             toolbar.setupWithNavController(findNavController())
@@ -223,5 +232,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
             }
         }
     }
+
+    private fun isNotTabBarComponent() = mainComponentName != viewModel.tabBarComponentName
 
 }
