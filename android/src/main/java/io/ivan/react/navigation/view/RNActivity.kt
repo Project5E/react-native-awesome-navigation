@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
@@ -20,8 +21,9 @@ open class RNActivity : RNBaseActivity() {
     open var mainComponentName: String = ""
     open var launchOptions: Bundle = Bundle()
 
-    private lateinit var reactRootView: ReactRootView
+    private lateinit var container: ViewGroup
     private lateinit var toolbar: Toolbar
+    private lateinit var reactRootView: ReactRootView
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
 
@@ -32,8 +34,10 @@ open class RNActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.component_container)
 
+        container = findViewById(R.id.container)
         toolbar = findViewById(R.id.toolbar)
         reactRootView = ReactRootView(this)
+        container.addView(reactRootView)
 
         intent.extras?.apply {
             getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
