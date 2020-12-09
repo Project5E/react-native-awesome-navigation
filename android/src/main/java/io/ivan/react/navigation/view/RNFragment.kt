@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.infer.annotation.Assertions
-import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
 import com.facebook.react.devsupport.DoubleTapReloadRecognizer
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
@@ -34,15 +33,13 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     open var launchOptions: Bundle = Bundle()
 
     private var reactRootView: ReactRootView? = null
+    private var mPermissionListener: PermissionListener? = null
+
     private lateinit var toolbar: Toolbar
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
-
-    private var mPermissionListener: PermissionListener? = null
     private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
-    private val reactNativeHost
-        get() = (requireActivity().application as ReactApplication).reactNativeHost
+    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +58,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val parent = inflater.inflate(R.layout.component_container, container, false) as ViewGroup
+        val parent = inflater.inflate(R.layout.fragment_container_component, container, false) as ViewGroup
         toolbar = parent.findViewById(R.id.toolbar)
         if (reactRootView == null) {
             reactRootView = ReactRootView(inflater.context)

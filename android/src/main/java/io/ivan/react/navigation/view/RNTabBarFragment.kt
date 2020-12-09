@@ -19,9 +19,9 @@ import java.util.*
 
 class RNTabBarFragment : Fragment() {
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
-
     private lateinit var viewPager: SwipeControllableViewPager
+
+    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val parent = inflater.inflate(R.layout.fragment_tabbar, container, false) as ViewGroup

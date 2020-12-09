@@ -24,21 +24,17 @@ open class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
 
+    private lateinit var navHostFragment: NavHostFragment
+
     private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
-    private val navHostFragment: NavHostFragment by lazy { createNavHostFragmentWithoutGraph() }
 
     private val navController: NavController
         get() = navHostFragment.navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_root)
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, navHostFragment)
-            .setPrimaryNavigationFragment(navHostFragment)
-            .commit()
-
+        setContentView(R.layout.activity_container_nav_host)
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         receive()
     }
 
@@ -109,10 +105,10 @@ open class RNRootActivity : RNBaseActivity() {
             )
         })
 
-        dispatch()
+        receiveDispatch()
     }
 
-    private fun dispatch() {
+    private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
             val page = state as Page
             addDestinationAndNavigate(page)

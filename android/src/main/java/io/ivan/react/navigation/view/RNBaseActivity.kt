@@ -16,6 +16,7 @@ import io.ivan.react.navigation.utils.reactNativeHost
 open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, PermissionAwareActivity {
 
     private var mPermissionListener: PermissionListener? = null
+
     private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
     override fun onCreate(savedInstanceState: Bundle?) {

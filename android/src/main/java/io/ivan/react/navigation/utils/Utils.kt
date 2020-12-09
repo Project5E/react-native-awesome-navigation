@@ -1,6 +1,7 @@
 package io.ivan.react.navigation.utils
 
 import android.content.Context
+import androidx.fragment.app.Fragment
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.Arguments
@@ -9,8 +10,8 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.ivan.react.navigation.NavigationConstants
 
-
 val Context.reactNativeHost: ReactNativeHost get() = (applicationContext as ReactApplication).reactNativeHost
+val Fragment.reactNativeHost: ReactNativeHost get() = (requireActivity().applicationContext as ReactApplication).reactNativeHost
 
 /**
  * @param data Types:
