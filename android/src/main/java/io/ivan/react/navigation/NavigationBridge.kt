@@ -3,6 +3,7 @@ package io.ivan.react.navigation
 import com.facebook.react.bridge.*
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.view.RNActivity
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
@@ -41,15 +42,26 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?) {
-        when (action) {
-            "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options))
-            "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, requirePage(component, options))
-            "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
-            "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
-            "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
-            "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
-            "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
-            else -> throw RNNavigationException("action error")
+        when (currentActivity) {
+            is RNActivity -> {
+                when (action) {
+                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH_NEST, requirePage(component, options))
+                    "pop" -> Store.dispatch(ACTION_DISPATCH_POP_NEST)
+                    else -> throw RNNavigationException("action(=$action) error")
+                }
+            }
+            else -> {
+                when (action) {
+                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options))
+                    "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, requirePage(component, options))
+                    "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
+                    "pop" -> Store.dispatch(ACTION_DISPATCH_POP)
+                    "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS)
+                    "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
+                    "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
+                    else -> throw RNNavigationException("action(=$action) error")
+                }
+            }
         }
     }
 

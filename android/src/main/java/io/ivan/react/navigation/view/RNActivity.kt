@@ -48,11 +48,11 @@ open class RNActivity : RNBaseActivity() {
     }
 
     private fun receiveDispatch() {
-        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
             val page = state as Page
             addDestinationAndNavigate(page)
         })
-        Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
+        Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
         })
