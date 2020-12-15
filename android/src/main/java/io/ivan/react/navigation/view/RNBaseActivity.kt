@@ -11,7 +11,8 @@ import com.facebook.react.devsupport.DoubleTapReloadRecognizer
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
-import io.ivan.react.navigation.utils.reactNativeHost
+import io.ivan.react.navigation.NavigationManager.reactInstanceManager
+import io.ivan.react.navigation.NavigationManager.reactNativeHost
 
 open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, PermissionAwareActivity {
 
@@ -21,34 +22,34 @@ open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        reactNativeHost.reactInstanceManager.createReactContextInBackground()
+        reactInstanceManager.createReactContextInBackground()
     }
 
     override fun onResume() {
         super.onResume()
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostResume(this, this)
+            reactInstanceManager.onHostResume(this, this)
         }
     }
 
     override fun onPause() {
         super.onPause()
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostPause(this)
+            reactInstanceManager.onHostPause(this)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostDestroy(this)
+            reactInstanceManager.onHostDestroy(this)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onActivityResult(this, requestCode, resultCode, data)
+            reactInstanceManager.onActivityResult(this, requestCode, resultCode, data)
         }
     }
 
@@ -75,7 +76,7 @@ open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, 
                 && reactNativeHost.useDeveloperSupport
                 && keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
             ) {
-                reactNativeHost.reactInstanceManager.showDevOptionsDialog()
+                reactInstanceManager.showDevOptionsDialog()
                 return@run true
             }
             return@run false
@@ -84,7 +85,7 @@ open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, 
 
     override fun onBackPressed() {
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onBackPressed()
+            reactInstanceManager.onBackPressed()
         } else {
             super.onBackPressed()
         }
@@ -95,7 +96,7 @@ open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, 
 
     override fun onNewIntent(intent: Intent?) {
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onNewIntent(intent)
+            reactInstanceManager.onNewIntent(intent)
         } else {
             super.onNewIntent(intent)
         }
@@ -125,14 +126,14 @@ open class RNBaseActivity : AppCompatActivity(), DefaultHardwareBackBtnHandler, 
     private fun shouldShowDevMenuOrReload(keyCode: Int, event: KeyEvent?): Boolean {
         if (reactNativeHost.hasInstance() && reactNativeHost.useDeveloperSupport) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                reactNativeHost.reactInstanceManager.showDevOptionsDialog()
+                reactInstanceManager.showDevOptionsDialog()
                 return true
             }
             val didDoubleTapR =
                 Assertions.assertNotNull<DoubleTapReloadRecognizer>(mDoubleTapReloadRecognizer)
                     .didDoubleTapR(keyCode, currentFocus)
             if (didDoubleTapR) {
-                reactNativeHost.reactInstanceManager.devSupportManager.handleReloadJS()
+                reactInstanceManager.devSupportManager.handleReloadJS()
                 return true
             }
         }

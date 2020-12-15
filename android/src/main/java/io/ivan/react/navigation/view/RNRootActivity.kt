@@ -14,6 +14,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*

@@ -22,8 +22,14 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
+import io.ivan.react.navigation.NavigationManager.reactInstanceManager
+import io.ivan.react.navigation.NavigationManager.reactNativeHost
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.utils.ARG_COMPONENT_NAME
+import io.ivan.react.navigation.utils.ARG_LAUNCH_OPTIONS
+import io.ivan.react.navigation.utils.optBoolean
+import io.ivan.react.navigation.utils.optString
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 
@@ -81,7 +87,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         super.onResume()
         if (reactNativeHost.hasInstance()) {
             if (requireActivity() is DefaultHardwareBackBtnHandler) {
-                reactNativeHost.reactInstanceManager.onHostResume(
+                reactInstanceManager.onHostResume(
                     requireActivity(),
                     requireActivity() as DefaultHardwareBackBtnHandler?
                 )
@@ -91,7 +97,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
                 )
             }
         }
-        requireActivity().sendNavigationEvent(
+        sendNavigationEvent(
             NavigationConstants.VIEW_DID_APPEAR,
             findNavController().currentBackStackEntry?.destination?.id?.toString()
         )
@@ -100,9 +106,9 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     override fun onPause() {
         super.onPause()
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onHostPause(requireActivity())
+            reactInstanceManager.onHostPause(requireActivity())
         }
-        requireActivity().sendNavigationEvent(
+        sendNavigationEvent(
             NavigationConstants.VIEW_DID_DISAPPEAR,
             findNavController().previousBackStackEntry?.destination?.id?.toString()
         )
@@ -119,14 +125,14 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
         reactRootView = null
         // TODO: 下面注释代码会导致 reactInstanceManager 与 currentActivity 解绑
 //        if (reactNativeHost.hasInstance()) {
-//            reactNativeHost.reactInstanceManager.onHostDestroy(requireActivity())
+//            reactInstanceManager.onHostDestroy(requireActivity())
 //        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onActivityResult(requireActivity(), requestCode, resultCode, data)
+            reactInstanceManager.onActivityResult(requireActivity(), requestCode, resultCode, data)
         }
     }
 
@@ -137,7 +143,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
      */
     fun onBackPressed(): Boolean {
         if (reactNativeHost.hasInstance()) {
-            reactNativeHost.reactInstanceManager.onBackPressed()
+            reactInstanceManager.onBackPressed()
             return true
         }
         return false
@@ -167,14 +173,14 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     private fun shouldShowDevMenuOrReload(keyCode: Int, event: KeyEvent?): Boolean {
         if (reactNativeHost.hasInstance() && reactNativeHost.useDeveloperSupport) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                reactNativeHost.reactInstanceManager.showDevOptionsDialog()
+                reactInstanceManager.showDevOptionsDialog()
                 return true
             }
             val didDoubleTapR =
                 Assertions.assertNotNull<DoubleTapReloadRecognizer>(mDoubleTapReloadRecognizer)
                     .didDoubleTapR(keyCode, requireActivity().currentFocus)
             if (didDoubleTapR) {
-                reactNativeHost.reactInstanceManager.devSupportManager.handleReloadJS()
+                reactInstanceManager.devSupportManager.handleReloadJS()
                 return true
             }
         }
@@ -206,7 +212,7 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
 
     private fun loadApp() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        reactRootView?.startReactApplication(reactNativeHost.reactInstanceManager, mainComponentName, launchOptions)
+        reactRootView?.startReactApplication(reactInstanceManager, mainComponentName, launchOptions)
     }
 
     private fun setupToolbar() {
