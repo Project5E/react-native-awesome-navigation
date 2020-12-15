@@ -10,8 +10,8 @@ interface Route {
 }
 
 export class Navigator {
-  static dispatch = (screenID: string, action: string, component?: string, options?: any) => {
-    NavigationBridge.dispatch(screenID, action, component, options)
+  static dispatch = async (screenID: string, action: string, component?: string, options?: any) => {
+    await NavigationBridge.dispatch(screenID, action, component, options)
   }
 
   static get = (screenID: string): Navigator | undefined => {
@@ -78,8 +78,8 @@ export class Navigator {
     Navigator.dispatch(this.screenID, 'present', component, {...options, isFullScreen})
   }
 
-  dismiss = () => {
-    Navigator.dispatch(this.screenID, 'dismiss')
+  dismiss = async () => {
+    await Navigator.dispatch(this.screenID, 'dismiss')
   }
 
   switchTab(index: number) {

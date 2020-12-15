@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <React/RCTEventEmitter.h>
 
 @class ALCNavigationController;
 @class ALCTabBarViewController;
@@ -29,7 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (ALCNavigationController *)getNavigationController;
 - (ALCTabBarViewController *)getTabBarController;
 
-- (void)handleDispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params;
+- (void)handleDispatch:(NSString *)screenID
+                action:(NSString *)action
+                  page:(NSString *)pageName
+                params:(NSDictionary *)params
+               resolve:(RCTPromiseResolveBlock)resolve
+                reject:(RCTPromiseRejectBlock)reject;
 
 @end
 

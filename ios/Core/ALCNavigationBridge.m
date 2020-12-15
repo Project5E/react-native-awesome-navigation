@@ -106,8 +106,13 @@ RCT_EXPORT_METHOD(setResult:(NSDictionary *)data) {
     self.manager.resultData = data;
 }
 
-RCT_EXPORT_METHOD(dispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params) {
-    [self.helper handleDispatch:screenID action:action page:pageName params:params];
+RCT_EXPORT_METHOD(dispatch:(NSString *)screenID
+                  action:(NSString *)action
+                  page:(NSString *)pageName
+                  params:(NSDictionary *)params
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject) {
+    [self.helper handleDispatch:screenID action:action page:pageName params:params resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(registerReactComponent:(NSString *)appKey options:(NSDictionary *)options) {

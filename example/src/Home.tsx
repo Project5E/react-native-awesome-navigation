@@ -3,7 +3,6 @@ import {View, Button} from 'react-native'
 import {
   Navigator,
   router,
-  Router,
   setTabBadge,
   useVisibleEffect,
 } from 'react-native-navigation-5e'

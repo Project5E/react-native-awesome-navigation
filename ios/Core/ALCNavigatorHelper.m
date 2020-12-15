@@ -104,7 +104,12 @@
     return tbc;
 }
 
-- (void)handleDispatch:(NSString *)screenID action:(NSString *)action page:(NSString *)pageName params:(NSDictionary *)params {
+- (void)handleDispatch:(NSString *)screenID
+                action:(NSString *)action
+                  page:(NSString *)pageName
+                params:(NSDictionary *)params
+               resolve:(RCTPromiseResolveBlock)resolve
+                reject:(RCTPromiseRejectBlock)reject {
     UIWindow *window = RCTSharedApplication().delegate.window;
     UIViewController *vc = [self getNavigationController];
     // push
@@ -145,7 +150,9 @@
         if (!vc) {
             vc = window.rootViewController;
         }
-        [vc dismissViewControllerAnimated:YES completion:nil];
+        [vc dismissViewControllerAnimated:YES completion:^{
+            resolve(@1);
+        }];
         // switchTab
     } else if ([action isEqualToString:@"switchTab"]) {
         ALCTabBarViewController *tbc = [self getTabBarController];

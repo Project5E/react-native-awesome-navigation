@@ -13,8 +13,9 @@ const Present = props => {
         title="push detail"
       />
       <Button
-        onPress={() => {
-          props.navigator.dismiss()
+        onPress={async () => {
+          await props.navigator.dismiss()
+          props.navigator.present('Present')
         }}
         title="dismiss"
       />
