@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -20,6 +21,10 @@ import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 open class RNRootActivity : RNBaseActivity() {
 
@@ -27,7 +32,11 @@ open class RNRootActivity : RNBaseActivity() {
 
     private lateinit var navHostFragment: NavHostFragment
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
+    private val viewModel: RNViewModel
+            by lazy { createRNViewModel(application) }
+
+    private val dismissAnimTime: Long
+            by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -134,9 +143,18 @@ open class RNRootActivity : RNBaseActivity() {
             navController.navigateUp()
         })
 
-        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer {
+        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
+            val promise = state as Promise
+
             removeCurrentScreenIdToStack()
             navController.navigateUp()
+
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    delay(dismissAnimTime)
+                    promise.resolve(null)
+                }
+            }
         })
 
         Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, Observer { state ->
