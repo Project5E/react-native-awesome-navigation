@@ -1,9 +1,8 @@
 package io.ivan.react.navigation
 
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.facebook.react.uimanager.events.RCTEventEmitter
 import io.ivan.react.navigation.NavigationManager.reactInstanceManager
 
 /**
@@ -28,47 +27,59 @@ object NavigationEmitter {
     }
 
     @JvmStatic
-    fun sendNavigationEvent(eventType: String, screenId: String?, data: Any? = null) {
+    fun receiveEvent(targetTag: Int, eventName: String, event: WritableMap?) {
         reactInstanceManager.currentReactContext
-            ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            ?.emit(
-                NavigationConstants.NAVIGATION_EVENT,
-                Arguments.createMap().also { map ->
-                    map.putString(NavigationConstants.EVENT_TYPE, eventType)
+            ?.getJSModule(RCTEventEmitter::class.java)
+            ?.receiveEvent(targetTag, eventName, event)
+    }
 
-                    screenId?.let {
-                        map.putString(NavigationConstants.SCREEN_ID, it)
-                    } ?: map.putNull(NavigationConstants.SCREEN_ID)
+    @JvmStatic
+    fun receiveTouches(eventName: String, touches: WritableArray, changedIndices: WritableArray) {
+        reactInstanceManager.currentReactContext
+            ?.getJSModule(RCTEventEmitter::class.java)
+            ?.receiveTouches(eventName, touches, changedIndices)
+    }
 
-                    with(NavigationConstants.RESULT_DATA) {
-                        when (data) {
-                            data == null -> {
-                                map.putNull(this)
-                            }
-                            is Boolean -> {
-                                map.putBoolean(this, data)
-                            }
-                            is Int -> {
-                                map.putInt(this, data)
-                            }
-                            is Double -> {
-                                map.putDouble(this, data)
-                            }
-                            is String -> {
-                                map.putString(this, data)
-                            }
-                            is ReadableMap -> {
-                                map.putMap(this, data)
-                            }
-                            is ReadableArray -> {
-                                map.putArray(this, data)
-                            }
-                            else -> {
-                                map.putString(this, data.toString())
-                            }
+    @JvmStatic
+    fun sendNavigationEvent(eventType: String, screenId: String?, data: Any? = null) {
+        sendEvent(
+            NavigationConstants.NAVIGATION_EVENT,
+            Arguments.createMap().also { map ->
+                map.putString(NavigationConstants.EVENT_TYPE, eventType)
+
+                screenId?.let {
+                    map.putString(NavigationConstants.SCREEN_ID, it)
+                } ?: map.putNull(NavigationConstants.SCREEN_ID)
+
+                with(NavigationConstants.RESULT_DATA) {
+                    when (data) {
+                        data == null -> {
+                            map.putNull(this)
+                        }
+                        is Boolean -> {
+                            map.putBoolean(this, data)
+                        }
+                        is Int -> {
+                            map.putInt(this, data)
+                        }
+                        is Double -> {
+                            map.putDouble(this, data)
+                        }
+                        is String -> {
+                            map.putString(this, data)
+                        }
+                        is ReadableMap -> {
+                            map.putMap(this, data)
+                        }
+                        is ReadableArray -> {
+                            map.putArray(this, data)
+                        }
+                        else -> {
+                            map.putString(this, data.toString())
                         }
                     }
                 }
-            )
+            }
+        )
     }
 }
