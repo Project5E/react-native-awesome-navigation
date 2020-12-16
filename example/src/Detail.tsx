@@ -1,6 +1,6 @@
-import React, {useCallback} from 'react'
-import {View, Button} from 'react-native'
-import {useVisibleEffect} from 'react-native-navigation-5e'
+import React, { useCallback, useState } from 'react'
+import { View, Button, Modal } from 'react-native'
+import { useVisibleEffect } from 'react-native-navigation-5e'
 
 const Detail = props => {
   useVisibleEffect(
@@ -12,8 +12,24 @@ const Detail = props => {
       }
     }, [])
   )
+
+  const [modalVisible, setModalVisible] = useState(false)
+
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#88888888' }}>
+          <Button
+            onPress={() => {
+              setModalVisible(false)
+            }}
+            title="modal cancel"
+          />
+        </View>
+      </Modal>
       <Button
         onPress={() => {
           props.navigator.push('NoNavigationBar')
@@ -29,7 +45,7 @@ const Detail = props => {
       />
       <Button
         onPress={() => {
-          props.navigator.setResult({qwe: 123})
+          props.navigator.setResult({ qwe: 123 })
           props.navigator.pop()
         }}
         title="pop"
@@ -39,6 +55,12 @@ const Detail = props => {
           props.navigator.popToRoot()
         }}
         title="pop to root"
+      />
+      <Button
+        onPress={() => {
+          setModalVisible(true)
+        }}
+        title="showModal"
       />
     </View>
   )
