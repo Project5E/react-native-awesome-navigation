@@ -74,8 +74,12 @@ export class Navigator {
     Navigator.dispatch(this.screenID, 'popToRoot')
   }
 
-  present = (component: string, options?: any, isFullScreen = false) => {
-    Navigator.dispatch(this.screenID, 'present', component, {...options, isFullScreen})
+  present = (component: string, options = {}, isFullScreen = false, isTransparency = false) => {
+    Navigator.dispatch(this.screenID, 'present', component, {
+      ...options,
+      isFullScreen,
+      isTransparency,
+    })
   }
 
   dismiss = async () => {

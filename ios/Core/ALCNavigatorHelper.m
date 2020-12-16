@@ -138,12 +138,16 @@
             vc = window.rootViewController;
         }
         UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
-        NSNumber *isFullScreen = params[@"isFullScreen"];
         ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
+        NSNumber *isFullScreen = params[@"isFullScreen"];
         if (isFullScreen.boolValue) {
             presentNav.modalPresentationStyle = UIModalPresentationFullScreen;
         }
-        presentNav.presentationController.delegate = self;
+        NSNumber *isTransparency = params[@"isTransparency"];
+        if (isTransparency.boolValue) {
+            presentNav.modalPresentationStyle = UIModalPresentationOverFullScreen;
+            presentNav.viewControllers.firstObject.view.backgroundColor = [UIColor clearColor];
+        }
         [vc presentViewController:presentNav animated:YES completion:nil];
         // dismiss
     } else if ([action isEqualToString:@"dismiss"]) {

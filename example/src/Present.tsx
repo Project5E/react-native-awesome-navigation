@@ -3,7 +3,7 @@ import {View, Button, Text} from 'react-native'
 
 const Present = props => {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black', opacity: 0.8}}>
       <Text style={{fontSize: 20}}>This is a presented view</Text>
       <Button
         onPress={async () => {
@@ -25,7 +25,7 @@ const Present = props => {
 
 Present.navigationItem = {
   title: 'Present',
-  // hideNavigationBar: false,
+  hideNavigationBar: true,
 }
 
 export default Present

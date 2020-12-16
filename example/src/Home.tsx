@@ -72,7 +72,7 @@ const Home = props => {
 
       <Button
         onPress={() => {
-          props.navigator.present('Present')
+          props.navigator.present('Present', {}, true, true)
         }}
         title="present"
       />
