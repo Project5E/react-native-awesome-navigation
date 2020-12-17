@@ -38,6 +38,9 @@ open class RNRootActivity : RNBaseActivity() {
     private val dismissAnimTime: Long
             by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
+    private val fragmentNavigator: FragmentNavigator
+            by lazy { navController.navigatorProvider.getNavigator(FragmentNavigator::class.java) }
+
     private val navController: NavController
         get() = navHostFragment.navController
 
@@ -168,7 +171,7 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun buildDestination(page: Page): NavDestination =
-        buildDestination(this, supportFragmentManager, page.rootName, Arguments.toBundle(page.options))
+        buildDestination(fragmentNavigator, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
         FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {

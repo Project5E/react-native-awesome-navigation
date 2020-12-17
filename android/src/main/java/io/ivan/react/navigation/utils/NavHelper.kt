@@ -1,13 +1,14 @@
 package io.ivan.react.navigation.utils
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import io.ivan.react.navigation.R
+import io.ivan.react.navigation.view.RNActivity
 import io.ivan.react.navigation.view.RNFragment
 
 const val ARG_COMPONENT_NAME = "arg_component_name"
@@ -24,11 +25,38 @@ fun NavController.setStartDestination(startDestination: NavDestination?) {
     }
 }
 
-fun buildDestination(context: Context, fm: FragmentManager, destinationName: String, options: Bundle?): NavDestination {
-    return FragmentNavigator(context, fm, R.id.content).createDestination().apply {
+fun buildDestination(
+    fragmentNavigator: FragmentNavigator,
+    destinationName: String,
+    options: Bundle?
+): NavDestination {
+    return fragmentNavigator.createDestination().apply {
         val viewId = ViewCompat.generateViewId()
         id = viewId
         className = RNFragment::class.java.name
+        addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
+            arg.defaultValue = destinationName
+            arg.build()
+        })
+        addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
+            arg.defaultValue = (options ?: Bundle()).also {
+                it.putString("screenID", viewId.toString())
+            }
+            arg.build()
+        })
+    }
+}
+
+fun buildDestination(
+    context: Context,
+    activityNavigator: ActivityNavigator,
+    destinationName: String,
+    options: Bundle?
+): NavDestination {
+    return activityNavigator.createDestination().apply {
+        val viewId = ViewCompat.generateViewId()
+        id = viewId
+        intent = Intent(context, RNActivity::class.java)
         addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
             arg.defaultValue = destinationName
             arg.build()

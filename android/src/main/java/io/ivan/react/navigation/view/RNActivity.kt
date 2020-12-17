@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -22,7 +23,11 @@ open class RNActivity : RNBaseActivity() {
 
     private lateinit var navHostFragment: NavHostFragment
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(application) }
+    private val viewModel: RNViewModel
+            by lazy { createRNViewModel(application) }
+
+    private val fragmentNavigator: FragmentNavigator
+            by lazy { navController.navigatorProvider.getNavigator(FragmentNavigator::class.java) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -60,7 +65,7 @@ open class RNActivity : RNBaseActivity() {
 
     private fun setupStartDestination() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        val startDestination = buildDestination(this, supportFragmentManager, mainComponentName, launchOptions)
+        val startDestination = buildDestination(fragmentNavigator, mainComponentName, launchOptions)
         navController.setStartDestination(startDestination)
     }
 
@@ -70,7 +75,8 @@ open class RNActivity : RNBaseActivity() {
         navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
     ) {
         val destination =
-            buildDestination(this, supportFragmentManager, page.rootName, Arguments.toBundle(page.options))
+            buildDestination(fragmentNavigator, page.rootName, Arguments.toBundle(page.options))
+
         navController.graph.addDestination(destination)
         navController.navigate(destination.id)
     }
