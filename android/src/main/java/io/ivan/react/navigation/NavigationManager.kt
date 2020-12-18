@@ -34,6 +34,6 @@ object NavigationManager {
 
     @JvmStatic
     fun requireReactNativeHost(): ReactNativeHost =
-        _reactNativeHost ?: throw RNNavigationException("must call NavigationInitializer#install first")
+        _reactNativeHost ?: throw RNNavigationException("must call NavigationManager#install first")
 
 }

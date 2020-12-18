@@ -41,6 +41,9 @@ open class RNRootActivity : RNBaseActivity() {
     private val fragmentNavigator: FragmentNavigator
             by lazy { navController.navigatorProvider.getNavigator(FragmentNavigator::class.java) }
 
+    private val fragmentStateNavigator: FragmentStateNavigator
+            by lazy { FragmentStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
+
     private val navController: NavController
         get() = navHostFragment.navController
 
@@ -48,6 +51,7 @@ open class RNRootActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController.navigatorProvider.addNavigator(fragmentStateNavigator)
         receive()
     }
 
@@ -171,10 +175,10 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun buildDestination(page: Page): NavDestination =
-        buildDestination(fragmentNavigator, page.rootName, Arguments.toBundle(page.options))
+        buildDestination(fragmentStateNavigator, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
-        FragmentNavigator(this, supportFragmentManager, R.id.content).createDestination().also {
+        fragmentNavigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName

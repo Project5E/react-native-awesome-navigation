@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.infer.annotation.Assertions
@@ -26,14 +25,11 @@ import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.NavigationManager.reactInstanceManager
 import io.ivan.react.navigation.NavigationManager.reactNativeHost
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.ARG_COMPONENT_NAME
-import io.ivan.react.navigation.utils.ARG_LAUNCH_OPTIONS
-import io.ivan.react.navigation.utils.optBoolean
-import io.ivan.react.navigation.utils.optString
+import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 
-open class RNFragment : Fragment(), PermissionAwareActivity {
+open class RNFragment : LifecycleFragment(), PermissionAwareActivity {
 
     open var mainComponentName: String = ""
     open var launchOptions: Bundle = Bundle()
@@ -46,6 +42,10 @@ open class RNFragment : Fragment(), PermissionAwareActivity {
     private val mDoubleTapReloadRecognizer: DoubleTapReloadRecognizer by lazy { DoubleTapReloadRecognizer() }
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
+
+    override var name: String?
+        get() = mainComponentName
+        set(value) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
