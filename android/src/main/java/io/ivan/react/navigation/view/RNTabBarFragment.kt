@@ -9,9 +9,7 @@ import androidx.lifecycle.Observer
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
-import io.ivan.react.navigation.utils.Store
-import io.ivan.react.navigation.utils.optInt
+import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 import io.ivan.react.navigation.view.widget.SwipeControllableViewPager
@@ -55,9 +53,11 @@ class RNTabBarFragment : Fragment() {
 
     private fun createTabBarFragment(): RNFragment =
         RNFragment().apply {
-            mainComponentName = viewModel.tabBarComponentName
-            launchOptions = Bundle().also {
-                it.putSerializable("tabs", pageOptionList())
+            arguments = Bundle().also { args ->
+                args.putString(ARG_COMPONENT_NAME, viewModel.tabBarComponentName)
+                args.putBundle(ARG_LAUNCH_OPTIONS, Bundle().also { options ->
+                    options.putSerializable("tabs", pageOptionList())
+                })
             }
         }
 
