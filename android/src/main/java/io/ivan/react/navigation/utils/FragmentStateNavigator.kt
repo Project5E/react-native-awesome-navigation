@@ -68,9 +68,6 @@ class FragmentStateNavigator(
                 && mBackStack.peekLast() == destId)
         val isAdded: Boolean
         isAdded = when {
-            initialNavigation -> {
-                true
-            }
             isSingleTopReplacement -> {
                 if (mBackStack.size > 1) {
                     manager.popBackStack(
@@ -99,28 +96,6 @@ class FragmentStateNavigator(
         } else {
             null
         }
-    }
-
-    override fun popBackStack(): Boolean {
-        if (mBackStack.isEmpty()) {
-            return false
-        }
-        if (manager.isStateSaved) {
-            Log.i(
-                TAG, "Ignoring popBackStack() call: FragmentManager has already"
-                        + " saved its state"
-            )
-            return false
-        }
-        val ft = manager.beginTransaction()
-        ft.remove(manager.fragments.last())
-        ft.commit()
-        manager.popBackStack(
-            generateBackStackName(mBackStack.size, mBackStack.peekLast()),
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-        mBackStack.removeLast()
-        return true
     }
 
     private fun generateBackStackName(backStackIndex: Int, destId: Int): String {
