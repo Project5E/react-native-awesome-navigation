@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.facebook.react.ReactRootView
 import io.ivan.react.navigation.NavigationConstants
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.NavigationManager.resetCurrentActivity
@@ -20,6 +21,7 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 open class RNFragment : LifecycleFragment() {
 
     private lateinit var mainComponentName: String
+    private lateinit var reactRootView: ReactRootView
     private lateinit var toolbar: Toolbar
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
@@ -47,7 +49,7 @@ open class RNFragment : LifecycleFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val parent = inflater.inflate(R.layout.fragment_container_component, container, false) as ViewGroup
         toolbar = parent.findViewById(R.id.toolbar)
-        parent.addView(super.onCreateView(inflater, container, savedInstanceState))
+        parent.addView(createOrReuseReactRootView(inflater, container, savedInstanceState))
         return parent
     }
 
@@ -82,6 +84,19 @@ open class RNFragment : LifecycleFragment() {
     override fun onDestroy() {
         super.onDestroy()
         resetCurrentActivity(requireActivity())
+    }
+
+    private fun createOrReuseReactRootView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): ReactRootView {
+        if (!this::reactRootView.isInitialized) {
+            reactRootView = super.onCreateView(inflater, container, savedInstanceState) as ReactRootView
+        } else {
+            (reactRootView.parent as? ViewGroup?)?.removeView(reactRootView)
+        }
+        return reactRootView
     }
 
     private fun setupToolbar() {
