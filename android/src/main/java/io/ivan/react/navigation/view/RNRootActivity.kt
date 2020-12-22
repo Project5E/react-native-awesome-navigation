@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -37,9 +36,6 @@ open class RNRootActivity : RNBaseActivity() {
 
     private val dismissAnimTime: Long
             by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
-
-    private val fragmentNavigator: FragmentNavigator
-            by lazy { navController.navigatorProvider.getNavigator(FragmentNavigator::class.java) }
 
     private val fragmentStateNavigator: FragmentStateNavigator
             by lazy { FragmentStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
@@ -178,7 +174,7 @@ open class RNRootActivity : RNBaseActivity() {
         buildDestination(fragmentStateNavigator, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
-        fragmentNavigator.createDestination().also {
+        fragmentStateNavigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName

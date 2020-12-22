@@ -27,10 +27,7 @@ class FragmentStateNavigator(
         navOptions: NavOptions?, navigatorExtras: Navigator.Extras?
     ): NavDestination? {
         if (manager.isStateSaved) {
-            Log.i(
-                TAG, "Ignoring navigate() call: FragmentManager has already"
-                        + " saved its state"
-            )
+            Log.i(TAG, "Ignoring navigate() call: FragmentManager has already saved its state")
             return null
         }
 
@@ -59,7 +56,11 @@ class FragmentStateNavigator(
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
 
-        ft.add(containerId, frag, tag)
+        if (frag.isAdded) {
+            ft.replace(containerId, frag, tag)
+        } else {
+            ft.add(containerId, frag, tag)
+        }
         ft.setPrimaryNavigationFragment(frag)
 
         val initialNavigation = mBackStack.isEmpty()
@@ -68,6 +69,9 @@ class FragmentStateNavigator(
                 && mBackStack.peekLast() == destId)
         val isAdded: Boolean
         isAdded = when {
+            initialNavigation -> {
+                true
+            }
             isSingleTopReplacement -> {
                 if (mBackStack.size > 1) {
                     manager.popBackStack(
@@ -85,7 +89,7 @@ class FragmentStateNavigator(
         }
         if (navigatorExtras is Extras) {
             for ((key, value) in navigatorExtras.sharedElements) {
-                ft.addSharedElement(key!!, value!!)
+                ft.addSharedElement(key, value)
             }
         }
         ft.setReorderingAllowed(true)
