@@ -72,7 +72,7 @@ const Home = props => {
 
       <Button
         onPress={() => {
-          props.navigator.present('Present', {}, true, true)
+          props.navigator.present('Present', {}, {isFullScreen: true, isTransparency: true, animated: false})
         }}
         title="present"
       />

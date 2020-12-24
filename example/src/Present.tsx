@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import {View, Button, Text} from 'react-native'
+import {
+  useVisibleEffect,
+} from 'react-native-navigation-5e'
 
 const Present = props => {
+  useVisibleEffect(
+    props.screenID,
+    useCallback(() => {
+      console.log(`${props.screenID} is visible`)
+      return () => {
+        console.log(`${props.screenID} is gone`)
+      }
+    }, [])
+  )
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black', opacity: 0.8}}>
       <Text style={{fontSize: 20}}>This is a presented view</Text>
@@ -15,7 +27,7 @@ const Present = props => {
       <Button
         onPress={async () => {
           await props.navigator.dismiss()
-          props.navigator.present('Present')
+          // props.navigator.present('Present')
         }}
         title="dismiss"
       />

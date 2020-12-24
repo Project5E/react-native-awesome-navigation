@@ -110,63 +110,87 @@
                 params:(NSDictionary *)params
                resolve:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
-    UIWindow *window = RCTSharedApplication().delegate.window;
-    UIViewController *vc = [self getNavigationController];
-    // push
     if ([action isEqualToString:@"push"]) {
-        UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
-        viewController.hidesBottomBarWhenPushed = YES;
-        [(ALCNavigationController *)vc pushViewController:viewController animated:true];
-        // pop
+        [self pushPage:pageName params:params];
     } else if ([action isEqualToString:@"pop"]) {
-        [(ALCNavigationController *)vc popViewControllerAnimated:YES];
-        [[ALCNavigationManager shared] popAndSendDataToViewController:vc.childViewControllers.lastObject];
-        // popPages
+        [self pop];
     } else if ([action isEqualToString:@"popPages"]) {
-        NSNumber *count = params[@"count"];
-        if (((ALCNavigationController *)vc).childViewControllers.count > count.intValue) {
-            NSUInteger index = ((ALCNavigationController *)vc).childViewControllers.count - count.intValue - 1;
-            UIViewController *targetVC = (ALCNavigationController *)vc.childViewControllers[index];
-            [(ALCNavigationController *)vc popToViewController:targetVC animated:YES];
-        }
-        // popToRoot
+        [self popPageWithParams:params];
     } else if ([action isEqualToString:@"popToRoot"]) {
-        [(ALCNavigationController *)vc popToRootViewControllerAnimated:YES];
-        // present
+        [self popToRoot];
     } else if ([action isEqualToString:@"present"]) {
-        if (!vc) {
-            vc = window.rootViewController;
-        }
-        UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
-        ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
-        NSNumber *isFullScreen = params[@"isFullScreen"];
-        if (isFullScreen.boolValue) {
-            presentNav.modalPresentationStyle = UIModalPresentationFullScreen;
-        }
-        NSNumber *isTransparency = params[@"isTransparency"];
-        if (isTransparency.boolValue) {
-            presentNav.modalPresentationStyle = UIModalPresentationOverFullScreen;
-            presentNav.viewControllers.firstObject.view.backgroundColor = [UIColor clearColor];
-        }
-        [vc presentViewController:presentNav animated:YES completion:nil];
-        // dismiss
+        [self presentPage:pageName params:params];
     } else if ([action isEqualToString:@"dismiss"]) {
-        if (!vc) {
-            vc = window.rootViewController;
-        }
-        [vc dismissViewControllerAnimated:YES completion:^{
-            resolve(@1);
-        }];
-        // switchTab
+        [self dissmiss:resolve reject:reject];
     } else if ([action isEqualToString:@"switchTab"]) {
-        ALCTabBarViewController *tbc = [self getTabBarController];
-        NSNumber *index = params[@"index"];
-        tbc.selectedIndex = index.integerValue;
+        [self switchTabWithParams:params];
     }
 }
 
-- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
-    
+- (void)pushPage:(NSString *)pageName params:(NSDictionary *)params {
+    UIViewController *vc = [self getNavigationController];
+    UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
+    viewController.hidesBottomBarWhenPushed = YES;
+    [(ALCNavigationController *)vc pushViewController:viewController animated:true];
+}
+
+- (void)pop {
+    UIViewController *vc = [self getNavigationController];
+    [(ALCNavigationController *)vc popViewControllerAnimated:YES];
+    [[ALCNavigationManager shared] popAndSendDataToViewController:vc.childViewControllers.lastObject];
+}
+
+- (void)popToRoot {
+    UIViewController *vc = [self getNavigationController];
+    [(ALCNavigationController *)vc popToRootViewControllerAnimated:YES];
+}
+
+- (void)popPageWithParams:(NSDictionary *)params {
+    UIViewController *vc = [self getNavigationController];
+    NSNumber *count = params[@"count"];
+    if (((ALCNavigationController *)vc).childViewControllers.count > count.intValue) {
+        NSUInteger index = ((ALCNavigationController *)vc).childViewControllers.count - count.intValue - 1;
+        UIViewController *targetVC = (ALCNavigationController *)vc.childViewControllers[index];
+        [(ALCNavigationController *)vc popToViewController:targetVC animated:YES];
+    }
+}
+
+- (void)presentPage:(NSString *)pageName params:(NSDictionary *)params {
+    UIViewController *vc = [self getNavigationController];
+    if (!vc) {
+        UIWindow *window = RCTSharedApplication().delegate.window;
+        vc = window.rootViewController;
+    }
+    UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
+    ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
+    NSNumber *isFullScreen = params[@"isFullScreen"];
+    if (isFullScreen.boolValue) {
+        presentNav.modalPresentationStyle = UIModalPresentationFullScreen;
+    }
+    NSNumber *isTransparency = params[@"isTransparency"];
+    if (isTransparency.boolValue) {
+        presentNav.modalPresentationStyle = UIModalPresentationOverFullScreen;
+        presentNav.viewControllers.firstObject.view.backgroundColor = [UIColor clearColor];
+    }
+    NSNumber *animated = params[@"animated"];
+    [vc presentViewController:presentNav animated:animated.boolValue completion:nil];
+}
+
+- (void)dissmiss:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    UIViewController *vc = [self getNavigationController];
+    if (!vc) {
+        UIWindow *window = RCTSharedApplication().delegate.window;
+        vc = window.rootViewController;
+    }
+    [vc dismissViewControllerAnimated:YES completion:^{
+        resolve(@1);
+    }];
+}
+
+- (void)switchTabWithParams:(NSDictionary *)params  {
+    ALCTabBarViewController *tbc = [self getTabBarController];
+    NSNumber *index = params[@"index"];
+    tbc.selectedIndex = index.integerValue;
 }
 
 @end
