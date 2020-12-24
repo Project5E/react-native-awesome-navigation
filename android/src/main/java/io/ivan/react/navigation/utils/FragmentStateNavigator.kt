@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -58,9 +59,14 @@ class FragmentStateNavigator(
 
         if (frag.isAdded) {
             ft.replace(containerId, frag, tag)
+            if (frag.isHidden) {
+                ft.show(frag)
+            }
         } else {
             ft.add(containerId, frag, tag)
+            getPrevFragment()?.let { ft.hide(it) }
         }
+
         ft.setPrimaryNavigationFragment(frag)
 
         val initialNavigation = mBackStack.isEmpty()
@@ -102,6 +108,17 @@ class FragmentStateNavigator(
         }
     }
 
+    override fun popBackStack(): Boolean {
+        return super.popBackStack().apply {
+            getPrevFragment()?.let {
+                manager.executePendingTransactions()
+                if (it.isHidden) {
+                    manager.beginTransaction().show(it).commit()
+                }
+            }
+        }
+    }
+
     private fun generateBackStackName(backStackIndex: Int, destId: Int): String {
         return "$backStackIndex-$destId"
     }
@@ -111,6 +128,15 @@ class FragmentStateNavigator(
         val mBackStackField = fragmentNavigatorClass.getDeclaredField("mBackStack")
         mBackStackField.isAccessible = true
         return mBackStackField.get(this) as ArrayDeque<Int>
+    }
+
+    private fun getPrevFragment(): Fragment? {
+        return if (mBackStack.isNotEmpty()) {
+            val prevTag = mBackStack.last.toString()
+            manager.findFragmentByTag(prevTag)
+        } else {
+            null
+        }
     }
 
 }

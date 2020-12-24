@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
+import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
+import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
+import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
@@ -20,6 +23,18 @@ class RNTabBarFragment : Fragment() {
     private lateinit var viewPager: SwipeControllableViewPager
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
+
+    private val currentScreenId: String
+        get() = viewModel.screenIdStack[viewModel.currentTabIndex]
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            sendNavigationEvent(VIEW_DID_DISAPPEAR, currentScreenId)
+        } else {
+            sendNavigationEvent(VIEW_DID_APPEAR, currentScreenId)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val parent = inflater.inflate(R.layout.fragment_tabbar, container, false) as ViewGroup

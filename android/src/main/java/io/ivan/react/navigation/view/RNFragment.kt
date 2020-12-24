@@ -10,7 +10,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.ReactRootView
-import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
+import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.NavigationManager.resetCurrentActivity
 import io.ivan.react.navigation.R
@@ -20,6 +21,7 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNFragment : LifecycleFragment() {
 
+    private lateinit var screenId: String
     private lateinit var mainComponentName: String
     private lateinit var reactRootView: ReactRootView
     private lateinit var toolbar: Toolbar
@@ -27,23 +29,31 @@ open class RNFragment : LifecycleFragment() {
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
     override fun setArguments(args: Bundle?) {
+        args?.getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
         val launchOptions = args?.getBundle(ARG_LAUNCH_OPTIONS)
-        val newOptions = Bundle()
-        launchOptions?.let { newOptions.putAll(it) }
-        launchOptions?.getString("screenID") ?: apply {
-            newOptions.putString("screenID", View.generateViewId().toString())
-        }
+        val newOptions = launchOptions ?: Bundle()
+        screenId = launchOptions?.getString("screenID") ?: View.generateViewId().toString()
+        newOptions.putString("screenID", screenId)
         args?.putBundle(ARG_LAUNCH_OPTIONS, newOptions)
         super.setArguments(args)
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+//            onPause()
+            sendNavigationEvent(VIEW_DID_DISAPPEAR, screenId)
+        } else {
+//            onResume()
+            sendNavigationEvent(VIEW_DID_APPEAR, screenId)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
-        arguments?.getBundle(ARG_LAUNCH_OPTIONS)
-            ?.getString("screenID")
-            ?.takeIf { isNotTabBarComponent() }
-            ?.let { viewModel.screenIdStack.add(it) }
+        if (isNotTabBarComponent()) {
+            viewModel.screenIdStack.add(screenId)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -62,18 +72,12 @@ open class RNFragment : LifecycleFragment() {
 
     override fun onResume() {
         super.onResume()
-        sendNavigationEvent(
-            NavigationConstants.VIEW_DID_APPEAR,
-            findNavController().currentBackStackEntry?.destination?.id?.toString()
-        )
+        sendNavigationEvent(VIEW_DID_APPEAR, screenId)
     }
 
     override fun onPause() {
         super.onPause()
-        sendNavigationEvent(
-            NavigationConstants.VIEW_DID_DISAPPEAR,
-            findNavController().previousBackStackEntry?.destination?.id?.toString()
-        )
+        sendNavigationEvent(VIEW_DID_DISAPPEAR, screenId)
     }
 
     override fun onDestroyView() {

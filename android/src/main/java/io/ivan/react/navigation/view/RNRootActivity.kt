@@ -13,7 +13,7 @@ import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
-import io.ivan.react.navigation.NavigationConstants
+import io.ivan.react.navigation.NavigationConstants.Companion.COMPONENT_RESULT
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.*
@@ -112,7 +112,7 @@ open class RNRootActivity : RNBaseActivity() {
             val data = state as ReadableMap
 
             sendNavigationEvent(
-                NavigationConstants.COMPONENT_RESULT,
+                COMPONENT_RESULT,
                 navController.previousBackStackEntry?.destination?.id?.toString(),
                 Arguments.createMap().also { it.merge(data) }
             )
