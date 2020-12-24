@@ -13,6 +13,7 @@ import io.ivan.react.navigation.view.RNFragment
 
 const val ARG_COMPONENT_NAME = "arg_component_name"
 const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
+const val ARG_FRAGMENT_PENETRABLE = "arg_fragment_penetrable"
 
 fun createNavHostFragmentWithoutGraph() = NavHostFragment.create(0)
 

@@ -129,9 +129,12 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
-            addDestinationAndNavigate(page, null, navOptions {
-                anim(anim_bottom_enter_bottom_exit)
-            })
+            val isTransparency = page.options?.getBoolean("isTransparency")
+            addDestinationAndNavigate(
+                page,
+                Bundle().also { it.putBoolean(ARG_FRAGMENT_PENETRABLE, isTransparency ?: false) },
+                navOptions { anim(anim_bottom_enter_bottom_exit) }
+            )
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {

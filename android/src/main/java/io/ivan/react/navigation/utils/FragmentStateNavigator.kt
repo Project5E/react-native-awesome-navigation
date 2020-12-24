@@ -57,6 +57,8 @@ class FragmentStateNavigator(
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
 
+        val isPenetrate = args?.getBoolean(ARG_FRAGMENT_PENETRABLE)
+
         if (frag.isAdded) {
             ft.replace(containerId, frag, tag)
             if (frag.isHidden) {
@@ -64,7 +66,9 @@ class FragmentStateNavigator(
             }
         } else {
             ft.add(containerId, frag, tag)
-            getPrevFragment()?.let { ft.hide(it) }
+            if (isPenetrate != null && !isPenetrate) {
+                getPrevFragment()?.let { ft.hide(it) }
+            }
         }
 
         ft.setPrimaryNavigationFragment(frag)
