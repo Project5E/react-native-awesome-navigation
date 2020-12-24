@@ -10,6 +10,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
 import io.ivan.react.navigation.R
+import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
+import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
+import io.ivan.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import io.ivan.react.navigation.model.Page
 import io.ivan.react.navigation.utils.*
 import io.ivan.react.navigation.view.model.RNViewModel
@@ -41,7 +44,10 @@ open class RNActivity : RNBaseActivity() {
             getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
             getBundle(ARG_LAUNCH_OPTIONS)?.let { launchOptions.putAll(it) }
         }
-        launchOptions.getBundle("screenID") ?: launchOptions.putString("screenID", View.generateViewId().toString())
+        launchOptions.getBundle(ARG_OPTIONS_SCREEN_ID) ?: launchOptions.putString(
+            ARG_OPTIONS_SCREEN_ID,
+            View.generateViewId().toString()
+        )
 
         setupStartDestination()
         receiveDispatch()

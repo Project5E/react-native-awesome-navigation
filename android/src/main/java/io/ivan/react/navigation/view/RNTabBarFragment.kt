@@ -12,7 +12,11 @@ import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
 import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
+import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
+import io.ivan.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
+import io.ivan.react.navigation.utils.Store
+import io.ivan.react.navigation.utils.optInt
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 import io.ivan.react.navigation.view.widget.SwipeControllableViewPager

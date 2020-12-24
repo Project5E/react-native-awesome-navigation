@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.ReactFragment
+import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 
 private const val TAG = "1van"
 

@@ -16,7 +16,7 @@ const Detail = props => {
   const [modalVisible, setModalVisible] = useState(false)
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#ffffffff' }}>
       <Modal
         transparent={true}
         visible={modalVisible}

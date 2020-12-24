@@ -104,7 +104,7 @@ open class RNRootActivity : RNBaseActivity() {
                     viewModel.screenIdStack.last()
                 }
             promise.resolve(Arguments.createMap().also {
-                it.putString("screenID", currentScreenId)
+                it.putString(ARG_OPTIONS_SCREEN_ID, currentScreenId)
             })
         })
 
@@ -132,7 +132,7 @@ open class RNRootActivity : RNBaseActivity() {
             val isTransparency = page.options?.getBoolean("isTransparency")
             addDestinationAndNavigate(
                 page,
-                Bundle().also { it.putBoolean(ARG_FRAGMENT_PENETRABLE, isTransparency ?: false) },
+                Bundle().also { it.putBoolean(ARG_NAV_PENETRABLE, isTransparency ?: false) },
                 navOptions { anim(anim_bottom_enter_bottom_exit) }
             )
         })

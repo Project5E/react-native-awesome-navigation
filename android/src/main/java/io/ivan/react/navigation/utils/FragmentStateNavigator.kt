@@ -10,6 +10,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
+import io.ivan.react.navigation.model.ARG_NAV_PENETRABLE
 import java.util.*
 
 private const val TAG = "FragmentStateNavigator"
@@ -57,7 +58,7 @@ class FragmentStateNavigator(
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
 
-        val isPenetrate = args?.getBoolean(ARG_FRAGMENT_PENETRABLE)
+        val isPenetrate = args?.getBoolean(ARG_NAV_PENETRABLE)
 
         if (frag.isAdded) {
             ft.replace(containerId, frag, tag)

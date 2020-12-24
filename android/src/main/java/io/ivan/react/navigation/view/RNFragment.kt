@@ -15,7 +15,12 @@ import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.NavigationManager.resetCurrentActivity
 import io.ivan.react.navigation.R
-import io.ivan.react.navigation.utils.*
+import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
+import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
+import io.ivan.react.navigation.model.ARG_OPTIONS_SCREEN_ID
+import io.ivan.react.navigation.utils.LifecycleFragment
+import io.ivan.react.navigation.utils.optBoolean
+import io.ivan.react.navigation.utils.optString
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 
@@ -32,8 +37,8 @@ open class RNFragment : LifecycleFragment() {
         args?.getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
         val launchOptions = args?.getBundle(ARG_LAUNCH_OPTIONS)
         val newOptions = launchOptions ?: Bundle()
-        screenId = launchOptions?.getString("screenID") ?: View.generateViewId().toString()
-        newOptions.putString("screenID", screenId)
+        screenId = launchOptions?.getString(ARG_OPTIONS_SCREEN_ID) ?: View.generateViewId().toString()
+        newOptions.putString(ARG_OPTIONS_SCREEN_ID, screenId)
         args?.putBundle(ARG_LAUNCH_OPTIONS, newOptions)
         super.setArguments(args)
     }

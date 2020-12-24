@@ -8,12 +8,11 @@ import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import io.ivan.react.navigation.R
+import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
+import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
+import io.ivan.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import io.ivan.react.navigation.view.RNActivity
 import io.ivan.react.navigation.view.RNFragment
-
-const val ARG_COMPONENT_NAME = "arg_component_name"
-const val ARG_LAUNCH_OPTIONS = "arg_launch_options"
-const val ARG_FRAGMENT_PENETRABLE = "arg_fragment_penetrable"
 
 fun createNavHostFragmentWithoutGraph() = NavHostFragment.create(0)
 
@@ -41,7 +40,7 @@ fun buildDestination(
         })
         addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
             arg.defaultValue = (options ?: Bundle()).also {
-                it.putString("screenID", viewId.toString())
+                it.putString(ARG_OPTIONS_SCREEN_ID, viewId.toString())
             }
             arg.build()
         })
@@ -64,7 +63,7 @@ fun buildDestination(
         })
         addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().let { arg ->
             arg.defaultValue = (options ?: Bundle()).also {
-                it.putString("screenID", viewId.toString())
+                it.putString(ARG_OPTIONS_SCREEN_ID, viewId.toString())
             }
             arg.build()
         })
