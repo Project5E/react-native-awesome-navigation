@@ -94,8 +94,8 @@ export class Navigator {
     })
   }
 
-  dismiss = async () => {
-    await Navigator.dispatch(this.screenID, 'dismiss')
+  dismiss = async (animated: boolean) => {
+    await Navigator.dispatch(this.screenID, 'dismiss', undefined, {animated})
   }
 
   switchTab(index: number) {

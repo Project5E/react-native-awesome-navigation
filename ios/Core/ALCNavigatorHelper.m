@@ -121,7 +121,7 @@
     } else if ([action isEqualToString:@"present"]) {
         [self presentPage:pageName params:params];
     } else if ([action isEqualToString:@"dismiss"]) {
-        [self dissmiss:resolve reject:reject];
+        [self dissmissParams:params resolve:resolve reject:reject];
     } else if ([action isEqualToString:@"switchTab"]) {
         [self switchTabWithParams:params];
     }
@@ -176,13 +176,14 @@
     [vc presentViewController:presentNav animated:animated.boolValue completion:nil];
 }
 
-- (void)dissmiss:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+- (void)dissmissParams:(NSDictionary *)params resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     UIViewController *vc = [self getNavigationController];
     if (!vc) {
         UIWindow *window = RCTSharedApplication().delegate.window;
         vc = window.rootViewController;
     }
-    [vc dismissViewControllerAnimated:YES completion:^{
+    NSNumber *animated = params[@"animated"];
+    [vc dismissViewControllerAnimated:animated.boolValue completion:^{
         resolve(@1);
     }];
 }
