@@ -13,7 +13,8 @@ import com.facebook.react.ReactRootView
 import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
 import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
-import io.ivan.react.navigation.NavigationManager.resetCurrentActivity
+import io.ivan.react.navigation.NavigationManager.clearInstanceManagerInHost
+import io.ivan.react.navigation.NavigationManager.resetInstanceManagerInHost
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -91,8 +92,10 @@ open class RNFragment : LifecycleFragment() {
     }
 
     override fun onDestroy() {
+        clearInstanceManagerInHost()
         super.onDestroy()
-        resetCurrentActivity(requireActivity())
+        resetInstanceManagerInHost()
+//        resetCurrentActivity(requireActivity())
     }
 
     private fun createOrReuseReactRootView(
