@@ -37,8 +37,8 @@ open class RNRootActivity : RNBaseActivity() {
     private val dismissAnimTime: Long
             by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
-    private val fragmentStateNavigator: FragmentStateNavigator
-            by lazy { FragmentStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
+    private val rnNavigator: RNFragmentNavigator
+            by lazy { RNFragmentNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -47,7 +47,7 @@ open class RNRootActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController.navigatorProvider.addNavigator(fragmentStateNavigator)
+        navController.navigatorProvider.addNavigator(rnNavigator)
         receive()
     }
 
@@ -174,10 +174,10 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun buildDestination(page: Page): NavDestination =
-        buildDestination(fragmentStateNavigator, page.rootName, Arguments.toBundle(page.options))
+        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
-        fragmentStateNavigator.createDestination().also {
+        rnNavigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName

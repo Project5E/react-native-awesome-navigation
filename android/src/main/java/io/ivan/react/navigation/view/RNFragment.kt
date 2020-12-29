@@ -25,7 +25,7 @@ import io.ivan.react.navigation.utils.optString
 import io.ivan.react.navigation.view.model.RNViewModel
 import io.ivan.react.navigation.view.model.createRNViewModel
 
-open class RNFragment : LifecycleFragment() {
+open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     private lateinit var screenId: String
     private lateinit var mainComponentName: String
@@ -42,17 +42,6 @@ open class RNFragment : LifecycleFragment() {
         newOptions.putString(ARG_OPTIONS_SCREEN_ID, screenId)
         args?.putBundle(ARG_LAUNCH_OPTIONS, newOptions)
         super.setArguments(args)
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (hidden) {
-//            onPause()
-            sendNavigationEvent(VIEW_DID_DISAPPEAR, screenId)
-        } else {
-//            onResume()
-            sendNavigationEvent(VIEW_DID_APPEAR, screenId)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +85,14 @@ open class RNFragment : LifecycleFragment() {
         super.onDestroy()
         resetInstanceManagerInHost()
 //        resetCurrentActivity(requireActivity())
+    }
+
+    override fun viewDidAppear() {
+        onResume()
+    }
+
+    override fun viewDidDisappear() {
+        onPause()
     }
 
     private fun createOrReuseReactRootView(

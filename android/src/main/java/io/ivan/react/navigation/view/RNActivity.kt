@@ -28,8 +28,8 @@ open class RNActivity : RNBaseActivity() {
     private val viewModel: RNViewModel
             by lazy { createRNViewModel(application) }
 
-    private val fragmentStateNavigator: FragmentStateNavigator
-            by lazy { FragmentStateNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
+    private val rnNavigator: RNFragmentNavigator
+            by lazy { RNFragmentNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -38,7 +38,7 @@ open class RNActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController.navigatorProvider.addNavigator(fragmentStateNavigator)
+        navController.navigatorProvider.addNavigator(rnNavigator)
 
         intent.extras?.apply {
             getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
@@ -71,7 +71,7 @@ open class RNActivity : RNBaseActivity() {
 
     private fun setupStartDestination() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        val startDestination = buildDestination(fragmentStateNavigator, mainComponentName, launchOptions)
+        val startDestination = buildDestination(rnNavigator, mainComponentName, launchOptions)
         navController.setStartDestination(startDestination)
     }
 
@@ -80,7 +80,7 @@ open class RNActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
     ) {
-        val destination = buildDestination(fragmentStateNavigator, page.rootName, Arguments.toBundle(page.options))
+        val destination = buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
         navController.graph.addDestination(destination)
         navController.navigate(destination.id)
     }

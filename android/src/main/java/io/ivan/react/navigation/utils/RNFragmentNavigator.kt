@@ -6,17 +6,21 @@ import android.util.Log
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
 import io.ivan.react.navigation.model.ARG_NAV_PENETRABLE
+import io.ivan.react.navigation.view.RNComponentLifecycle
 import java.util.*
 
-private const val TAG = "FragmentStateNavigator"
+private const val TAG = "RNFragmentNavigator"
 
-@Navigator.Name("fragment_state")
-class FragmentStateNavigator(
+@Navigator.Name("react_fragment")
+class RNFragmentNavigator(
     private val context: Context,
     private val manager: FragmentManager,
     private val containerId: Int
@@ -44,6 +48,12 @@ class FragmentStateNavigator(
             ?: manager.fragmentFactory.instantiate(context.classLoader, className)
         frag.arguments = args
 
+        val isPenetrate = args?.getBoolean(ARG_NAV_PENETRABLE)
+        val currentFragment = getTopFragment()
+        if (isPenetrate != null && !isPenetrate) {
+            beforePush(currentFragment, frag)
+        }
+
         val ft = manager.beginTransaction()
 
         var enterAnim = navOptions?.enterAnim ?: -1
@@ -58,18 +68,10 @@ class FragmentStateNavigator(
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
 
-        val isPenetrate = args?.getBoolean(ARG_NAV_PENETRABLE)
-
         if (frag.isAdded) {
             ft.replace(containerId, frag, tag)
-            if (frag.isHidden) {
-                ft.show(frag)
-            }
         } else {
             ft.add(containerId, frag, tag)
-            if (isPenetrate != null && !isPenetrate) {
-                getPrevFragment()?.let { ft.hide(it) }
-            }
         }
 
         ft.setPrimaryNavigationFragment(frag)
@@ -105,6 +107,7 @@ class FragmentStateNavigator(
         }
         ft.setReorderingAllowed(true)
         ft.commit()
+
         return if (isAdded) {
             mBackStack.add(destId)
             destination
@@ -114,13 +117,11 @@ class FragmentStateNavigator(
     }
 
     override fun popBackStack(): Boolean {
+        val currentFragment = getTopFragment()
         return super.popBackStack().apply {
-            getPrevFragment()?.let {
-                manager.executePendingTransactions()
-                if (it.isHidden) {
-                    manager.beginTransaction().show(it).commit()
-                }
-            }
+            manager.executePendingTransactions()
+            val prevFragment = getTopFragment()
+            afterPop(currentFragment, prevFragment)
         }
     }
 
@@ -135,12 +136,36 @@ class FragmentStateNavigator(
         return mBackStackField.get(this) as ArrayDeque<Int>
     }
 
-    private fun getPrevFragment(): Fragment? {
+    private fun getTopFragment(): Fragment? {
         return if (mBackStack.isNotEmpty()) {
             val prevTag = mBackStack.last.toString()
             manager.findFragmentByTag(prevTag)
         } else {
             null
+        }
+    }
+
+    private fun beforePush(currentFragment: Fragment?, nextFragment: Fragment?) {
+        currentFragment ?: throw RNNavigationException("currentFragment == null")
+        nextFragment ?: throw RNNavigationException("nextFragment == null")
+
+        if (currentFragment is RNComponentLifecycle) {
+            currentFragment.viewDidDisappear()
+        }
+    }
+
+    private fun afterPop(currentFragment: Fragment?, prevFragment: Fragment?) {
+        currentFragment ?: throw RNNavigationException("currentFragment == null")
+        prevFragment ?: throw RNNavigationException("prevFragment == null")
+
+        if (prevFragment is RNComponentLifecycle) {
+            currentFragment.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    prevFragment.viewDidAppear()
+                    currentFragment.lifecycle.removeObserver(this)
+                }
+            })
         }
     }
 

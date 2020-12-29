@@ -22,7 +22,7 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 import io.ivan.react.navigation.view.widget.SwipeControllableViewPager
 import java.util.*
 
-class RNTabBarFragment : Fragment() {
+class RNTabBarFragment : Fragment(), RNComponentLifecycle {
 
     private lateinit var viewPager: SwipeControllableViewPager
 
@@ -30,15 +30,6 @@ class RNTabBarFragment : Fragment() {
 
     private val currentScreenId: String
         get() = viewModel.screenIdStack[viewModel.currentTabIndex]
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (hidden) {
-            sendNavigationEvent(VIEW_DID_DISAPPEAR, currentScreenId)
-        } else {
-            sendNavigationEvent(VIEW_DID_APPEAR, currentScreenId)
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val parent = inflater.inflate(R.layout.fragment_tabbar, container, false) as ViewGroup
@@ -68,6 +59,14 @@ class RNTabBarFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (view as ViewGroup).removeAllViews()
+    }
+
+    override fun viewDidAppear() {
+        sendNavigationEvent(VIEW_DID_APPEAR, currentScreenId)
+    }
+
+    override fun viewDidDisappear() {
+        sendNavigationEvent(VIEW_DID_DISAPPEAR, currentScreenId)
     }
 
     private fun createTabBarFragment(): RNFragment =
