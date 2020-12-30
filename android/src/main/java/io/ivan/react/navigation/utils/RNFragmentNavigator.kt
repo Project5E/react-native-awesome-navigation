@@ -146,8 +146,7 @@ class RNFragmentNavigator(
     }
 
     private fun beforePush(currentFragment: Fragment?, nextFragment: Fragment?) {
-        currentFragment ?: throw RNNavigationException("currentFragment == null")
-        nextFragment ?: throw RNNavigationException("nextFragment == null")
+        currentFragment ?: return
 
         if (currentFragment is RNComponentLifecycle) {
             currentFragment.viewDidDisappear()
@@ -155,8 +154,8 @@ class RNFragmentNavigator(
     }
 
     private fun afterPop(currentFragment: Fragment?, prevFragment: Fragment?) {
-        currentFragment ?: throw RNNavigationException("currentFragment == null")
-        prevFragment ?: throw RNNavigationException("prevFragment == null")
+        currentFragment ?: return
+        prevFragment ?: return
 
         if (prevFragment is RNComponentLifecycle) {
             currentFragment.lifecycle.addObserver(object : LifecycleObserver {

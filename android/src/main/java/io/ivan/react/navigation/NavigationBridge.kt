@@ -45,14 +45,14 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
         when (currentActivity) {
             is RNActivity -> {
                 when (action) {
-                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH_NEST, requirePage(component, options))
+                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH_NEST, requirePage(component, options) to promise)
                     "pop" -> Store.dispatch(ACTION_DISPATCH_POP_NEST)
                     else -> throw RNNavigationException("action(=$action) error")
                 }
             }
             else -> {
                 when (action) {
-                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options))
+                    "push" -> Store.dispatch(ACTION_DISPATCH_PUSH, requirePage(component, options) to promise)
                     "present" -> Store.dispatch(ACTION_DISPATCH_PRESENT, requirePage(component, options))
                     "popToRoot" -> Store.dispatch(ACTION_DISPATCH_POP_TO_ROOT)
                     "pop" -> Store.dispatch(ACTION_DISPATCH_POP)

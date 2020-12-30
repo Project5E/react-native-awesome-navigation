@@ -22,4 +22,5 @@ class RNViewModel(application: Application) : AndroidViewModel(application) {
     var currentTabIndex = 0
     val navigationOptionCache: MutableMap<String, ReadableMap?> = mutableMapOf()
     var screenIdStack = mutableListOf<String>()
+    var prevPageResult: ReadableMap? = null
 }

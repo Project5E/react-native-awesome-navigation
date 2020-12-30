@@ -9,6 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -60,8 +61,9 @@ open class RNActivity : RNBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
-            val page = state as Page
+            val (page, promise) = state as Pair<Page, Promise>
             addDestinationAndNavigate(page)
+            viewModel.prevPageResult?.let { promise.resolve(Arguments.createMap().apply { merge(it) }) }
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()

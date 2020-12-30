@@ -94,6 +94,10 @@ export class Navigator {
     })
   }
 
+  /**
+   *
+   * @param animated 仅作用于iOS
+   */
   dismiss = async (animated: boolean) => {
     await Navigator.dispatch(this.screenID, 'dismiss', undefined, {animated})
   }

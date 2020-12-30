@@ -110,11 +110,11 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
             val data = state as ReadableMap
-
+            viewModel.prevPageResult = data
             sendNavigationEvent(
                 COMPONENT_RESULT,
                 navController.previousBackStackEntry?.destination?.id?.toString(),
-                Arguments.createMap().also { it.merge(data) }
+                Arguments.createMap().apply { merge(data) }
             )
         })
 
@@ -123,8 +123,9 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
-            val page = state as Page
+            val (page, promise) = state as Pair<Page, Promise>
             addDestinationAndNavigate(page)
+            viewModel.prevPageResult?.let { promise.resolve(Arguments.createMap().apply { merge(it) }) }
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
