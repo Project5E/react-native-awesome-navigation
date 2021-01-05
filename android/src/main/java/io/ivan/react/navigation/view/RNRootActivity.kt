@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -30,6 +31,7 @@ open class RNRootActivity : RNBaseActivity() {
     private var startDestination: NavDestination? = null
 
     private lateinit var navHostFragment: NavHostFragment
+    private lateinit var fragmentNavigator: FragmentNavigator
 
     private val viewModel: RNViewModel
             by lazy { createRNViewModel(application) }
@@ -48,6 +50,7 @@ open class RNRootActivity : RNBaseActivity() {
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController.navigatorProvider.addNavigator(rnNavigator)
+        fragmentNavigator = navController.navigatorProvider.getNavigator("fragment")
         receive()
     }
 
@@ -71,21 +74,21 @@ open class RNRootActivity : RNBaseActivity() {
                     this is Tabs && type == RootType.TABS -> {
                         viewModel.tabs = this
                         options?.optString("tabBarModuleName")?.let {
-                            startDestination = buildDestinationWithTabBar(it)
+                            startDestination = buildDestinationWithTabBar(fragmentNavigator, it)
                         }
                         // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况
                     }
                     this is Screen && type == RootType.STACK -> {
-                        startDestination = buildDestination(page)
+                        startDestination = buildDestination(fragmentNavigator, page)
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        startDestination = buildDestination(page)
+                        startDestination = buildDestination(fragmentNavigator, page)
                     }
                     else -> {
                     }
                 }
             }
-            navController.setStartDestination(startDestination)
+            navController.setGraph(startDestination)
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, Observer { state ->
@@ -174,11 +177,11 @@ open class RNRootActivity : RNBaseActivity() {
         })
     }
 
-    private fun buildDestination(page: Page): NavDestination =
-        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
+    private fun buildDestination(navigator: FragmentNavigator, page: Page): NavDestination =
+        buildDestination(navigator, page.rootName, Arguments.toBundle(page.options))
 
-    private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
-        rnNavigator.createDestination().also {
+    private fun buildDestinationWithTabBar(navigator: FragmentNavigator, tabBarComponentName: String): NavDestination =
+        navigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName
@@ -189,7 +192,7 @@ open class RNRootActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
     ) {
-        val destination = buildDestination(page)
+        val destination = buildDestination(rnNavigator, page)
         navController.graph.addDestination(destination)
         navController.navigate(destination.id, args, navOptions)
     }

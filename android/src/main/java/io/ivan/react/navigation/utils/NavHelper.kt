@@ -16,21 +16,22 @@ import io.ivan.react.navigation.view.RNFragment
 
 fun createNavHostFragmentWithoutGraph() = NavHostFragment.create(0)
 
-fun NavController.setStartDestination(startDestination: NavDestination?) {
+fun NavController.setGraph(startDestination: NavDestination?) {
     startDestination ?: return
 
-    graph = NavGraphNavigator(navigatorProvider).createDestination().also {
+    val navigator = navigatorProvider.getNavigator<NavGraphNavigator>("navigation")
+    graph = navigator.createDestination().also {
         it.addDestination(startDestination)
         it.startDestination = startDestination.id
     }
 }
 
 fun buildDestination(
-    fragmentNavigator: FragmentNavigator,
+    navigator: FragmentNavigator,
     destinationName: String,
     options: Bundle?
 ): NavDestination {
-    return fragmentNavigator.createDestination().apply {
+    return navigator.createDestination().apply {
         val viewId = ViewCompat.generateViewId()
         id = viewId
         className = RNFragment::class.java.name

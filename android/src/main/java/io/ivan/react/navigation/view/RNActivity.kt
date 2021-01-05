@@ -50,7 +50,7 @@ open class RNActivity : RNBaseActivity() {
             View.generateViewId().toString()
         )
 
-        setupStartDestination()
+        setupNavGraph()
         receiveDispatch()
     }
 
@@ -71,10 +71,10 @@ open class RNActivity : RNBaseActivity() {
         })
     }
 
-    private fun setupStartDestination() {
+    private fun setupNavGraph() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
         val startDestination = buildDestination(rnNavigator, mainComponentName, launchOptions)
-        navController.setStartDestination(startDestination)
+        navController.setGraph(startDestination)
     }
 
     private fun addDestinationAndNavigate(
