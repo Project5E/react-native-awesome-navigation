@@ -14,12 +14,13 @@ import io.ivan.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import io.ivan.react.navigation.view.RNActivity
 import io.ivan.react.navigation.view.RNFragment
 
-fun createNavHostFragmentWithoutGraph() = NavHostFragment.create(0)
+fun createRNFragmentNavigator(navHostFragment: NavHostFragment) =
+    RNFragmentNavigator(navHostFragment.requireContext(), navHostFragment.childFragmentManager, navHostFragment.id)
 
 fun NavController.setGraph(startDestination: NavDestination?) {
     startDestination ?: return
 
-    val navigator = navigatorProvider.getNavigator<NavGraphNavigator>("navigation")
+    val navigator = navigatorProvider.getNavigator(NavGraphNavigator::class.java)
     graph = navigator.createDestination().also {
         it.addDestination(startDestination)
         it.startDestination = startDestination.id

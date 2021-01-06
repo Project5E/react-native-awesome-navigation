@@ -68,7 +68,12 @@ class RNFragmentNavigator(
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
 
-        if (frag.isAdded) {
+        val initialNavigation = mBackStack.isEmpty()
+        val isSingleTopReplacement = (navOptions != null && !initialNavigation
+                && navOptions.shouldLaunchSingleTop()
+                && mBackStack.peekLast() == destId)
+
+        if (frag.isAdded || initialNavigation) {
             ft.replace(containerId, frag, tag)
         } else {
             ft.add(containerId, frag, tag)
@@ -76,12 +81,7 @@ class RNFragmentNavigator(
 
         ft.setPrimaryNavigationFragment(frag)
 
-        val initialNavigation = mBackStack.isEmpty()
-        val isSingleTopReplacement = (navOptions != null && !initialNavigation
-                && navOptions.shouldLaunchSingleTop()
-                && mBackStack.peekLast() == destId)
-        val isAdded: Boolean
-        isAdded = when {
+        val isAdded = when {
             initialNavigation -> {
                 true
             }

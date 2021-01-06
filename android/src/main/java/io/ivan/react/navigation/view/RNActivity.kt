@@ -30,7 +30,7 @@ open class RNActivity : RNBaseActivity() {
             by lazy { createRNViewModel(application) }
 
     private val rnNavigator: RNFragmentNavigator
-            by lazy { RNFragmentNavigator(this, navHostFragment.childFragmentManager, R.id.nav_host_fragment) }
+            by lazy { createRNFragmentNavigator(navHostFragment) }
 
     private val navController: NavController
         get() = navHostFragment.navController
