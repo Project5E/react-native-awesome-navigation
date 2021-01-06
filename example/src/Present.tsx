@@ -26,6 +26,7 @@ const Present = props => {
       />
       <Button
         onPress={async () => {
+          props.navigator.setResult({'key': 123})
           await props.navigator.dismiss()
           // props.navigator.present('Present')
         }}

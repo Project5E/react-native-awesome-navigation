@@ -36,7 +36,7 @@
 
 - (UIViewController *)fetchViewController:(NSString *)pageName params:(NSDictionary *)params;
 
-- (void)popAndSendDataToViewController:(UIViewController *)vc;
+- (void)resignAndSendDataToViewController:(UIViewController *)vc;
 - (void)clearData;
 
 @end

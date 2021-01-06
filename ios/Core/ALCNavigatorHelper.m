@@ -21,6 +21,8 @@
 
 @implementation ALCNavigatorHelper
 
+# pragma mark - layout
+
 - (ALCTabBarViewController *)createTabBarControllerWithLayout:(NSDictionary *)layout {
     NSArray *tabs = layout[@"children"];
     NSDictionary *options = layout[@"options"];
@@ -69,9 +71,14 @@
     return [[ALCNavigationManager shared] fetchViewController:layout[@"moduleName"] params:nil];
 }
 
-- (ALCNavigationController *)getNavigationController {
-    UIWindow *window = RCTSharedApplication().delegate.window;
-    UIViewController *root = window.rootViewController;
+# pragma mark - getter
+
+- (UIViewController *)getRootViewController {
+    return RCTSharedApplication().delegate.window.rootViewController;
+}
+
+- (nullable ALCNavigationController *)getNavigationController {
+    UIViewController *root = [self getRootViewController];
     ALCNavigationController *nav;
     if ([root.presentedViewController isKindOfClass:[UINavigationController class]]) {
         nav = (ALCNavigationController *)root.presentedViewController;
@@ -91,7 +98,7 @@
     return nav;
 }
 
-- (ALCTabBarViewController *)getTabBarController {
+- (nullable ALCTabBarViewController *)getTabBarController {
     UIWindow *window = RCTSharedApplication().delegate.window;
     ALCTabBarViewController *tbc;
     switch (self.layoutType) {
@@ -103,6 +110,22 @@
     }
     return tbc;
 }
+
+- (nullable UIViewController *)getParentingViewController {
+    UIViewController *vc = [self getNavigationController];
+    UIViewController *fatherVC = vc.presentingViewController;
+    UIViewController *targetVC;
+    if ([fatherVC isKindOfClass:[ALCTabBarViewController class]]) {
+        targetVC = ((ALCTabBarViewController *)fatherVC).selectedViewController.childViewControllers.lastObject;
+    } else if ([fatherVC isKindOfClass:[ALCNavigationController class]]) {
+        targetVC = ((ALCNavigationController *)fatherVC).childViewControllers.lastObject;
+    } else {
+        targetVC = fatherVC;
+    }
+    return targetVC;;
+}
+
+# pragma mark - dispatch
 
 - (void)handleDispatch:(NSString *)screenID
                 action:(NSString *)action
@@ -137,7 +160,7 @@
 - (void)pop {
     UIViewController *vc = [self getNavigationController];
     [(ALCNavigationController *)vc popViewControllerAnimated:YES];
-    [[ALCNavigationManager shared] popAndSendDataToViewController:vc.childViewControllers.lastObject];
+    [[ALCNavigationManager shared] resignAndSendDataToViewController:vc.childViewControllers.lastObject];
 }
 
 - (void)popToRoot {
@@ -158,8 +181,7 @@
 - (void)presentPage:(NSString *)pageName params:(NSDictionary *)params {
     UIViewController *vc = [self getNavigationController];
     if (!vc) {
-        UIWindow *window = RCTSharedApplication().delegate.window;
-        vc = window.rootViewController;
+        vc = [self getRootViewController];
     }
     UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
     ALCNavigationController *presentNav = [[ALCNavigationController alloc] initWithRootViewController:viewController];
@@ -179,13 +201,16 @@
 - (void)dissmissParams:(NSDictionary *)params resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     UIViewController *vc = [self getNavigationController];
     if (!vc) {
-        UIWindow *window = RCTSharedApplication().delegate.window;
-        vc = window.rootViewController;
+        vc = [self getRootViewController];
     }
     NSNumber *animated = params[@"animated"];
     [vc dismissViewControllerAnimated:animated.boolValue completion:^{
         resolve(@1);
     }];
+    UIViewController *targetVC = [self getParentingViewController];
+    if (targetVC) {
+        [[ALCNavigationManager shared] resignAndSendDataToViewController:targetVC];
+    }
 }
 
 - (void)switchTabWithParams:(NSDictionary *)params  {

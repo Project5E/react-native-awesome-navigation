@@ -61,7 +61,7 @@ export class Navigator {
     NavigationBridge.setResult(data)
   }
 
-  push = async (component: string, params?: any) => {
+  push = async (component: string, params?: any): Promise<any> => {
     Navigator.dispatch(this.screenID, 'push', component, params)
     return new Promise(resolve => {
       const listener = {
@@ -86,11 +86,20 @@ export class Navigator {
     Navigator.dispatch(this.screenID, 'popToRoot')
   }
 
-  present = (component: string, options = {}, presentOption?: PresentOption) => {
+  present = async (component: string, options = {}, presentOption?: PresentOption) => {
     Navigator.dispatch(this.screenID, 'present', component, {
       ...options,
       ...defaultPresentOption,
       ...presentOption,
+    })
+    return new Promise(resolve => {
+      const listener = {
+        execute: (data: any) => {
+          resolve(data)
+          this.resultListener = undefined
+        },
+      }
+      this.resultListener = listener
     })
   }
 
@@ -98,7 +107,7 @@ export class Navigator {
    *
    * @param animated 仅作用于iOS
    */
-  dismiss = async (animated: boolean) => {
+  dismiss = async (animated = true) => {
     await Navigator.dispatch(this.screenID, 'dismiss', undefined, {animated})
   }
 

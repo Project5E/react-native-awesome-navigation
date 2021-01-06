@@ -27,8 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (ALCNavigationController *)createNavigationControllerWithLayout:(NSDictionary *)layout;
 - (UIViewController *)createScreenControllerWithLayout:(NSDictionary *)layout;
 
-- (ALCNavigationController *)getNavigationController;
-- (ALCTabBarViewController *)getTabBarController;
+- (nullable ALCNavigationController *)getNavigationController;
+- (nullable ALCTabBarViewController *)getTabBarController;
 
 - (void)handleDispatch:(NSString *)screenID
                 action:(NSString *)action

@@ -71,8 +71,9 @@ const Home = props => {
       />
 
       <Button
-        onPress={() => {
-          props.navigator.present('Present', {}, {isFullScreen: true, isTransparency: true, animated: false})
+        onPress={async () => {
+          const resp = await props.navigator.present('Present', {}) //{isFullScreen: true, isTransparency: true, animated: false}
+          console.log(resp)
         }}
         title="present"
       />

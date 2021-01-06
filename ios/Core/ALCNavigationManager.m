@@ -91,7 +91,7 @@
     return vc;
 }
 
-- (void)popAndSendDataToViewController:(UIViewController *)vc {
+- (void)resignAndSendDataToViewController:(UIViewController *)vc {
     if (self.resultData) {
         [vc didReceiveResultData:self.resultData];
         self.resultData = nil;
