@@ -1,6 +1,6 @@
 <h1 align="center">
   <img src="logo.png"/><br/>
-  React Native Navigation 5E
+  React Native Awesome Navigation
 </h1>
 
 The react-native-navigation-5e is a native navigation based on iOS UIViewController and Android Activity/Fragment. The purpose we are doing this is that the popular [react-navigation](https://reactnavigation.org)'s performance cannot satify our react-navie based application, especially on Android. Thanks to Khan Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) give us inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will be keep optimizing and updating.
