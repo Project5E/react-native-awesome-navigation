@@ -101,7 +101,7 @@ open class RNActivity : RNBaseActivity() {
     ) {
         val destination = buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
         navController.graph.addDestination(destination)
-        navController.navigate(destination.id)
+        navController.navigate(destination.id, args, navOptions)
     }
 
     private fun removeCurrentScreenIdToStack() {
