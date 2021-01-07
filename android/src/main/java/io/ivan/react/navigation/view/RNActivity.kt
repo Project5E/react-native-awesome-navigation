@@ -55,8 +55,9 @@ open class RNActivity : RNBaseActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        navController.previousBackStackEntry?.apply { navController.navigateUp() } ?: finish()
+        if (!navController.navigateUp()) {
+            finish()
+        }
     }
 
     private fun receiveDispatch() {
@@ -67,7 +68,7 @@ open class RNActivity : RNBaseActivity() {
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
-            navController.navigateUp()
+            onBackPressed()
         })
     }
 

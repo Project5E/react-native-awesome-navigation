@@ -52,12 +52,12 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        navController.previousBackStackEntry?.apply { navController.navigateUp() }
-            ?: startActivity(Intent(Intent.ACTION_MAIN).also {
+        if (!navController.navigateUp()) {
+            startActivity(Intent(Intent.ACTION_MAIN).also {
                 it.addCategory(Intent.CATEGORY_HOME)
                 it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             })
+        }
     }
 
     private fun receive() {
