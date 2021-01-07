@@ -21,8 +21,8 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNActivity : RNBaseActivity() {
 
-    open var mainComponentName: String = ""
     open var launchOptions: Bundle = Bundle()
+    private var _mainComponentName: String = ""
 
     private lateinit var navHostFragment: NavHostFragment
 
@@ -35,6 +35,10 @@ open class RNActivity : RNBaseActivity() {
     private val navController: NavController
         get() = navHostFragment.navController
 
+    override fun getMainComponentName(): String {
+        return _mainComponentName
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
@@ -42,7 +46,7 @@ open class RNActivity : RNBaseActivity() {
         navController.navigatorProvider.addNavigator(rnNavigator)
 
         intent.extras?.apply {
-            getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
+            getString(ARG_COMPONENT_NAME)?.let { _mainComponentName = it }
             getBundle(ARG_LAUNCH_OPTIONS)?.let { launchOptions.putAll(it) }
         }
         launchOptions.getBundle(ARG_OPTIONS_SCREEN_ID) ?: launchOptions.putString(
