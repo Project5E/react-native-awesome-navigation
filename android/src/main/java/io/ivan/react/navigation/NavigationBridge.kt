@@ -68,7 +68,14 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun setResult(data: ReadableMap) {
-        Store.dispatch(ACTION_SET_RESULT, data)
+        when (currentActivity) {
+            is RNActivity -> {
+                Store.dispatch(ACTION_SET_RESULT_NEST, data)
+            }
+            else -> {
+                Store.dispatch(ACTION_SET_RESULT, data)
+            }
+        }
     }
 
     @ReactMethod
