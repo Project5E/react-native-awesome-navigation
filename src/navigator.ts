@@ -13,12 +13,14 @@ interface PresentOption {
   isFullScreen?: boolean
   isTransparency?: boolean
   animated?: boolean
+  isTabBarPresented?: boolean
 }
 
 const defaultPresentOption: PresentOption = {
   isFullScreen: false,
   isTransparency: false,
   animated: true,
+  isTabBarPresented: false,
 }
 
 export class Navigator {
@@ -86,7 +88,11 @@ export class Navigator {
     Navigator.dispatch(this.screenID, 'popToRoot')
   }
 
-  present = async (component: string, options = {}, presentOption?: PresentOption) => {
+  present = async (
+    component: string,
+    options = {},
+    presentOption?: PresentOption
+  ): Promise<any> => {
     Navigator.dispatch(this.screenID, 'present', component, {
       ...options,
       ...defaultPresentOption,

@@ -13,9 +13,12 @@
 #import "ALCViewController.h"
 #import "ALCTabBarViewController.h"
 #import "UIViewController+ALC.h"
+#import "ALCConstants.h"
 #import "ALCUtils.h"
 
 @interface ALCNavigatorHelper () <UIAdaptivePresentationControllerDelegate>
+
+@property (nonatomic, assign) BOOL isTabBarPresent;
 
 @end
 
@@ -196,6 +199,8 @@
     }
     NSNumber *animated = params[@"animated"];
     [vc presentViewController:presentNav animated:animated.boolValue completion:nil];
+    NSNumber *isTabBarPresented = params[@"animated"];
+    self.isTabBarPresent = isTabBarPresented.boolValue;
 }
 
 - (void)dissmissParams:(NSDictionary *)params resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
@@ -203,14 +208,24 @@
     if (!vc) {
         vc = [self getRootViewController];
     }
+    if (!self.isTabBarPresent) {
+        UIViewController *targetVC = [self getParentingViewController];
+        if (targetVC) {
+            [[ALCNavigationManager shared] resignAndSendDataToViewController:targetVC];
+        }
+    } else {
+        [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
+        @{
+          EVENT_TYPE: COMPONENT_RESULT,
+          RESULT_DATA: [ALCNavigationManager shared].resultData ?: [NSNull null],
+          SCREEN_ID: [self getTabBarController].screenID
+        }];
+        [[ALCNavigationManager shared] clearData];
+    }
     NSNumber *animated = params[@"animated"];
     [vc dismissViewControllerAnimated:animated.boolValue completion:^{
         resolve(@1);
     }];
-    UIViewController *targetVC = [self getParentingViewController];
-    if (targetVC) {
-        [[ALCNavigationManager shared] resignAndSendDataToViewController:targetVC];
-    }
 }
 
 - (void)switchTabWithParams:(NSDictionary *)params  {
