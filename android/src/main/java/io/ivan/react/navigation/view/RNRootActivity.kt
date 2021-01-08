@@ -90,32 +90,14 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, Observer { state ->
             val promise = state as Promise
-            val currentScreenId = viewModel.tabs?.pages?.size
-                // with tab bar
-                ?.let { tabSize ->
-                    if (viewModel.screenIdStack.size == tabSize) {
-                        viewModel.screenIdStack[viewModel.currentTabIndex]
-                    } else {
-                        viewModel.screenIdStack.last()
-                    }
-                }
-            // without tab bar
-                ?: let {
-                    viewModel.screenIdStack.last()
-                }
             promise.resolve(Arguments.createMap().also {
-                it.putString(ARG_OPTIONS_SCREEN_ID, currentScreenId)
+                it.putString(ARG_OPTIONS_SCREEN_ID, getCurrentScreenId())
             })
         })
 
         Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
             val data = state as ReadableMap
             viewModel.prevPageResult = data
-            sendNavigationEvent(
-                COMPONENT_RESULT,
-                navController.previousBackStackEntry?.destination?.id?.toString(),
-                Arguments.createMap().apply { merge(data) }
-            )
         })
 
         receiveDispatch()
@@ -123,9 +105,8 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
-            val (page, promise) = state as Pair<Page, Promise>
+            val page = state as Page
             addDestinationAndNavigate(page)
-            viewModel.prevPageResult?.let { promise.resolve(Arguments.createMap().apply { merge(it) }) }
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
@@ -148,6 +129,13 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
+            viewModel.prevPageResult?.let {
+                sendNavigationEvent(
+                    COMPONENT_RESULT,
+                    getCurrentScreenId(),
+                    Arguments.createMap().apply { merge(it) }
+                )
+            }
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
@@ -155,6 +143,14 @@ open class RNRootActivity : RNBaseActivity() {
 
             removeCurrentScreenIdToStack()
             navController.navigateUp()
+
+            viewModel.prevPageResult?.let {
+                sendNavigationEvent(
+                    COMPONENT_RESULT,
+                    getCurrentScreenId(),
+                    Arguments.createMap().apply { merge(it) }
+                )
+            }
 
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
@@ -211,6 +207,38 @@ open class RNRootActivity : RNBaseActivity() {
                     // without tab bar
                 ?: viewModel.screenIdStack.subList(0, 1)
 
+    }
+
+    private fun getCurrentScreenId(): String {
+        return viewModel.tabs?.pages?.size
+            // with tab bar
+            ?.let { tabSize ->
+                if (viewModel.screenIdStack.size == tabSize) {
+                    viewModel.screenIdStack[viewModel.currentTabIndex]
+                } else {
+                    viewModel.screenIdStack.last()
+                }
+            }
+        // without tab bar
+            ?: let {
+                viewModel.screenIdStack.last()
+            }
+    }
+
+    private fun getScreenId(index: Int): String {
+        return viewModel.tabs?.pages?.size
+            // with tab bar
+            ?.let { tabSize ->
+                if (viewModel.screenIdStack.size == tabSize) {
+                    viewModel.screenIdStack[viewModel.currentTabIndex]
+                } else {
+                    viewModel.screenIdStack[index]
+                }
+            }
+        // without tab bar
+            ?: let {
+                viewModel.screenIdStack[index]
+            }
     }
 
 }
