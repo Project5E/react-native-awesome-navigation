@@ -208,23 +208,24 @@
     if (!vc) {
         vc = [self getRootViewController];
     }
-    if (!self.isTabBarPresent) {
-        UIViewController *targetVC = [self getParentingViewController];
-        if (targetVC) {
-            [[ALCNavigationManager shared] resignAndSendDataToViewController:targetVC];
-        }
-    } else {
-        [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
-        @{
-          EVENT_TYPE: COMPONENT_RESULT,
-          RESULT_DATA: [ALCNavigationManager shared].resultData ?: [NSNull null],
-          SCREEN_ID: [self getTabBarController].screenID
-        }];
-        [[ALCNavigationManager shared] clearData];
-    }
+    
+    UIViewController *targetVC = [self getParentingViewController];
     NSNumber *animated = params[@"animated"];
     [vc dismissViewControllerAnimated:animated.boolValue completion:^{
         resolve(@1);
+        if (!self.isTabBarPresent) {
+            if (targetVC) {
+                [[ALCNavigationManager shared] resignAndSendDataToViewController:targetVC];
+            }
+        } else {
+            [ALCNavigationManager sendEvent:NAVIGATION_EVENT data:
+            @{
+              EVENT_TYPE: COMPONENT_RESULT,
+              RESULT_DATA: [ALCNavigationManager shared].resultData ?: [NSNull null],
+              SCREEN_ID: [self getTabBarController].screenID
+            }];
+            [[ALCNavigationManager shared] clearData];
+        }
     }];
 }
 

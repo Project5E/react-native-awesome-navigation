@@ -10,10 +10,10 @@ interface Route {
 }
 
 interface PresentOption {
-  isFullScreen?: boolean
-  isTransparency?: boolean
-  animated?: boolean
-  isTabBarPresented?: boolean
+  isFullScreen?: boolean // 仅iOS有效 是否全屏Present
+  isTransparency?: boolean // 背景是否透明
+  animated?: boolean // 是否有动画
+  isTabBarPresented?: boolean // 仅iOS有效 是否从自定义TabBar Prensent
 }
 
 const defaultPresentOption: PresentOption = {
