@@ -199,7 +199,7 @@
     }
     NSNumber *animated = params[@"animated"];
     [vc presentViewController:presentNav animated:animated.boolValue completion:nil];
-    NSNumber *isTabBarPresented = params[@"animated"];
+    NSNumber *isTabBarPresented = params[@"isTabBarPresented"];
     self.isTabBarPresent = isTabBarPresented.boolValue;
 }
 
