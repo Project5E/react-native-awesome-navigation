@@ -10,9 +10,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReadableMap
-import io.ivan.react.navigation.NavigationConstants
-import io.ivan.react.navigation.NavigationEmitter
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -58,7 +55,7 @@ open class RNActivity : RNBaseActivity() {
         )
 
         setupNavGraph()
-        receive()
+        receiveDispatch()
     }
 
     override fun onBackPressed() {
@@ -67,7 +64,7 @@ open class RNActivity : RNBaseActivity() {
         }
     }
 
-    private fun receive() {
+    private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
             val (page, promise) = state as Pair<Page, Promise>
             addDestinationAndNavigate(page)
@@ -76,15 +73,6 @@ open class RNActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
             onBackPressed()
-        })
-        Store.reducer(ACTION_SET_RESULT_NEST)?.observe(this, Observer { state ->
-            val data = state as ReadableMap
-            viewModel.prevPageResult = data
-            NavigationEmitter.sendNavigationEvent(
-                NavigationConstants.COMPONENT_RESULT,
-                navController.previousBackStackEntry?.destination?.id?.toString(),
-                Arguments.createMap().apply { merge(data) }
-            )
         })
     }
 

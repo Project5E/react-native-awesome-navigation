@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.IdRes
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -49,9 +48,8 @@ class RNFragmentNavigator(
         frag.arguments = args
 
         val isPenetrate = args?.getBoolean(ARG_NAV_PENETRABLE)
-        val currentFragment = getTopFragment()
         if (isPenetrate != null && !isPenetrate) {
-            beforePush(currentFragment, frag)
+            pushLifecycleEffect()
         }
 
         val ft = manager.beginTransaction()
@@ -117,12 +115,8 @@ class RNFragmentNavigator(
     }
 
     override fun popBackStack(): Boolean {
-        val currentFragment = getTopFragment()
-        return super.popBackStack().apply {
-            manager.executePendingTransactions()
-            val prevFragment = getTopFragment()
-            afterPop(currentFragment, prevFragment)
-        }
+        popLifecycleEffect()
+        return super.popBackStack()
     }
 
     private fun generateBackStackName(backStackIndex: Int, destId: Int): String {
@@ -136,26 +130,21 @@ class RNFragmentNavigator(
         return mBackStackField.get(this) as ArrayDeque<Int>
     }
 
-    private fun getTopFragment(): Fragment? {
-        return if (mBackStack.isNotEmpty()) {
-            val prevTag = mBackStack.last.toString()
-            manager.findFragmentByTag(prevTag)
-        } else {
-            null
-        }
-    }
-
-    private fun beforePush(currentFragment: Fragment?, nextFragment: Fragment?) {
-        currentFragment ?: return
+    private fun pushLifecycleEffect() {
+        val destId = mBackStack.peekLast()
+        val currentFragment = destId?.let { manager.findFragmentByTag(it.toString()) } ?: return
 
         if (currentFragment is RNComponentLifecycle) {
             currentFragment.viewDidDisappear()
         }
     }
 
-    private fun afterPop(currentFragment: Fragment?, prevFragment: Fragment?) {
-        currentFragment ?: return
-        prevFragment ?: return
+    private fun popLifecycleEffect() {
+        val backList = mBackStack.toArray()
+        val last1 = backList[backList.lastIndex]
+        val last2 = backList[backList.lastIndex - 1]
+        val currentFragment = manager.findFragmentByTag(last1.toString()) ?: return
+        val prevFragment = manager.findFragmentByTag(last2.toString()) ?: return
 
         if (prevFragment is RNComponentLifecycle) {
             currentFragment.lifecycle.addObserver(object : LifecycleObserver {
