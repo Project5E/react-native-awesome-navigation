@@ -1,6 +1,5 @@
 package io.ivan.react.navigation.view
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
@@ -51,13 +50,8 @@ open class RNRootActivity : RNBaseActivity() {
         receive()
     }
 
-    override fun onBackPressed() {
-        if (!navController.navigateUp()) {
-            startActivity(Intent(Intent.ACTION_MAIN).also {
-                it.addCategory(Intent.CATEGORY_HOME)
-                it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            })
-        }
+    override fun invokeDefaultOnBackPressed() {
+        navController.navigateUp()
     }
 
     private fun receive() {

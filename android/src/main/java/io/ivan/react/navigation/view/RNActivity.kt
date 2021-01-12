@@ -57,11 +57,15 @@ open class RNActivity : RNBaseActivity() {
         receiveDispatch()
     }
 
-    override fun onBackPressed() {
-        if (!navController.navigateUp()) {
-            finish()
-        }
+    override fun invokeDefaultOnBackPressed() {
+        navController.navigateUp()
     }
+
+//    override fun onBackPressed() {
+//        if (!navController.navigateUp()) {
+//            finish()
+//        }
+//    }
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
