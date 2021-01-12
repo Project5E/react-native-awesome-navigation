@@ -140,6 +140,7 @@ class RNFragmentNavigator(
     }
 
     private fun popLifecycleEffect() {
+        if (mBackStack.size < 2) return
         val backList = mBackStack.toArray()
         val last1 = backList[backList.lastIndex]
         val last2 = backList[backList.lastIndex - 1]

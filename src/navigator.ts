@@ -47,6 +47,7 @@ export class Navigator {
   screenID: string
   moduleName: string
   resultListener?: ResultListener
+  currentTabIndex: number
 
   constructor(screenID: string, moduleName: string) {
     this.screenID = screenID
@@ -118,6 +119,7 @@ export class Navigator {
   }
 
   switchTab(index: number) {
+    this.currentTabIndex = index
     return Navigator.dispatch(this.screenID, 'switchTab', undefined, {index})
   }
 
