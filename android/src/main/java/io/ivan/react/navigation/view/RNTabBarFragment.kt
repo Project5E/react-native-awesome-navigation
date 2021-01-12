@@ -25,6 +25,7 @@ import java.util.*
 class RNTabBarFragment : Fragment(), RNComponentLifecycle {
 
     private lateinit var viewPager: SwipeControllableViewPager
+    private val tabBarRnFragment: RNFragment by lazy { createTabBarRnFragment() }
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
@@ -40,7 +41,7 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         childFragmentManager.beginTransaction()
-            .replace(R.id.tab_bar_container, createTabBarFragment())
+            .replace(R.id.tab_bar_container, tabBarRnFragment)
             .commitNowAllowingStateLoss()
 
         // swipe enable
@@ -62,14 +63,16 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
     }
 
     override fun viewDidAppear() {
+        tabBarRnFragment.viewDidAppear()
         sendNavigationEvent(VIEW_DID_APPEAR, currentScreenId)
     }
 
     override fun viewDidDisappear() {
+        tabBarRnFragment.viewDidDisappear()
         sendNavigationEvent(VIEW_DID_DISAPPEAR, currentScreenId)
     }
 
-    private fun createTabBarFragment(): RNFragment =
+    private fun createTabBarRnFragment(): RNFragment =
         RNFragment().apply {
             arguments = Bundle().also { args ->
                 args.putString(ARG_COMPONENT_NAME, viewModel.tabBarComponentName)
