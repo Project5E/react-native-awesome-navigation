@@ -51,6 +51,7 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     override fun invokeDefaultOnBackPressed() {
+        removeCurrentScreenIdToStack()
         navController.navigateUp()
     }
 

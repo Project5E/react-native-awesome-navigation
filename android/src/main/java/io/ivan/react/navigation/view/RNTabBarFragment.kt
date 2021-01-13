@@ -47,7 +47,10 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
         // swipe enable
         viewPager.isEnabled = false
 
-        viewModel.tabs?.let { viewPager.adapter = RNTabPageAdapter(childFragmentManager, it) }
+        viewModel.tabs?.let {
+            viewPager.adapter = RNTabPageAdapter(childFragmentManager, it)
+            viewPager.offscreenPageLimit = it.pages.size
+        }
 
         Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
             val data = state as ReadableMap
