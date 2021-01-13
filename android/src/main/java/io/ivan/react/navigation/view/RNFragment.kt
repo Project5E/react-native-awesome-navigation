@@ -27,19 +27,22 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
-    private lateinit var screenId: String
-    private lateinit var mainComponentName: String
+    val screenId get() = _screenId
+    val mainComponentName get() = _mainComponentName
+
+    private lateinit var _screenId: String
+    private lateinit var _mainComponentName: String
     private lateinit var reactRootView: ReactRootView
     private lateinit var toolbar: Toolbar
 
     private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
 
     override fun setArguments(args: Bundle?) {
-        args?.getString(ARG_COMPONENT_NAME)?.let { mainComponentName = it }
+        args?.getString(ARG_COMPONENT_NAME)?.let { _mainComponentName = it }
         val launchOptions = args?.getBundle(ARG_LAUNCH_OPTIONS)
         val newOptions = launchOptions ?: Bundle()
-        screenId = launchOptions?.getString(ARG_OPTIONS_SCREEN_ID) ?: View.generateViewId().toString()
-        newOptions.putString(ARG_OPTIONS_SCREEN_ID, screenId)
+        _screenId = launchOptions?.getString(ARG_OPTIONS_SCREEN_ID) ?: View.generateViewId().toString()
+        newOptions.putString(ARG_OPTIONS_SCREEN_ID, _screenId)
         args?.putBundle(ARG_LAUNCH_OPTIONS, newOptions)
         super.setArguments(args)
     }
@@ -47,7 +50,7 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (isNotTabBarComponent()) {
-            viewModel.screenIdStack.add(screenId)
+            viewModel.screenIdStack.add(_screenId)
         }
     }
 
@@ -67,12 +70,12 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     override fun onResume() {
         super.onResume()
-        sendNavigationEvent(VIEW_DID_APPEAR, screenId)
+        sendNavigationEvent(VIEW_DID_APPEAR, _screenId)
     }
 
     override fun onPause() {
         super.onPause()
-        sendNavigationEvent(VIEW_DID_DISAPPEAR, screenId)
+        sendNavigationEvent(VIEW_DID_DISAPPEAR, _screenId)
     }
 
     override fun onDestroyView() {
@@ -116,7 +119,7 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
             setSupportActionBar(toolbar)
             toolbar.setupWithNavController(findNavController())
 
-            val navigationOption = viewModel.navigationOptionCache[mainComponentName]
+            val navigationOption = viewModel.navigationOptionCache[_mainComponentName]
             when (navigationOption?.optBoolean("hideNavigationBar")) {
                 true -> {
                     supportActionBar?.hide()
@@ -129,6 +132,6 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
         }
     }
 
-    private fun isNotTabBarComponent() = mainComponentName != viewModel.tabBarComponentName
+    private fun isNotTabBarComponent() = _mainComponentName != viewModel.tabBarComponentName
 
 }

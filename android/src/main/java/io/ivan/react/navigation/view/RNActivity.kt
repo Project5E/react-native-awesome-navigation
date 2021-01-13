@@ -20,9 +20,10 @@ import io.ivan.react.navigation.view.model.createRNViewModel
 
 open class RNActivity : RNBaseActivity() {
 
+    val screenId get() = _screenId
     open var launchOptions: Bundle = Bundle()
     private var _mainComponentName: String = ""
-
+    private var _screenId: String? = null
     private lateinit var navHostFragment: NavHostFragment
 
     private val viewModel: RNViewModel
