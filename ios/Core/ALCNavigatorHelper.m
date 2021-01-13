@@ -84,7 +84,10 @@
     UIViewController *root = [self getRootViewController];
     ALCNavigationController *nav;
     if ([root.presentedViewController isKindOfClass:[UINavigationController class]]) {
-        nav = (ALCNavigationController *)root.presentedViewController;
+        while (root.presentedViewController != nil) {
+            root = root.presentedViewController;
+        }
+        nav = (ALCNavigationController *)root;
     } else {
         switch (self.layoutType) {
             case ALCLayoutTypeTabs: {
@@ -115,7 +118,7 @@
 }
 
 - (nullable UIViewController *)getParentingViewController {
-    UIViewController *vc = [self getNavigationController];
+    ALCNavigationController *vc = [self getNavigationController];
     UIViewController *fatherVC = vc.presentingViewController;
     UIViewController *targetVC;
     if ([fatherVC isKindOfClass:[ALCTabBarViewController class]]) {
@@ -154,30 +157,30 @@
 }
 
 - (void)pushPage:(NSString *)pageName params:(NSDictionary *)params {
-    UIViewController *vc = [self getNavigationController];
+    ALCNavigationController *vc = [self getNavigationController];
     UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:pageName params:params];
     viewController.hidesBottomBarWhenPushed = YES;
-    [(ALCNavigationController *)vc pushViewController:viewController animated:true];
+    [vc pushViewController:viewController animated:true];
 }
 
 - (void)pop {
-    UIViewController *vc = [self getNavigationController];
-    [(ALCNavigationController *)vc popViewControllerAnimated:YES];
+    ALCNavigationController *vc = [self getNavigationController];
+    [vc popViewControllerAnimated:YES];
     [[ALCNavigationManager shared] resignAndSendDataToViewController:vc.childViewControllers.lastObject];
 }
 
 - (void)popToRoot {
-    UIViewController *vc = [self getNavigationController];
-    [(ALCNavigationController *)vc popToRootViewControllerAnimated:YES];
+    ALCNavigationController *vc = [self getNavigationController];
+    [vc popToRootViewControllerAnimated:YES];
 }
 
 - (void)popPageWithParams:(NSDictionary *)params {
-    UIViewController *vc = [self getNavigationController];
+    ALCNavigationController *vc = [self getNavigationController];
     NSNumber *count = params[@"count"];
     if (((ALCNavigationController *)vc).childViewControllers.count > count.intValue) {
         NSUInteger index = ((ALCNavigationController *)vc).childViewControllers.count - count.intValue - 1;
         UIViewController *targetVC = (ALCNavigationController *)vc.childViewControllers[index];
-        [(ALCNavigationController *)vc popToViewController:targetVC animated:YES];
+        [vc popToViewController:targetVC animated:YES];
     }
 }
 
