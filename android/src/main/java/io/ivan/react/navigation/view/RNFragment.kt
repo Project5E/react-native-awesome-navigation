@@ -51,6 +51,8 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
         super.onCreate(savedInstanceState)
         if (isNotTabBarComponent()) {
             viewModel.screenIdStack.add(_screenId)
+        } else {
+            viewModel.tabBarScreenId = _screenId
         }
     }
 

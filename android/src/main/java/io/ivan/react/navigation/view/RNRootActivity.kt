@@ -27,6 +27,7 @@ import kotlinx.coroutines.withContext
 open class RNRootActivity : RNBaseActivity() {
 
     private var startDestination: NavDestination? = null
+    private var isTabBarPresented: Boolean = false
 
     private lateinit var navHostFragment: NavHostFragment
 
@@ -92,7 +93,7 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
             val data = state as ReadableMap
-            viewModel.prevPageResult = data
+            viewModel.pageResult = data
         })
 
         receiveDispatch()
@@ -106,12 +107,10 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
-            val isTransparency = page.options?.getBoolean("isTransparency")
-            addDestinationAndNavigate(
-                page,
-                Bundle().also { it.putBoolean(ARG_NAV_PENETRABLE, isTransparency ?: false) },
-                navOptions { anim(anim_bottom_enter_bottom_exit) }
-            )
+            val isTransparency = page.options?.optBoolean("isTransparency") ?: false
+            val args = Bundle().also { it.putBoolean(ARG_NAV_PENETRABLE, isTransparency) }
+            isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
+            addDestinationAndNavigate(page, args, navOptions { anim(anim_bottom_enter_bottom_exit) })
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
@@ -124,12 +123,8 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
-            viewModel.prevPageResult?.let {
-                sendNavigationEvent(
-                    COMPONENT_RESULT,
-                    getCurrentScreenId(),
-                    Arguments.createMap().apply { merge(it) }
-                )
+            viewModel.pageResult?.let {
+                sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
             }
         })
 
@@ -139,12 +134,16 @@ open class RNRootActivity : RNBaseActivity() {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
 
-            viewModel.prevPageResult?.let {
-                sendNavigationEvent(
-                    COMPONENT_RESULT,
-                    getCurrentScreenId(),
-                    Arguments.createMap().apply { merge(it) }
-                )
+            viewModel.pageResult?.let {
+                sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
+            }
+            if (isWithRnTabBar() && isTabBarPresented) {
+                viewModel.pageResult?.let {
+                    sendNavigationEvent(
+                        COMPONENT_RESULT,
+                        viewModel.tabBarScreenId,
+                        Arguments.createMap().apply { merge(it) })
+                }
             }
 
             lifecycleScope.launch {
@@ -234,6 +233,10 @@ open class RNRootActivity : RNBaseActivity() {
             ?: let {
                 viewModel.screenIdStack[index]
             }
+    }
+
+    private fun isWithRnTabBar(): Boolean {
+        return viewModel.tabs != null && viewModel.tabBarScreenId != null
     }
 
 }
