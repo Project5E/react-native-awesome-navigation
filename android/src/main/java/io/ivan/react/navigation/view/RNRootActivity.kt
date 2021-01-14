@@ -108,9 +108,8 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
             val isTransparency = page.options?.optBoolean("isTransparency") ?: false
-            val args = Bundle().also { it.putBoolean(ARG_NAV_PENETRABLE, isTransparency) }
             isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
-            addDestinationAndNavigate(page, args, navOptions { anim(anim_bottom_enter_bottom_exit) })
+            addDestinationAndNavigate(page, null, navOptions { anim(anim_bottom_enter_bottom_exit) })
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
@@ -123,9 +122,7 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
-            viewModel.pageResult?.let {
-                sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
-            }
+            sendComponentResultEvent()
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
@@ -134,22 +131,11 @@ open class RNRootActivity : RNBaseActivity() {
             removeCurrentScreenIdToStack()
             navController.navigateUp()
 
-            viewModel.pageResult?.let {
-                sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
-            }
-            if (isWithRnTabBar() && isTabBarPresented) {
-                viewModel.pageResult?.let {
-                    sendNavigationEvent(
-                        COMPONENT_RESULT,
-                        viewModel.tabBarScreenId,
-                        Arguments.createMap().apply { merge(it) })
-                }
-            }
-
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     delay(dismissAnimTime)
                     promise.resolve(null)
+                    sendComponentResultEvent()
                 }
             }
         })
@@ -217,6 +203,20 @@ open class RNRootActivity : RNBaseActivity() {
             ?: let {
                 viewModel.screenIdStack.last()
             }
+    }
+
+    private fun sendComponentResultEvent() {
+        viewModel.pageResult?.let {
+            sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
+        }
+        if (isWithRnTabBar() && isTabBarPresented) {
+            viewModel.pageResult?.let {
+                sendNavigationEvent(
+                    COMPONENT_RESULT,
+                    viewModel.tabBarScreenId,
+                    Arguments.createMap().apply { merge(it) })
+            }
+        }
     }
 
     private fun getScreenId(index: Int): String {

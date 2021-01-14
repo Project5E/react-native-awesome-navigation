@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -12,7 +13,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
-import io.ivan.react.navigation.model.ARG_NAV_PENETRABLE
 import io.ivan.react.navigation.view.RNComponentLifecycle
 import java.util.*
 
@@ -47,10 +47,7 @@ class RNFragmentNavigator(
             ?: manager.fragmentFactory.instantiate(context.classLoader, className)
         frag.arguments = args
 
-        val isPenetrate = args?.getBoolean(ARG_NAV_PENETRABLE)
-        if (isPenetrate != null && !isPenetrate) {
-            pushLifecycleEffect()
-        }
+        pushLifecycleEffect(frag)
 
         val ft = manager.beginTransaction()
 
@@ -130,12 +127,18 @@ class RNFragmentNavigator(
         return mBackStackField.get(this) as ArrayDeque<Int>
     }
 
-    private fun pushLifecycleEffect() {
+    private fun pushLifecycleEffect(nextFragment: Fragment) {
         val destId = mBackStack.peekLast()
         val currentFragment = destId?.let { manager.findFragmentByTag(it.toString()) } ?: return
 
         if (currentFragment is RNComponentLifecycle) {
-            currentFragment.viewDidDisappear()
+            nextFragment.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+                fun onCreate() {
+                    currentFragment.viewDidDisappear()
+                    nextFragment.lifecycle.removeObserver(this)
+                }
+            })
         }
     }
 
