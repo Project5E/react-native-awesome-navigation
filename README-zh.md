@@ -120,7 +120,6 @@ props.navigator.present('Present', undefined, {isFullScreen: true})
 同push一样，支持异步
 ```
 const resp = await props.navigator.present('Present', undefined, {isFullScreen: true})
-```
 
 interface PresentOption {
   isFullScreen?: boolean // 仅iOS有效 是否全屏Present
@@ -128,8 +127,9 @@ interface PresentOption {
   animated?: boolean // 是否有动画
   isTabBarPresented?: boolean // 标记是否从自定义TabBar Prensent
 }
+```
 
-dismiss present的反向操作
+dismiss present的反向操作 反向传餐
 ```
 props.navigator.setResult({qwe: 123})
 props.navigator.dismiss()
