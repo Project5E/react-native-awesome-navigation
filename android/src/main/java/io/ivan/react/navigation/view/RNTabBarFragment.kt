@@ -64,12 +64,12 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
 
     override fun viewDidAppear() {
         tabBarRnFragment.viewDidAppear()
-        sendViewAppearEvent(this, currentScreenId, true)
+        sendViewAppearEvent(requireActivity(), currentScreenId, true)
     }
 
     override fun viewDidDisappear() {
         tabBarRnFragment.viewDidDisappear()
-        sendViewAppearEvent(this, currentScreenId, false)
+        sendViewAppearEvent(requireActivity(), currentScreenId, false)
     }
 
     private fun createTabBarRnFragment(): RNFragment =

@@ -69,12 +69,12 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     override fun onResume() {
         super.onResume()
-        sendViewAppearEvent(this, _screenId, true)
+        sendViewAppearEvent(requireActivity(), _screenId, true)
     }
 
     override fun onPause() {
         super.onPause()
-        sendViewAppearEvent(this, _screenId, false)
+        sendViewAppearEvent(requireActivity(), _screenId, false)
     }
 
     override fun onDestroyView() {

@@ -171,11 +171,11 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun removeCurrentScreenIdToStack() {
-        navController.currentDestination?.id?.toString()?.let {
-            if (!viewModel.screenIdStack.contains(it)) {
+        navController.currentDestination?.id?.let {
+            if (!viewModel.screenIdStack.contains(it.toString()) && navController.graph.startDestination != it) {
                 throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
             }
-            viewModel.screenIdStack.remove(it)
+            viewModel.screenIdStack.remove(it.toString())
         }
     }
 
