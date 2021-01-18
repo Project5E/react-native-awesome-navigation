@@ -8,9 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
-import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
-import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
-import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -67,12 +64,12 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
 
     override fun viewDidAppear() {
         tabBarRnFragment.viewDidAppear()
-        sendNavigationEvent(VIEW_DID_APPEAR, currentScreenId)
+        sendViewAppearEvent(this, currentScreenId, true)
     }
 
     override fun viewDidDisappear() {
         tabBarRnFragment.viewDidDisappear()
-        sendNavigationEvent(VIEW_DID_DISAPPEAR, currentScreenId)
+        sendViewAppearEvent(this, currentScreenId, false)
     }
 
     private fun createTabBarRnFragment(): RNFragment =

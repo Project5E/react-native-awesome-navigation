@@ -10,9 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.ReactRootView
-import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_APPEAR
-import io.ivan.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
-import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
 import io.ivan.react.navigation.NavigationManager.clearInstanceManagerInHost
 import io.ivan.react.navigation.NavigationManager.resetInstanceManagerInHost
 import io.ivan.react.navigation.R
@@ -72,12 +69,12 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     override fun onResume() {
         super.onResume()
-        sendNavigationEvent(VIEW_DID_APPEAR, _screenId)
+        sendViewAppearEvent(this, _screenId, true)
     }
 
     override fun onPause() {
         super.onPause()
-        sendNavigationEvent(VIEW_DID_DISAPPEAR, _screenId)
+        sendViewAppearEvent(this, _screenId, false)
     }
 
     override fun onDestroyView() {
