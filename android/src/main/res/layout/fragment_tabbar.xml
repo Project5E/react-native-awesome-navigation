@@ -10,9 +10,23 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <androidx.fragment.app.FragmentContainerView
+    <FrameLayout
         android:id="@+id/tab_bar_container"
         android:layout_width="match_parent"
-        android:layout_height="56dp" />
+        android:layout_height="56dp">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/rn_tab_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/tab_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
 </LinearLayout>

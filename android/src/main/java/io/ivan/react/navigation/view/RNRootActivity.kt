@@ -66,10 +66,8 @@ open class RNRootActivity : RNBaseActivity() {
                 when {
                     this is Tabs && type == RootType.TABS -> {
                         viewModel.tabs = this
-                        options?.optString("tabBarModuleName")?.let {
-                            startDestination = buildDestinationWithTabBar(it)
-                        }
-                        // TODO: 2020/11/6 如果没有 tabBarModuleName ，还应该处理使用原生 tabBar 的情况
+                        val tabBarModuleName = options?.optString("tabBarModuleName")
+                        startDestination = buildDestinationWithTab(tabBarModuleName)
                     }
                     this is Screen && type == RootType.STACK -> {
                         startDestination = buildDestination(page)
@@ -153,7 +151,7 @@ open class RNRootActivity : RNBaseActivity() {
     private fun buildDestination(page: Page): NavDestination =
         buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
 
-    private fun buildDestinationWithTabBar(tabBarComponentName: String): NavDestination =
+    private fun buildDestinationWithTab(tabBarComponentName: String?): NavDestination =
         rnNavigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
             it.className = RNTabBarFragment::class.java.name

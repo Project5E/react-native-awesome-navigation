@@ -18,7 +18,7 @@ fun createRNViewModel(application: Application): RNViewModel =
 
 class RNViewModel(application: Application) : AndroidViewModel(application) {
     var tabBarScreenId: String? = null
-    var tabBarComponentName: String = ""
+    var tabBarComponentName: String? = null
     var tabs: Tabs? = null
     var currentTabIndex = 0
     val navigationOptionCache: MutableMap<String, ReadableMap?> = mutableMapOf()
