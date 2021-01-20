@@ -5,10 +5,10 @@ import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
+import io.ivan.react.navigation.NavigationManager.style
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -71,7 +71,7 @@ open class RNActivity : RNBaseActivity() {
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
             val page = state as Page
-            addDestinationAndNavigate(page)
+            addDestinationAndPush(page)
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
@@ -85,14 +85,10 @@ open class RNActivity : RNBaseActivity() {
         navController.setGraph(startDestination)
     }
 
-    private fun addDestinationAndNavigate(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
-    ) {
+    private fun addDestinationAndPush(page: Page) {
         val destination = buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
         navController.graph.addDestination(destination)
-        navController.navigate(destination.id, args, navOptions)
+        navController.navigate(destination.id, null, navOptions { anim(style.pushAnim) })
     }
 
     private fun removeCurrentScreenIdToStack() {

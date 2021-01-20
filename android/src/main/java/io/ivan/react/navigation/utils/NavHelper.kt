@@ -7,7 +7,6 @@ import androidx.core.view.ViewCompat
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
 import io.ivan.react.navigation.model.ARG_OPTIONS_SCREEN_ID
@@ -72,22 +71,3 @@ fun buildDestination(
     }
 }
 
-val anim_right_enter_right_exit: AnimBuilder.() -> Unit = {
-    enter = R.anim.navigation_slide_in_right
-    exit = R.anim.navigation_fade_out
-    popExit = R.anim.navigation_slide_out_right
-}
-
-val anim_top_enter_top_exit: AnimBuilder.() -> Unit = {
-    enter = R.anim.navigation_top_enter
-    popExit = R.anim.navigation_top_exit
-//    exit = android.R.anim.fade_out
-//    popEnter = android.R.anim.fade_in
-}
-
-val anim_bottom_enter_bottom_exit: AnimBuilder.() -> Unit = {
-    enter = R.anim.navigation_bottom_enter
-    popExit = R.anim.navigation_bottom_exit
-//    exit = android.R.anim.fade_out
-//    popEnter = android.R.anim.fade_in
-}

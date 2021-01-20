@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -14,6 +13,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import io.ivan.react.navigation.NavigationConstants.Companion.COMPONENT_RESULT
 import io.ivan.react.navigation.NavigationEmitter.sendNavigationEvent
+import io.ivan.react.navigation.NavigationManager.style
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.*
 import io.ivan.react.navigation.utils.*
@@ -100,14 +100,14 @@ open class RNRootActivity : RNBaseActivity() {
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
             val page = state as Page
-            addDestinationAndNavigate(page)
+            addDestinationAndPush(page)
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
             val isTransparency = page.options?.optBoolean("isTransparency") ?: false
             isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
-            addDestinationAndNavigate(page, null, navOptions { anim(anim_bottom_enter_bottom_exit) })
+            addDestinationAndPresent(page)
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
@@ -158,14 +158,16 @@ open class RNRootActivity : RNBaseActivity() {
             viewModel.tabBarComponentName = tabBarComponentName
         }
 
-    private fun addDestinationAndNavigate(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(anim_right_enter_right_exit) }
-    ) {
+    private fun addDestinationAndPush(page: Page) {
         val destination = buildDestination(page)
         navController.graph.addDestination(destination)
-        navController.navigate(destination.id, args, navOptions)
+        navController.navigate(destination.id, null, navOptions { anim(style.pushAnim) })
+    }
+
+    private fun addDestinationAndPresent(page: Page) {
+        val destination = buildDestination(page)
+        navController.graph.addDestination(destination)
+        navController.navigate(destination.id, null, navOptions { anim(style.presentAnim) })
     }
 
     private fun removeCurrentScreenIdToStack() {

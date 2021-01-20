@@ -5,12 +5,17 @@ import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
 import io.ivan.react.navigation.utils.RNNavigationException
+import io.ivan.react.navigation.view.model.GlobalStyle
 import java.lang.ref.WeakReference
 
 object NavigationManager {
 
     private var _reactNativeHost: ReactNativeHost? = null
     private var _reactInstanceManager: ReactInstanceManager? = null
+
+    @JvmStatic
+    @Volatile
+    var style: GlobalStyle = GlobalStyle()
 
     val reactNativeHost: ReactNativeHost
         @JvmStatic
