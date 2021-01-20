@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setTabBadge:(NSArray<NSDictionary *> *)options;
 
+- (void)updateTabBar:(NSDictionary *)options;
+
 @end
 
 NS_ASSUME_NONNULL_END

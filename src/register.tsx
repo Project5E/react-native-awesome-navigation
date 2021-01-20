@@ -26,7 +26,7 @@ const withNavigator = (moduleName: string) => {
   return (WrappedComponent: React.ComponentType<any>) => {
     const FC = (props: Props, ref: React.Ref<React.ComponentType<any>>) => {
       const {screenID} = props
-      const navigator = new Navigator(screenID, moduleName)
+      const navigator = store.getNavigator(screenID) || new Navigator(screenID, moduleName)
       store.addNavigator(screenID, navigator)
       useEffect(() => {
         navigator.signalFirstRenderComplete()

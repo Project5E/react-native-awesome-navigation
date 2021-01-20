@@ -26,11 +26,12 @@
 @implementation ALCTabBarViewController
 
 - (instancetype)initWithTabBarOptions:(NSDictionary *)options {
-    _options = options;
+    NSMutableDictionary *copied = [options mutableCopy];
+    copied[@"screenID"] = self.screenID;
+    _options = copied;
     _hasCustomTabBar = YES;
     return [super init];
 }
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -50,12 +51,10 @@
 }
 
 - (void)customTabBar {
-    NSMutableDictionary *copied = [self.options mutableCopy];
-    copied[@"screenID"] = self.screenID;
     NSString *tabBar = self.options[@"tabBarModuleName"];
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[ALCNavigationManager shared].bridge
                                                      moduleName:tabBar
-                                              initialProperties:[copied copy]];
+                                              initialProperties:self.options];
     rootView.frame = CGRectMake(0, 1, CGRectGetWidth(self.tabBar.bounds), 48);
     [self.tabBar addSubview:rootView];
     self.rootView = rootView;
@@ -102,6 +101,14 @@
                 [tabBar hideDotBadgeAtIndex:index];
             }
         }
+    }
+}
+
+- (void)updateTabBar:(NSDictionary *)options {
+    if (self.hasCustomTabBar) {
+        NSMutableDictionary *copied = [self.options mutableCopy];
+        [copied addEntriesFromDictionary:options];
+        self.rootView.appProperties = [copied copy];
     }
 }
 

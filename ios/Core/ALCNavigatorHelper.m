@@ -236,6 +236,7 @@
     ALCTabBarViewController *tbc = [self getTabBarController];
     NSNumber *index = params[@"index"];
     tbc.selectedIndex = index.integerValue;
+    [tbc updateTabBar:params];
 }
 
 @end
