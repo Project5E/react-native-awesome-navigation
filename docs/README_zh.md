@@ -1,5 +1,5 @@
 <h2 align="center">
-  <img src="logo.png"/><br/>
+  <img src="../logo.png"/><br/>
 </h2>
 <h1 align="center">
   React Native Awesome Navigation
@@ -69,8 +69,7 @@ setRoot({
 
 支持原生页面与RN页面混搭
 
-目前提供两个原生页面样式设置  
-设置标题以及是否隐藏导航栏
+目前提供两个原生页面样式设置 设置标题以及是否隐藏导航栏
 ```ts
 Home.navigationItem = {
   title: '主页',
@@ -80,8 +79,8 @@ Home.navigationItem = {
 ```
 
 ### iOS
-需要在AppDelegate中记录bridge  
-同时注册对应原生的ViewController，该ViewController需要继承ALCNativeViewController
+
+需要在AppDelegate中记录bridge 同时注册对应原生的ViewController，该ViewController需要继承ALCNativeViewController
 ```
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   [ALCNavigationManager shared].bridge = bridge;
@@ -139,11 +138,10 @@ switchTab 用于根页面自定义tabbar切换
 ```
 props.navigator.switchTab(0)
 ```
+
 0代表第一个tab
 
-每一个页面都会被注入各自所属的navigator  
-navigator含有每页页面唯一的screenID以及页面的module名  
-通过navigator来进行路由操作
+每一个页面都会被注入各自所属的navigator navigator含有每页页面唯一的screenID以及页面的module名 通过navigator来进行路由操作
 
 ## 全局样式
 目前有以下全局样式，后续会增加更多
@@ -270,12 +268,13 @@ data是返回的数据
 ### 商业App 中的应用
 
 <h3 align="center">
-  <img src="barcode.png"/><br/>
+  <img src="../barcode.png"/><br/>
 </h3>
 
 ## Contributing
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+See the [contributing guide](../CONTRIBUTING.md) to learn how to contribute to the repository and the development
+workflow.
 
 [Logo designed by jemastock / Freepik](http://www.freepik.com)
 

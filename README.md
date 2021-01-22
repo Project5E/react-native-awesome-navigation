@@ -3,28 +3,66 @@
   React Native Awesome Navigation
 </h1>
 
-The react-native-navigation-5e is a native navigation based on iOS UIViewController and Android Activity/Fragment. The purpose we are doing this is that the popular [react-navigation](https://reactnavigation.org)'s performance cannot satify our react-navie based application, especially on Android. Thanks to Khan Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) give us inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will be keep optimizing and updating.
+## Introduction ([中文](/docs/README_zh.md))
 
-[中文文档](https://github.com/Project5E/react-native-navigation-5e/blob/master/README-zh.md)
+The react-native-awesome-navigation is a native navigation based on iOS UIViewController and Android Activity/Fragment.
+The purpose we are doing this is that the popular [react-navigation](https://reactnavigation.org)'s performance cannot
+satify our react-navie based application, especially on Android. Thanks to Khan
+Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) give us
+inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will
+be keep optimizing and updating.
 
 ## Installation
 
 ```sh
-yarn add react-native-navigation-5e
-
-# npm install react-native-navigation-5e
-
-For Android link package dependencies in settings.gradle
-
-include ':app', ':react-native-navigation-5e-android'
-
-project(':react-native-navigation-5e-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-navigation-5e/android')
+yarn add react-native-awesome-navigation
 ```
+
+or
+
+```sh
+npm install react-native-awesome-navigation
+```
+
+### Build configuration on Android
+
+Ensure your build files match the following requirements:
+
+1. (React Native 0.59 and lower) Define the `react-native-awesome-navigation` project in `android/settings.gradle`:
+
+```groovy
+...
+include ':react-native-awesome-navigation'
+project(':react-native-awesome-navigation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-awesome-navigation/android')
+```
+
+2. (React Native 0.59 and lower) Add the `react-native-awesome-navigation` as an dependency of your app
+   in `android/app/build.gradle`:
+
+```groovy
+...
+dependencies {
+  ...
+  implementation project(':react-native-awesome-navigation')
+}
+```
+
+### Build configuration on iOS
+
+Using React Native Link (React Native 0.59 and lower)
+
+Run `react-native link react-native-awesome-navigation` after which you should be able to use this library on iOS.
+
+## Documentation
+
+### [Android](/docs/Android.md)
+
+### [iOS](/docs/iOS.md)
 
 ## Usage
 
 ```ts
-import { registerComponent, setRoot } from 'react-native-navigation-5e';
+import { registerComponent, setRoot } from 'react-native-awesome-navigation';
 
 // setting global style
 setStyle({
@@ -67,9 +105,8 @@ setRoot({
 });
 ```
 
-Support native page and RN page mash up
-Currently offer two native style setting
-Setting title bar title and whether hide title bar or not 
+Support native page and RN page mash up Currently offer two native style setting Setting title bar title and whether
+hide title bar or not
 ```ts
 Home.navigationItem = {
   title: 'MainPage',
@@ -79,8 +116,9 @@ Home.navigationItem = {
 ```
 
 ### iOS
-Bridge should be record in AppDelegate.   
-At same time register relevant native ViewController，the ViewController should inherit ALCNativeViewController.
+
+Bridge should be record in AppDelegate. At same time register relevant native ViewController，the ViewController should
+inherit ALCNativeViewController.
 ```
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   [ALCNavigationManager shared].bridge = bridge;
@@ -258,4 +296,4 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 ## License
 
-[MIT LISCENSE](https://github.com/Project5E/react-native-navigation-5e/blob/master/LICENSE)
+[MIT LISCENSE](https://github.com/Project5E/react-native-awesome-navigation/blob/master/LICENSE)
