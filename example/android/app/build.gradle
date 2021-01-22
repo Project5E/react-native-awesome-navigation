@@ -130,7 +130,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.ivan.react.navigation.example"
+        applicationId "com.project5e.react.navigation.example"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
