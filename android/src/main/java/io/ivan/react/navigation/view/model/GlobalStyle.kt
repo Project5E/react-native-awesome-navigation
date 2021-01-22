@@ -1,10 +1,15 @@
 package io.ivan.react.navigation.view.model
 
+import android.graphics.Color
+import androidx.annotation.ColorInt
 import androidx.navigation.AnimBuilder
 import io.ivan.react.navigation.NavigationManager
 import io.ivan.react.navigation.R
 
 data class GlobalStyle(
+    @ColorInt
+    val componentContainerBackgroundColor: Int = Color.WHITE,
+
     val pushAnim: AnimBuilder.() -> Unit = anim_right_enter_right_exit,
 
     val presentAnim: AnimBuilder.() -> Unit = anim_bottom_enter_bottom_exit
@@ -15,13 +20,18 @@ data class GlobalStyle(
     fun newBuilder() = Builder(this)
 
     class Builder internal constructor(style: GlobalStyle) {
+        private var componentContainerBackgroundColor = style.componentContainerBackgroundColor
         private var pushAnim = style.pushAnim
         private var presentAnim = style.presentAnim
 
         fun build() = NavigationManager.style.copy(
+            componentContainerBackgroundColor = componentContainerBackgroundColor,
             pushAnim = pushAnim,
             presentAnim = presentAnim
         )
+
+        fun setComponentContainerBackgroundColor(@ColorInt componentContainerBackgroundColor: Int) =
+            apply { this.componentContainerBackgroundColor = componentContainerBackgroundColor }
 
         fun setPushAnim(pushAnim: AnimBuilder.() -> Unit) =
             apply { this.pushAnim = pushAnim }

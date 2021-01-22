@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -85,10 +86,26 @@ open class RNActivity : RNBaseActivity() {
         navController.setGraph(startDestination)
     }
 
-    private fun addDestinationAndPush(page: Page) {
+    private fun addDestinationAndNavigate(page: Page, args: Bundle?, navOptions: NavOptions?) {
         val destination = buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
         navController.graph.addDestination(destination)
-        navController.navigate(destination.id, null, navOptions { anim(style.pushAnim) })
+        navController.navigate(destination.id, args, navOptions)
+    }
+
+    private fun addDestinationAndPush(
+        page: Page,
+        args: Bundle? = null,
+        navOptions: NavOptions? = navOptions { anim(style.pushAnim) }
+    ) {
+        addDestinationAndNavigate(page, args, navOptions)
+    }
+
+    private fun addDestinationAndPresent(
+        page: Page,
+        args: Bundle? = null,
+        navOptions: NavOptions? = navOptions { anim(style.presentAnim) }
+    ) {
+        addDestinationAndNavigate(page, args, navOptions)
     }
 
     private fun removeCurrentScreenIdToStack() {

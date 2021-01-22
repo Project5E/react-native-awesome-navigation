@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.ReactRootView
 import io.ivan.react.navigation.NavigationManager.clearInstanceManagerInHost
 import io.ivan.react.navigation.NavigationManager.resetInstanceManagerInHost
+import io.ivan.react.navigation.NavigationManager.style
 import io.ivan.react.navigation.R
 import io.ivan.react.navigation.model.ARG_COMPONENT_NAME
 import io.ivan.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -62,6 +63,11 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val isTransparency = arguments?.getBundle(ARG_LAUNCH_OPTIONS)?.getBoolean("isTransparency") ?: false
+        if (!isTransparency) {
+            view.setBackgroundColor(style.componentContainerBackgroundColor)
+        }
+
         if (isNotTabBarComponent()) {
             setupToolbar()
         }
