@@ -3,7 +3,7 @@
   React Native Awesome Navigation
 </h1>
 
-## Introduction ([中文](/docs/README_zh.md))
+# Introduction ([中文](/docs/README_zh.md))
 
 The react-native-awesome-navigation is a native navigation based on iOS UIViewController and Android Activity/Fragment.
 The purpose we are doing this is that the popular [react-navigation](https://reactnavigation.org)'s performance cannot
@@ -12,7 +12,7 @@ Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-tran
 inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will
 be keep optimizing and updating.
 
-## Installation
+# Installation
 
 ```sh
 yarn add react-native-awesome-navigation
@@ -24,7 +24,7 @@ or
 npm install react-native-awesome-navigation
 ```
 
-### Build configuration on Android
+## Build configuration on Android
 
 Ensure your build files match the following requirements:
 
@@ -47,19 +47,19 @@ dependencies {
 }
 ```
 
-### Build configuration on iOS
+## Build configuration on iOS
 
 Using React Native Link (React Native 0.59 and lower)
 
 Run `react-native link react-native-awesome-navigation` after which you should be able to use this library on iOS.
 
-## Documentation
+# Documentation
 
-### [Android](/docs/Android.md)
+- [Android](/docs/Android.md)
 
-### [iOS](/docs/iOS.md)
+- [iOS](/docs/iOS.md)
 
-## Usage
+# Usage
 
 ```ts
 import { registerComponent, setRoot } from 'react-native-awesome-navigation';
@@ -162,6 +162,7 @@ props.navigator.switchTab(0)
 Every page will be enrolled their own navigator, navigator have a unique screenID and module name ,through navigator to manipulate page.
 
 ## Global style
+
 Currently include styles follows，continue updating.
 ```ts
 interface GlobalStyle {
