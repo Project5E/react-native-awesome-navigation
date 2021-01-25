@@ -199,13 +199,13 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation project(':react-native-navigation-5e-android')
+    implementation project(':react-native-awesome-navigation')
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 }
 
 // Run this once to be able to run the application with BUCK

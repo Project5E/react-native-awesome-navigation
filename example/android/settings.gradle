@@ -3,5 +3,5 @@ rootProject.name = "RNNavigationAndroidExample"
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 
-include ':react-native-navigation-5e-android'
-project(':react-native-navigation-5e-android').projectDir = new File(rootProject.projectDir, '../../android')
+include ':react-native-awesome-navigation'
+project(':react-native-awesome-navigation').projectDir = new File(rootProject.projectDir, '../../android')

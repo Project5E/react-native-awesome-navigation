@@ -1,6 +1,6 @@
 {
   "name": "react-native-navigation-5e",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "description": "native-navigation",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -16,7 +16,7 @@
     "android",
     "react-navigator"
   ],
-  "repository": "https://github.com/Project5E/react-native-navigation-5e",
+  "repository": "https://github.com/Project5E/react-native-awesome-navigation",
   "author": "5e",
   "license": "MIT",
   "devDependencies": {
