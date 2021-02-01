@@ -228,6 +228,7 @@ open class RNRootActivity : RNBaseActivity() {
                     Arguments.createMap().apply { merge(it) })
             }
         }
+        viewModel.pageResult = null
     }
 
     private fun getScreenId(index: Int): String {

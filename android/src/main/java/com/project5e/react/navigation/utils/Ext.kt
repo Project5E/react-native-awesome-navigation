@@ -15,7 +15,7 @@ fun ReadableMap.optDouble(name: String): Double {
     return if (hasKey(name) && !(isNull(name))) {
         getDouble(name)
     } else {
-        Double.NaN
+        0.0
     }
 }
 
@@ -23,7 +23,7 @@ fun ReadableMap.optInt(name: String): Int {
     return if (hasKey(name) && !(isNull(name))) {
         getInt(name)
     } else {
-        -1
+        0
     }
 }
 
