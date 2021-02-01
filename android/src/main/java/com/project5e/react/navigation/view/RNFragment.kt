@@ -96,11 +96,11 @@ open class RNFragment : LogFragment(), RNComponentLifecycle {
     }
 
     override fun viewDidAppear() {
-        sendViewAppearEvent(requireActivity(), _screenId, true)
+        sendViewAppearEvent(this, _screenId, true)
     }
 
     override fun viewDidDisappear() {
-        sendViewAppearEvent(requireActivity(), _screenId, false)
+        sendViewAppearEvent(this, _screenId, false)
     }
 
     private fun createOrReuseReactRootView(
