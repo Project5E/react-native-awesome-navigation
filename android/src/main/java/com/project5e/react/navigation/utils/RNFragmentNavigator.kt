@@ -154,7 +154,9 @@ class RNFragmentNavigator(
             currentFragment.lifecycle.addObserver(object : LifecycleObserver {
                 @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                 fun onDestroy() {
-                    prevFragment.viewDidAppear()
+                    if (!prevFragment.isDetached) {
+                        prevFragment.viewDidAppear()
+                    }
                     currentFragment.lifecycle.removeObserver(this)
                 }
             })

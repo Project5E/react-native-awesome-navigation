@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import com.facebook.react.ReactFragment
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 
-private const val TAG = "1van"
+abstract class LogFragment : ReactFragment() {
 
-abstract class LifecycleFragment : ReactFragment() {
+    var TAG: String? = null
 
     private var mainComponentName: String = ""
 
@@ -22,62 +22,62 @@ abstract class LifecycleFragment : ReactFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.e(TAG, "onAttach $mainComponentName")
+        TAG?.let { Log.e(it, "onAttach $mainComponentName") }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e(TAG, "onCreate $mainComponentName")
+        TAG?.let { Log.e(it, "onCreate $mainComponentName") }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.e(TAG, "onCreateView $mainComponentName")
+        TAG?.let { Log.e(it, "onCreateView $mainComponentName") }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e(TAG, "onViewCreated $mainComponentName")
+        TAG?.let { Log.e(it, "onViewCreated $mainComponentName") }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.e(TAG, "onActivityCreated $mainComponentName")
+        TAG?.let { Log.e(it, "onActivityCreated $mainComponentName") }
     }
 
     override fun onStart() {
         super.onStart()
-        Log.e(TAG, "onStart $mainComponentName")
+        TAG?.let { Log.e(it, "onStart $mainComponentName") }
     }
 
     override fun onResume() {
         super.onResume()
-        Log.e(TAG, "onResume $mainComponentName")
+        TAG?.let { Log.e(it, "onResume $mainComponentName") }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.e(TAG, "onPause $mainComponentName")
+        TAG?.let { Log.e(it, "onPause $mainComponentName") }
     }
 
     override fun onStop() {
         super.onStop()
-        Log.e(TAG, "onStop $mainComponentName")
+        TAG?.let { Log.e(it, "onStop $mainComponentName") }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.e(TAG, "onDestroyView $mainComponentName")
+        TAG?.let { Log.e(it, "onDestroyView $mainComponentName") }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e(TAG, "onDestroy $mainComponentName")
+        TAG?.let { Log.e(it, "onDestroy $mainComponentName") }
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.e(TAG, "onDetach $mainComponentName")
+        TAG?.let { Log.e(it, "onDetach $mainComponentName") }
     }
 
 }

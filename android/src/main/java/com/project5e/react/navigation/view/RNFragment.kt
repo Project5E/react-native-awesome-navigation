@@ -17,13 +17,13 @@ import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
-import com.project5e.react.navigation.utils.LifecycleFragment
+import com.project5e.react.navigation.utils.LogFragment
 import com.project5e.react.navigation.utils.optBoolean
 import com.project5e.react.navigation.utils.optString
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
 
-open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
+open class RNFragment : LogFragment(), RNComponentLifecycle {
 
     val screenId get() = _screenId
     val mainComponentName get() = _mainComponentName
@@ -75,12 +75,12 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
 
     override fun onResume() {
         super.onResume()
-        sendViewAppearEvent(requireActivity(), _screenId, true)
+        viewDidAppear()
     }
 
     override fun onPause() {
         super.onPause()
-        sendViewAppearEvent(requireActivity(), _screenId, false)
+        viewDidDisappear()
     }
 
     override fun onDestroyView() {
@@ -96,11 +96,11 @@ open class RNFragment : LifecycleFragment(), RNComponentLifecycle {
     }
 
     override fun viewDidAppear() {
-        onResume()
+        sendViewAppearEvent(requireActivity(), _screenId, true)
     }
 
     override fun viewDidDisappear() {
-        onPause()
+        sendViewAppearEvent(requireActivity(), _screenId, false)
     }
 
     private fun createOrReuseReactRootView(
