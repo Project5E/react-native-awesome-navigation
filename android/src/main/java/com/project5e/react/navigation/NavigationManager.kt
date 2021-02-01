@@ -4,6 +4,7 @@ import android.app.Activity
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
+import com.project5e.react.navigation.utils.LogFragment
 import com.project5e.react.navigation.utils.RNNavigationException
 import com.project5e.react.navigation.view.model.GlobalStyle
 import java.lang.ref.WeakReference
@@ -24,6 +25,13 @@ object NavigationManager {
     val reactInstanceManager: ReactInstanceManager
         @JvmStatic
         get() = requireReactNativeHost().reactInstanceManager
+
+    @JvmStatic
+    var TAG: String? = null
+        set(value) {
+            LogFragment.TAG = value
+            field = value
+        }
 
     @JvmStatic
     fun install(reactNativeHost: ReactNativeHost) {

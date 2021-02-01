@@ -11,7 +11,9 @@ import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 
 abstract class LogFragment : ReactFragment() {
 
-    var TAG: String? = null
+    companion object {
+        var TAG: String? = null
+    }
 
     private var mainComponentName: String = ""
 
