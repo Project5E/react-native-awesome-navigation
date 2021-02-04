@@ -75,12 +75,12 @@ open class RNFragment : LogFragment(), RNComponentLifecycle {
 
     override fun onResume() {
         super.onResume()
-        viewDidAppear()
+        sendViewAppearEvent(this, _screenId, true)
     }
 
     override fun onPause() {
         super.onPause()
-        viewDidDisappear()
+        sendViewAppearEvent(this, _screenId, false)
     }
 
     override fun onDestroyView() {
@@ -96,11 +96,11 @@ open class RNFragment : LogFragment(), RNComponentLifecycle {
     }
 
     override fun viewDidAppear() {
-        sendViewAppearEvent(this, _screenId, true)
+        onResume()
     }
 
     override fun viewDidDisappear() {
-        sendViewAppearEvent(this, _screenId, false)
+        onPause()
     }
 
     private fun createOrReuseReactRootView(
