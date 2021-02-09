@@ -17,6 +17,7 @@ import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.*
+import com.project5e.react.navigation.navigator.RNFragmentNavigator
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel

@@ -15,6 +15,7 @@ import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import com.project5e.react.navigation.model.Page
+import com.project5e.react.navigation.navigator.RNFragmentNavigator
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
