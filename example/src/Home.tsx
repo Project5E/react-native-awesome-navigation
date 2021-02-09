@@ -1,11 +1,6 @@
 import React, {useCallback, useEffect} from 'react'
-import {View, Button} from 'react-native'
-import {
-  Navigator,
-  router,
-  setTabBadge,
-  useVisibleEffect,
-} from 'react-native-navigation-5e'
+import {Alert, Button, Platform, View} from 'react-native'
+import {Navigator, router, setTabBadge, useVisibleEffect} from 'react-native-navigation-5e'
 
 const Home = props => {
   useEffect(() => {
@@ -34,7 +29,7 @@ const Home = props => {
       return () => {
         console.log(`${props.screenID} is gone`)
       }
-    }, [])
+    }, []),
   )
 
   return (
@@ -45,29 +40,33 @@ const Home = props => {
           console.warn(resp)
           // Router.open('/home')
         }}
-        title="log route"
+        title='log route'
       />
       <Button
         onPress={async () => {
           props.navigator.push('NoNavigationBar')
         }}
-        title="push detail and hide bar"
+        title='push detail and hide bar'
       />
       <Button
         onPress={async () => {
           const resp = await props.navigator.push('Detail')
           console.warn(resp)
         }}
-        title="push detail"
+        title='push detail'
       />
       <Button
         onPress={async () => {
-          const resp = await props.navigator.push('NativeViewController', {
-            title: 'Native',
-          })
-          console.warn(resp)
+          if (Platform.OS === 'ios') {
+            const resp = await props.navigator.push('NativeViewController', {
+              title: 'Native',
+            })
+            console.warn(resp)
+          } else {
+            Alert.alert('Push Native', 'Android is coming.')
+          }
         }}
-        title="push native"
+        title='push native'
       />
 
       <Button
@@ -75,7 +74,7 @@ const Home = props => {
           const resp = await props.navigator.present('Present', {}) //{isFullScreen: true, isTransparency: true, animated: false}
           console.log(resp)
         }}
-        title="present"
+        title='present'
       />
     </View>
   )
