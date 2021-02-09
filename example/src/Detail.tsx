@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
-import { View, Button, Modal } from 'react-native'
-import { useVisibleEffect } from 'react-native-navigation-5e'
+import React, {useCallback, useState} from 'react'
+import {Button, Modal, View} from 'react-native'
+import {useVisibleEffect} from 'react-native-navigation-5e'
 
 const Detail = props => {
   useVisibleEffect(
@@ -10,57 +10,69 @@ const Detail = props => {
       return () => {
         console.log(`${props.screenID} is gone`)
       }
-    }, [])
+    }, []),
   )
 
   const [modalVisible, setModalVisible] = useState(false)
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#ffffffff' }}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffffff'}}>
       <Modal
         transparent={true}
         visible={modalVisible}
       >
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#88888888' }}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#88888888'}}>
           <Button
             onPress={() => {
               setModalVisible(false)
             }}
-            title="modal cancel"
+            title='modal cancel'
           />
         </View>
       </Modal>
-      <Button
-        onPress={() => {
-          props.navigator.push('NoNavigationBar')
-        }}
-        title="push detail and hide bar"
-      />
       <Button
         onPress={async () => {
           const resp = await props.navigator.push('Detail')
           console.warn(resp)
         }}
-        title="push detail"
+        title='push detail'
       />
       <Button
         onPress={() => {
-          props.navigator.setResult({ qwe: 123 })
+          props.navigator.push('NoNavigationBar')
+        }}
+        title='push detail and hide bar'
+      />
+      <Button
+        onPress={() => {
+          props.navigator.setResult({qwe: 123})
           props.navigator.pop()
         }}
-        title="pop"
+        title='pop'
       />
       <Button
         onPress={() => {
           props.navigator.popToRoot()
         }}
-        title="pop to root"
+        title='pop to root'
+      />
+      <Button
+        onPress={() => {
+          props.navigator.present('Detail')
+        }}
+        title='present Detail'
+      />
+      <Button
+        onPress={() => {
+          props.navigator.dismiss()
+        }}
+        title='dismiss'
       />
       <Button
         onPress={() => {
           setModalVisible(true)
         }}
-        title="showModal"
+        title='showModal'
       />
     </View>
   )
