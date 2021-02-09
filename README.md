@@ -12,6 +12,8 @@ Academy's [Our Transition to React Native](https://blog.khanacademy.org/our-tran
 inspiration, we decide to develop this project, and it has been already use in our commercial application, and it will
 be keep optimizing and updating.
 
+Before you decided to use this, feel free to play the example first, just read this [instruct to play example](https://github.com/Project5E/react-native-awesome-navigation/wiki)
+
 # Installation
 
 ```sh
