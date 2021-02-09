@@ -1,6 +1,6 @@
 //
 //  PureNavigation.h
-//  react-native-navigation-5e
+//  react-native-awesome-navigation
 //
 //  Created by skylar on 2020/9/23.
 //

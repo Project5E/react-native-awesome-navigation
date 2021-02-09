@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react'
 import {Button, Modal, View} from 'react-native'
-import {useVisibleEffect} from 'react-native-navigation-5e'
+import {useVisibleEffect} from 'react-native-awesome-navigation'
 
 const Detail = props => {
   useVisibleEffect(

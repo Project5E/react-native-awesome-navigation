@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "paths": {
-      "react-native-navigation-5e": ["./src/index"]
+      "react-native-awesome-navigation": [
+        "./src/index"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

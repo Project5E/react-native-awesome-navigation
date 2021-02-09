@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react'
-import {View, Button} from 'react-native'
-import {useVisibleEffect} from 'react-native-navigation-5e'
+import {Button, View} from 'react-native'
+import {useVisibleEffect} from 'react-native-awesome-navigation'
 
 const Setting = props => {
   useVisibleEffect(
@@ -10,7 +10,7 @@ const Setting = props => {
       return () => {
         console.log(`${props.screenID} is gone`)
       }
-    }, [])
+    }, []),
   )
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>

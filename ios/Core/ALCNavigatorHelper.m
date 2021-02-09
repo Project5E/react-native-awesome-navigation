@@ -1,6 +1,6 @@
 //
 //  ALCNavigator.m
-//  react-native-navigation-5e
+//  react-native-awesome-navigation
 //
 //  Created by skylar on 2020/9/22.
 //
@@ -44,7 +44,7 @@
         } else {
             NSAssert(false, @"error");
         }
-        
+
         vc.tabBarItem.image = [ALCUtils fetchImage:icon];
         [controllers addObject:vc];
     }
@@ -211,7 +211,7 @@
     if (!vc) {
         vc = [self getRootViewController];
     }
-    
+
     UIViewController *targetVC = [self getParentingViewController];
     NSNumber *animated = params[@"animated"];
     [vc dismissViewControllerAnimated:animated.boolValue completion:^{

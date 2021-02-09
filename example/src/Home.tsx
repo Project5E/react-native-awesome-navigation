@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from 'react'
 import {Alert, Button, Platform, View} from 'react-native'
-import {Navigator, router, setTabBadge, useVisibleEffect} from 'react-native-navigation-5e'
+import {Navigator, router, setTabBadge, useVisibleEffect} from 'react-native-awesome-navigation'
 
 const Home = props => {
   useEffect(() => {

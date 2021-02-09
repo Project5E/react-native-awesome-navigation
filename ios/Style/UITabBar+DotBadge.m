@@ -1,6 +1,6 @@
 //
 //  UITabBar+DotBadge.m
-//  react-native-navigation-5e
+//  react-native-awesome-navigation
 //
 //  Created by skylar on 2020/9/18.
 //
@@ -15,7 +15,7 @@
     //label为小红点，并设置label属性
     UILabel *label = [[UILabel alloc]init];
     label.tag = 1000 + index;
-    
+
     if (@available(iOS 10.0, *)) {
         label.backgroundColor = [UITabBarItem appearance].badgeColor ?: [UIColor colorWithRed:1 green:58.0/255.0 blue:47./255. alpha:1];
     } else {
@@ -30,7 +30,7 @@
     [self addSubview:label];
     //把小红点移到最顶层
     [self bringSubviewToFront:label];
-    
+
     [self styleLabel:label];
 }
 

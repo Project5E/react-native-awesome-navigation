@@ -12,7 +12,7 @@
 #import <React/RCTRootView.h>
 
 #import <React/RCTLinkingManager.h>
-#import <react-native-navigation-5e/PureNavigation.h>
+#import <react-native-awesome-navigation/PureNavigation.h>
 
 #import "ThisIsViewController.h"
 

@@ -1,4 +1,4 @@
-import {Register, setStyle, router} from 'react-native-navigation-5e'
+import {Register, setStyle} from 'react-native-awesome-navigation'
 import {Image} from 'react-native'
 import Home from './src/Home'
 import Setting from './src/Setting'
