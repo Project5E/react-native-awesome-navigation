@@ -1,5 +1,5 @@
 buildscript {
-    def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['kotlinVersion']
+    ext.kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['kotlinVersion']
 
     repositories {
         google()
@@ -12,23 +12,24 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+//apply plugin: 'com.android.library'
+//apply plugin: 'kotlin-android'
 
 def getExtOrDefault(name) {
     return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties[name]
 }
 
-def getExtOrIntegerDefault(name) {
-    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties[name]).toInteger()
-}
-
 android {
-    compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+    compileSdkVersion getExtOrDefault('compileSdkVersion').toInteger()
     buildToolsVersion getExtOrDefault('buildToolsVersion')
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+        targetSdkVersion getExtOrDefault('targetSdkVersion').toInteger()
         versionCode 1
         versionName "1.0"
     }
@@ -45,6 +46,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 repositories {
@@ -59,10 +63,7 @@ repositories {
     if (rootProject.ext.has('reactNativeAndroidRoot')) {
         defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
     } else {
-        defaultDir = new File(
-                projectDir,
-                '/../../../node_modules/react-native/android'
-        )
+        defaultDir = new File(projectDir, '/../../../node_modules/react-native/android')
     }
 
     if (defaultDir.exists()) {
@@ -80,15 +81,9 @@ repositories {
             if (found) return true
             parentDir = parentDir.parentFile
 
-            def androidSourcesDir = new File(
-                    parentDir,
-                    'node_modules/react-native'
-            )
+            def androidSourcesDir = new File(parentDir, 'node_modules/react-native')
 
-            def androidPrebuiltBinaryDir = new File(
-                    parentDir,
-                    'node_modules/react-native/android'
-            )
+            def androidPrebuiltBinaryDir = new File(parentDir, 'node_modules/react-native/android')
 
             if (androidPrebuiltBinaryDir.exists()) {
                 maven {
@@ -118,14 +113,12 @@ repositories {
     }
 }
 
-def kotlin_version = getExtOrDefault('kotlinVersion')
-
 dependencies {
     api 'com.facebook.react:react-native:+'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-    def nav_version = "2.3.1"
+    def nav_version = "2.3.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 }
