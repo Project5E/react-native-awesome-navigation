@@ -7,6 +7,8 @@
 
 react-native-navigation-5e 是基于iOS `UIViewController` 和 Android `Activity/Fragment` 开发的一款原生路由库。 我们开发这个库的原因是当今流行[react-navigation](https://reactnavigation.org) 在性能方面达不到我们React Native App 的要求尤其是在Android App 体验很差。 感谢可汗学院的 [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) 这篇文章给予我们一些灵感, 我们决定开发这个项目, 并且这个项目已经全量应用在我们的商业App 中, 我们还会对该项目持续优化更新。
 
+使用这个库之前， 请先玩玩example，[点击这个教程](https://github.com/Project5E/react-native-awesome-navigation/wiki)可以帮助你如何玩demo
+
 ## 安装
 
 ```sh
@@ -84,7 +86,7 @@ setRoot({
 });
 ```
 
-支持原生页面与RN页面混搭
+支持原生页面与RN 页面混搭
 
 目前提供两个原生页面样式设置 设置标题以及是否隐藏导航栏
 ```ts
@@ -158,7 +160,7 @@ props.navigator.switchTab(0)
 
 0代表第一个tab
 
-每一个页面都会被注入各自所属的navigator navigator 含有每页页面唯一的screenID 以及页面的module 名 通过navigator 来进行路由操作
+每一个页面都会被注入各自所属的navigator 含有每页页面唯一的screenID 以及页面的module 名 通过navigator 来进行路由操作
 
 ## 全局样式
 目前有以下全局样式，后续会增加更多
