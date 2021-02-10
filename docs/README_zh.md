@@ -5,7 +5,10 @@
   React Native Awesome Navigation
 </h1>
 
-react-native-navigation-5e 是基于iOS `UIViewController` 和 Android `Activity/Fragment` 开发的一款原生路由库。 我们开发这个库的原因是当今流行[react-navigation](https://reactnavigation.org) 在性能方面达不到我们React Native App 的要求尤其是在Android App 体验很差。 感谢可汗学院的 [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) 这篇文章给予我们一些灵感, 我们决定开发这个项目, 并且这个项目已经全量应用在我们的商业App 中, 我们还会对该项目持续优化更新。
+react-native-awesome-navigation 是基于iOS `UIViewController` 和 Android `Activity/Fragment` 开发的一款原生路由库。
+我们开发这个库的原因是当今流行[react-navigation](https://reactnavigation.org) 在性能方面达不到我们React Native App 的要求尤其是在Android App 体验很差。
+感谢可汗学院的 [Our Transition to React Native](https://blog.khanacademy.org/our-transition-to-react-native/) 这篇文章给予我们一些灵感,
+我们决定开发这个项目, 并且这个项目已经全量应用在我们的商业App 中, 我们还会对该项目持续优化更新。
 
 使用这个库之前， 请先玩玩example，[点击这个教程](https://github.com/Project5E/react-native-awesome-navigation/wiki)可以帮助你如何玩demo
 
@@ -25,14 +28,15 @@ npm install react-native-awesome-navigation
 
 1. (React Native 0.59以下) 定义 `react-native-awesome-navigation` 在 `android/settings.gradle`:
 
-```
+```groovy
 ...
-include ':app', ':react-native-navigation-5e-android'
-project(':react-native-navigation-5e-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-navigation-5e/android')
+include ':react-native-awesome-navigation'
+project(':react-native-awesome-navigation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-awesome-navigation/android')
 ```
+
 2. (React Native 0.59以下) 定义 Add the `react-native-awesome-navigation` as an dependency of your app in `android/app/build.gradle`:
 
-```
+```groovy
 ...
 dependencies {
   ...
@@ -43,7 +47,7 @@ dependencies {
 ## 使用
 
 ```ts
-import { registerComponent, setRoot } from 'react-native-navigation-5e';
+import { registerComponent, setRoot } from 'react-native-awesome-navigation';
 
 // 设置全局样式
 setStyle({
@@ -299,5 +303,5 @@ workflow.
 
 ## License
 
-[MIT LISCENSE](https://github.com/Project5E/react-native-navigation-5e/blob/master/LICENSE)
+[MIT LISCENSE](https://github.com/Project5E/react-native-awesome-navigation/blob/master/LICENSE)
 
