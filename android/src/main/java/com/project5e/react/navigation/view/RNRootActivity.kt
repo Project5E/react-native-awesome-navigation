@@ -18,6 +18,7 @@ import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.*
 import com.project5e.react.navigation.navigator.RNFragmentNavigator
+import com.project5e.react.navigation.navigator.RNFragmentNavigator.Destination.NavigationType
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
@@ -39,8 +40,7 @@ open class RNRootActivity : RNBaseActivity() {
     private val dismissAnimTime: Long
             by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
-    private val rnNavigator: RNFragmentNavigator
-            by lazy { createRNFragmentNavigator(navHostFragment) }
+    private val rnNavigator: RNFragmentNavigator by lazy { RNFragmentNavigator(navController.navigatorProvider) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -49,7 +49,11 @@ open class RNRootActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController.navigatorProvider.addNavigator(rnNavigator)
+        with(navController.navigatorProvider) {
+            addNavigator(createRNPushFragmentNavigator(navHostFragment))
+            addNavigator(createRNPresentFragmentNavigator(navHostFragment))
+            addNavigator(rnNavigator)
+        }
         receive()
     }
 
@@ -150,8 +154,8 @@ open class RNRootActivity : RNBaseActivity() {
         })
     }
 
-    private fun buildDestination(page: Page): NavDestination =
-        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
+    private fun buildDestination(page: Page, navigationType: NavigationType? = null): NavDestination =
+        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options), navigationType)
 
     private fun buildDestinationWithTab(tabBarComponentName: String?): NavDestination =
         rnNavigator.createDestination().also {
@@ -160,8 +164,13 @@ open class RNRootActivity : RNBaseActivity() {
             viewModel.tabBarComponentName = tabBarComponentName
         }
 
-    private fun addDestinationAndNavigate(page: Page, args: Bundle?, navOptions: NavOptions?) {
-        val destination = buildDestination(page)
+    private fun addDestinationAndNavigate(
+        navigationType: NavigationType,
+        page: Page,
+        args: Bundle?,
+        navOptions: NavOptions?
+    ) {
+        val destination = buildDestination(page, navigationType)
         navController.graph.addDestination(destination)
         navController.navigate(destination.id, args, navOptions)
     }
@@ -171,7 +180,7 @@ open class RNRootActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(style.pushAnim) }
     ) {
-        addDestinationAndNavigate(page, args, navOptions)
+        addDestinationAndNavigate(NavigationType.PUSH, page, args, navOptions)
     }
 
     private fun addDestinationAndPresent(
@@ -179,7 +188,7 @@ open class RNRootActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(style.presentAnim) }
     ) {
-        addDestinationAndNavigate(page, args, navOptions)
+        addDestinationAndNavigate(NavigationType.PRESENT, page, args, navOptions)
     }
 
     private fun removeCurrentScreenIdToStack() {

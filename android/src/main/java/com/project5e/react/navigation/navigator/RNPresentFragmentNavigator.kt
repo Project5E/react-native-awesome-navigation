@@ -11,8 +11,8 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.Navigator
 import com.project5e.react.navigation.view.RNComponentLifecycle
 
-@Navigator.Name("react_fragment")
-class RnPresentFragmentNavigator(
+@Navigator.Name("react_fragment_present")
+class RNPresentFragmentNavigator(
     private val context: Context,
     private val manager: FragmentManager,
     private val containerId: Int
@@ -29,7 +29,7 @@ class RnPresentFragmentNavigator(
         return frag
     }
 
-    override fun pushLifecycleEffect(nextFragment: Fragment) {
+    override fun navigateLifecycleEffect(nextFragment: Fragment) {
         val destId = mBackStack.peekLast()
         val currentFragment = destId?.let { manager.findFragmentByTag(it.toString()) } ?: return
 

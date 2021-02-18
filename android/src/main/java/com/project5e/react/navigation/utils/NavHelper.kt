@@ -5,17 +5,29 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.navigation.*
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import com.project5e.react.navigation.navigator.RNFragmentNavigator
+import com.project5e.react.navigation.navigator.RNPresentFragmentNavigator
+import com.project5e.react.navigation.navigator.RNPushFragmentNavigator
 import com.project5e.react.navigation.view.RNActivity
 import com.project5e.react.navigation.view.RNFragment
 
-fun createRNFragmentNavigator(navHostFragment: NavHostFragment) =
-    RNFragmentNavigator(navHostFragment.requireContext(), navHostFragment.childFragmentManager, navHostFragment.id)
+fun createRNPushFragmentNavigator(navHostFragment: NavHostFragment) =
+    RNPushFragmentNavigator(
+        navHostFragment.requireContext(),
+        navHostFragment.childFragmentManager,
+        navHostFragment.id
+    )
+
+fun createRNPresentFragmentNavigator(navHostFragment: NavHostFragment) =
+    RNPresentFragmentNavigator(
+        navHostFragment.requireContext(),
+        navHostFragment.childFragmentManager,
+        navHostFragment.id
+    )
 
 fun NavController.setGraph(startDestination: NavDestination?) {
     startDestination ?: return
@@ -28,14 +40,16 @@ fun NavController.setGraph(startDestination: NavDestination?) {
 }
 
 fun buildDestination(
-    navigator: FragmentNavigator,
+    navigator: RNFragmentNavigator,
     destinationName: String,
-    options: Bundle?
+    options: Bundle? = null,
+    navigationType: RNFragmentNavigator.Destination.NavigationType? = null,
 ): NavDestination {
     return navigator.createDestination().apply {
         val viewId = ViewCompat.generateViewId()
         id = viewId
         className = RNFragment::class.java.name
+        navigationType?.let { navigatorType = it }
         addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
             arg.defaultValue = destinationName
             arg.build()

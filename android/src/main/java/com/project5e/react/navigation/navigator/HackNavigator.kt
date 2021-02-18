@@ -54,7 +54,7 @@ open class HackNavigator(
 
         val frag = createWithDisplay(ft, className, args, destId.toString())
         ft.setPrimaryNavigationFragment(frag)
-        pushLifecycleEffect(frag)
+        navigateLifecycleEffect(frag)
 
         val initialNavigation = mBackStack.isEmpty()
         val isSingleTopReplacement = (navOptions != null
@@ -122,7 +122,7 @@ open class HackNavigator(
         return frag
     }
 
-    open fun pushLifecycleEffect(nextFragment: Fragment) {}
+    open fun navigateLifecycleEffect(nextFragment: Fragment) {}
 
     open fun popLifecycleEffect() {}
 

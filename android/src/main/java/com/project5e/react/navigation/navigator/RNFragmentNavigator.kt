@@ -1,68 +1,57 @@
 package com.project5e.react.navigation.navigator
 
-import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
-import com.project5e.react.navigation.view.RNComponentLifecycle
+import androidx.navigation.NavigatorProvider
+import androidx.navigation.fragment.FragmentNavigator
+import java.util.*
 
 @Navigator.Name("react_fragment")
 class RNFragmentNavigator(
-    private val context: Context,
-    private val manager: FragmentManager,
-    private val containerId: Int
-) : HackNavigator(context, manager, containerId) {
+    private val provider: NavigatorProvider,
+) : Navigator<RNFragmentNavigator.Destination>() {
 
-    override fun createWithDisplay(ft: FragmentTransaction, className: String, args: Bundle?, tag: String?): Fragment {
-        val frag = manager.findFragmentByTag(tag) ?: instantiateFragment(context, manager, className, args)
-        frag.arguments = args
-        if (frag.isAdded || mBackStack.isEmpty()) {
-            ft.replace(containerId, frag, tag)
-        } else {
-            ft.add(containerId, frag, tag)
-        }
-        return frag
+    private val navigatorTypes = ArrayDeque<Destination.NavigationType>()
+    private val pushNavigator by lazy { provider.getNavigator(RNPushFragmentNavigator::class.java) }
+    private val presentNavigator by lazy { provider.getNavigator(RNPresentFragmentNavigator::class.java) }
+
+    override fun createDestination() = Destination(this)
+
+    override fun navigate(
+        destination: Destination,
+        args: Bundle?,
+        navOptions: NavOptions?,
+        navigatorExtras: Extras?
+    ): NavDestination? {
+        navigatorTypes.add(destination.navigatorType)
+        val navigator = getNavigator(destination.navigatorType)
+        return navigator.navigate(destination, args, navOptions, navigatorExtras)
     }
 
-    override fun pushLifecycleEffect(nextFragment: Fragment) {
-        val destId = mBackStack.peekLast()
-        val currentFragment = destId?.let { manager.findFragmentByTag(it.toString()) } ?: return
+    override fun popBackStack(): Boolean {
+        if (navigatorTypes.isEmpty()) {
+            return false
+        }
+        val navigator = getNavigator(navigatorTypes.peekLast())
+        navigator.popBackStack()
+        navigatorTypes.removeLast()
+        return true
+    }
 
-        if (currentFragment is RNComponentLifecycle) {
-            nextFragment.lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-                fun onCreate() {
-                    currentFragment.viewDidDisappear()
-                    nextFragment.lifecycle.removeObserver(this)
-                }
-            })
+    private fun getNavigator(navigationType: Destination.NavigationType): Navigator<FragmentNavigator.Destination> {
+        return when (navigationType) {
+            Destination.NavigationType.PUSH -> pushNavigator
+            Destination.NavigationType.PRESENT -> presentNavigator
         }
     }
 
-    override fun popLifecycleEffect() {
-        if (mBackStack.size < 2) return
-        val backList = mBackStack.toArray()
-        val last1 = backList[backList.lastIndex]
-        val last2 = backList[backList.lastIndex - 1]
-        val currentFragment = manager.findFragmentByTag(last1.toString()) ?: return
-        val prevFragment = manager.findFragmentByTag(last2.toString()) ?: return
+    class Destination(fragmentNavigator: Navigator<Destination>) : FragmentNavigator.Destination(fragmentNavigator) {
 
-        if (prevFragment is RNComponentLifecycle) {
-            currentFragment.lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    if (!prevFragment.isDetached) {
-                        prevFragment.viewDidAppear()
-                    }
-                    currentFragment.lifecycle.removeObserver(this)
-                }
-            })
-        }
+        enum class NavigationType { PUSH, PRESENT }
+
+        var navigatorType: NavigationType = NavigationType.PUSH
     }
 
 }

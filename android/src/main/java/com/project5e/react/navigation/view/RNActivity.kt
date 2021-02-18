@@ -32,7 +32,7 @@ open class RNActivity : RNBaseActivity() {
             by lazy { createRNViewModel(application) }
 
     private val rnNavigator: RNFragmentNavigator
-            by lazy { createRNFragmentNavigator(navHostFragment) }
+            by lazy { RNFragmentNavigator(navController.navigatorProvider) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -45,7 +45,6 @@ open class RNActivity : RNBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController.navigatorProvider.addNavigator(rnNavigator)
 
         intent.extras?.apply {
             getString(ARG_COMPONENT_NAME)?.let { _mainComponentName = it }
