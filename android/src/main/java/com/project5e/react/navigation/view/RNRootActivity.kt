@@ -1,6 +1,7 @@
 package com.project5e.react.navigation.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +19,6 @@ import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.*
 import com.project5e.react.navigation.navigator.RNFragmentNavigator
-import com.project5e.react.navigation.navigator.RNFragmentNavigator.Destination.NavigationType
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
@@ -55,11 +55,21 @@ open class RNRootActivity : RNBaseActivity() {
             addNavigator(rnNavigator)
         }
         receive()
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            Log.e("1van1", "$destination")
+            navController.backStack.forEach {
+                Log.e("1van1", "${it.destination.id}")
+            }
+        }
     }
 
     override fun invokeDefaultOnBackPressed() {
-        removeCurrentScreenIdToStack()
-        navController.navigateUp()
+        val currentDestinationId = getCurrentDestinationId()
+
+        rnNavigator.popBackType = RNFragmentNavigator.PopBackType.POP
+        if (navController.navigateUp()) {
+            viewModel.screenIdStack.remove(currentDestinationId.toString())
+        }
     }
 
     private fun receive() {
@@ -117,29 +127,33 @@ open class RNRootActivity : RNBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
-            startDestination?.let {
-                removeScreenIdStackWithNavigateToStartDestination()
-                navController.navigate(it.id)
+            startDestination?.let { destination ->
+                clearStack()
+                rnNavigator.navigationType = RNFragmentNavigator.NavigationType.PUSH
+                navController.navigate(destination.id)
             }
         })
 
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
-            removeCurrentScreenIdToStack()
-            navController.navigateUp()
-            sendComponentResultEvent()
+            val currentDestinationId = getCurrentDestinationId()
+
+            rnNavigator.popBackType = RNFragmentNavigator.PopBackType.POP
+            if (navController.navigateUp()) {
+                viewModel.screenIdStack.remove(currentDestinationId.toString())
+                sendComponentResultEvent()
+            }
         })
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
             val promise = state as Promise
-
-            removeCurrentScreenIdToStack()
-            navController.navigateUp()
-
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    delay(dismissAnimTime)
-                    promise.resolve(null)
-                    sendComponentResultEvent()
+            rnNavigator.popBackType = RNFragmentNavigator.PopBackType.DISMISS
+            if (navController.navigateUp()) {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        delay(dismissAnimTime)
+                        promise.resolve(null)
+                        sendComponentResultEvent()
+                    }
                 }
             }
         })
@@ -147,15 +161,19 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, Observer { state ->
             val data = state as ReadableMap
             val count = data.optInt("count")
+
             for (i in 0 until count) {
-                removeCurrentScreenIdToStack()
-                navController.navigateUp()
+                val currentDestinationId = getCurrentDestinationId()
+                rnNavigator.popBackType = RNFragmentNavigator.PopBackType.POP
+                if (navController.navigateUp()) {
+                    viewModel.screenIdStack.remove(currentDestinationId.toString())
+                }
             }
         })
     }
 
-    private fun buildDestination(page: Page, navigationType: NavigationType? = null): NavDestination =
-        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options), navigationType)
+    private fun buildDestination(page: Page): NavDestination =
+        buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
 
     private fun buildDestinationWithTab(tabBarComponentName: String?): NavDestination =
         rnNavigator.createDestination().also {
@@ -165,12 +183,11 @@ open class RNRootActivity : RNBaseActivity() {
         }
 
     private fun addDestinationAndNavigate(
-        navigationType: NavigationType,
         page: Page,
         args: Bundle?,
         navOptions: NavOptions?
     ) {
-        val destination = buildDestination(page, navigationType)
+        val destination = buildDestination(page)
         navController.graph.addDestination(destination)
         navController.navigate(destination.id, args, navOptions)
     }
@@ -180,7 +197,8 @@ open class RNRootActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(style.pushAnim) }
     ) {
-        addDestinationAndNavigate(NavigationType.PUSH, page, args, navOptions)
+        rnNavigator.navigationType = RNFragmentNavigator.NavigationType.PUSH
+        addDestinationAndNavigate(page, args, navOptions)
     }
 
     private fun addDestinationAndPresent(
@@ -188,19 +206,13 @@ open class RNRootActivity : RNBaseActivity() {
         args: Bundle? = null,
         navOptions: NavOptions? = navOptions { anim(style.presentAnim) }
     ) {
-        addDestinationAndNavigate(NavigationType.PRESENT, page, args, navOptions)
+        rnNavigator.navigationType = RNFragmentNavigator.NavigationType.PRESENT
+        addDestinationAndNavigate(page, args, navOptions)
     }
 
-    private fun removeCurrentScreenIdToStack() {
-        navController.currentDestination?.id?.let {
-            if (!viewModel.screenIdStack.contains(it.toString()) && navController.graph.startDestination != it) {
-                throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
-            }
-            viewModel.screenIdStack.remove(it.toString())
-        }
-    }
+    private fun clearStack() {
+        navController.backStack.removeAll { it != navController.backStack.first }
 
-    private fun removeScreenIdStackWithNavigateToStartDestination() {
         viewModel.screenIdStack =
             viewModel.tabs?.pages?.size
                 // with tab bar
@@ -208,6 +220,15 @@ open class RNRootActivity : RNBaseActivity() {
                     // without tab bar
                 ?: viewModel.screenIdStack.subList(0, 1)
 
+    }
+
+    private fun getCurrentDestinationId(): Int? {
+        return navController.currentDestination?.id?.let {
+            if (!viewModel.screenIdStack.contains(it.toString()) && navController.graph.startDestination != it) {
+                throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
+            }
+            it
+        }
     }
 
     private fun getCurrentScreenId(): String {
@@ -226,21 +247,6 @@ open class RNRootActivity : RNBaseActivity() {
             }
     }
 
-    private fun sendComponentResultEvent() {
-        viewModel.pageResult?.let {
-            sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
-        }
-        if (isWithRnTabBar() && isTabBarPresented) {
-            viewModel.pageResult?.let {
-                sendNavigationEvent(
-                    COMPONENT_RESULT,
-                    viewModel.tabBarScreenId,
-                    Arguments.createMap().apply { merge(it) })
-            }
-        }
-        viewModel.pageResult = null
-    }
-
     private fun getScreenId(index: Int): String {
         return viewModel.tabs?.pages?.size
             // with tab bar
@@ -255,6 +261,21 @@ open class RNRootActivity : RNBaseActivity() {
             ?: let {
                 viewModel.screenIdStack[index]
             }
+    }
+
+    private fun sendComponentResultEvent() {
+        viewModel.pageResult?.let {
+            sendNavigationEvent(COMPONENT_RESULT, getCurrentScreenId(), Arguments.createMap().apply { merge(it) })
+        }
+        if (isWithRnTabBar() && isTabBarPresented) {
+            viewModel.pageResult?.let {
+                sendNavigationEvent(
+                    COMPONENT_RESULT,
+                    viewModel.tabBarScreenId,
+                    Arguments.createMap().apply { merge(it) })
+            }
+        }
+        viewModel.pageResult = null
     }
 
     private fun isWithRnTabBar(): Boolean {

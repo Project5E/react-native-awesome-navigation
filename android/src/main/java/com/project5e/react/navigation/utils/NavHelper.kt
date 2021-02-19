@@ -43,13 +43,11 @@ fun buildDestination(
     navigator: RNFragmentNavigator,
     destinationName: String,
     options: Bundle? = null,
-    navigationType: RNFragmentNavigator.Destination.NavigationType? = null,
 ): NavDestination {
     return navigator.createDestination().apply {
         val viewId = ViewCompat.generateViewId()
         id = viewId
         className = RNFragment::class.java.name
-        navigationType?.let { navigatorType = it }
         addArgument(ARG_COMPONENT_NAME, NavArgumentBuilder().let { arg ->
             arg.defaultValue = destinationName
             arg.build()
