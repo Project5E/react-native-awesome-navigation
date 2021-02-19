@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.NavigatorProvider
 import androidx.navigation.fragment.FragmentNavigator
+import java.util.*
 
 @Navigator.Name("react_fragment")
 class RNFragmentNavigator(
@@ -18,8 +19,17 @@ class RNFragmentNavigator(
     var navigationType: NavigationType? = null
     var popBackType: PopBackType? = null
 
+    val lastPushDestination: FragmentNavigator.Destination?
+        get() = if (pushDestinationStack.isEmpty()) null else pushDestinationStack.peekLast()
+
+    val lastPresentDestination: FragmentNavigator.Destination?
+        get() = if (presentDestinationStack.isEmpty()) null else presentDestinationStack.peekLast()
+
     private val pushNavigator by lazy { provider.getNavigator(RNPushFragmentNavigator::class.java) }
     private val presentNavigator by lazy { provider.getNavigator(RNPresentFragmentNavigator::class.java) }
+
+    private val pushDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
+    private val presentDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
 
     override fun createDestination() = FragmentNavigator.Destination(this)
 
@@ -29,27 +39,47 @@ class RNFragmentNavigator(
         navOptions: NavOptions?,
         navigatorExtras: Extras?
     ): NavDestination? {
-        val navigator = getNavigator(navigationType ?: NavigationType.PUSH)
-        return navigator.navigate(destination, args, navOptions, navigatorExtras)
-    }
-
-    override fun popBackStack(): Boolean {
-        val navigator = getNavigator(popBackType ?: PopBackType.POP)
-        recycle()
-        return navigator.popBackStack()
-    }
-
-    private fun getNavigator(navigationType: NavigationType): Navigator<FragmentNavigator.Destination> {
-        return when (navigationType) {
-            NavigationType.PUSH -> pushNavigator
-            NavigationType.PRESENT -> presentNavigator
+        return when (navigationType ?: NavigationType.PUSH) {
+            NavigationType.PUSH -> push(destination, args, navOptions, navigatorExtras)
+            NavigationType.PRESENT -> present(destination, args, navOptions, navigatorExtras)
         }
     }
 
-    private fun getNavigator(popBackType: PopBackType): Navigator<FragmentNavigator.Destination> {
-        return when (popBackType) {
-            PopBackType.POP -> pushNavigator
-            PopBackType.DISMISS -> presentNavigator
+    override fun popBackStack(): Boolean {
+        return when (popBackType ?: PopBackType.POP) {
+            PopBackType.POP -> pop()
+            PopBackType.DISMISS -> dismiss()
+        }.apply { recycle() }
+    }
+
+    private fun push(
+        destination: FragmentNavigator.Destination,
+        args: Bundle?,
+        navOptions: NavOptions?,
+        navigatorExtras: Extras?
+    ) = pushNavigator.navigate(destination, args, navOptions, navigatorExtras)
+        ?.apply { pushDestinationStack.add(destination) }
+
+    private fun present(
+        destination: FragmentNavigator.Destination,
+        args: Bundle?,
+        navOptions: NavOptions?,
+        navigatorExtras: Extras?
+    ) = presentNavigator.navigate(destination, args, navOptions, navigatorExtras)
+        ?.apply { presentDestinationStack.add(destination) }
+
+    private fun pop() = pushNavigator.popBackStack().apply { if (this) pushDestinationStack.removeLast() }
+
+    private fun dismiss() = presentNavigator.popBackStack().apply {
+        if (this) {
+            // clear push stack
+            lastPresentDestination?.let { last ->
+                pushDestinationStack.removeAll {
+                    it.id > last.id
+                }
+            }
+            // remove self
+            presentDestinationStack.removeLast()
         }
     }
 

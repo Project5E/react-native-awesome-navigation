@@ -1,7 +1,6 @@
 package com.project5e.react.navigation.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -55,12 +54,6 @@ open class RNRootActivity : RNBaseActivity() {
             addNavigator(rnNavigator)
         }
         receive()
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            Log.e("1van1", "$destination")
-            navController.backStack.forEach {
-                Log.e("1van1", "${it.destination.id}")
-            }
-        }
     }
 
     override fun invokeDefaultOnBackPressed() {
@@ -146,8 +139,15 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
             val promise = state as Promise
+            val removeSize = rnNavigator.lastPresentDestination?.id?.let { id ->
+                val subIndex = navController.backStack.map { it.destination.id }.indexOf(id)
+                navController.backStack.size - subIndex
+            }
+
             rnNavigator.popBackType = RNFragmentNavigator.PopBackType.DISMISS
             if (navController.navigateUp()) {
+                removeSize?.let { for (index in 1 until it) navController.backStack.removeLast() }
+
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         delay(dismissAnimTime)
