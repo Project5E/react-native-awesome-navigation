@@ -15,6 +15,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import com.project5e.react.navigation.NavigationConstants.Companion.COMPONENT_RESULT
 import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
+import com.project5e.react.navigation.NavigationManager.registerRNDestination
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.*
@@ -73,7 +74,10 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun receive() {
         Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, Observer { state ->
-            viewModel.navigationOptionCache.putAll(state as MutableMap<String, ReadableMap?>)
+            val data = state as MutableMap<String, ReadableMap?>
+
+            data.keys.forEach { registerRNDestination(it) }
+            viewModel.navigationOptionCache.putAll(data)
         })
 
         Store.reducer(ACTION_SET_ROOT)?.observe(this, Observer { state ->

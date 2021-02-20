@@ -1,18 +1,23 @@
 package com.project5e.react.navigation
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
 import com.project5e.react.navigation.utils.LogFragment
 import com.project5e.react.navigation.utils.RNNavigationException
+import com.project5e.react.navigation.view.RNFragment
 import com.project5e.react.navigation.view.model.GlobalStyle
 import java.lang.ref.WeakReference
 
 object NavigationManager {
 
-    private var _reactNativeHost: ReactNativeHost? = null
+    @SuppressLint("StaticFieldLeak")
     private var _reactInstanceManager: ReactInstanceManager? = null
+    private var _reactNativeHost: ReactNativeHost? = null
+
+    internal val registeredDestination: MutableMap<String, Class<out Any?>> = mutableMapOf()
 
     @JvmStatic
     @Volatile
@@ -47,6 +52,15 @@ object NavigationManager {
         if (!reactInstanceManager.hasStartedCreatingInitialContext()) {
             reactInstanceManager.createReactContextInBackground()
         }
+    }
+
+    @JvmStatic
+    fun <T> register(key: String, value: Class<T>) {
+        registeredDestination[key] = value
+    }
+
+    internal fun registerRNDestination(key: String) {
+        register(key, RNFragment::class.java)
     }
 
     @JvmStatic

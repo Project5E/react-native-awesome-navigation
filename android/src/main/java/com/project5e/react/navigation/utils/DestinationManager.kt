@@ -1,13 +1,16 @@
 package com.project5e.react.navigation.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.*
 import androidx.navigation.fragment.FragmentNavigator
 import com.facebook.react.bridge.Arguments
 import com.project5e.react.navigation.NavigationManager
+import com.project5e.react.navigation.NavigationManager.registeredDestination
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
@@ -109,6 +112,22 @@ class DestinationManager(private val navController: NavController) {
                 arg.build()
             })
         }
+    }
+
+    fun buildDestination(name: String) {
+        val viewControllerClass = getViewControllerClass(name)
+        when {
+            viewControllerClass == RNFragment::class.java -> {
+            }
+            viewControllerClass.isAssignableFrom(Fragment::class.java) -> {
+            }
+            viewControllerClass.isAssignableFrom(Activity::class.java) -> {
+            }
+        }
+    }
+
+    private fun getViewControllerClass(name: String): Class<out Any?> {
+        return registeredDestination[name] ?: throw IllegalArgumentException("Not registered!")
     }
 
 }
