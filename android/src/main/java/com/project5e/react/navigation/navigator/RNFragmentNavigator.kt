@@ -19,17 +19,11 @@ class RNFragmentNavigator(
     var navigationType: NavigationType? = null
     var popBackType: PopBackType? = null
 
-    val lastPushDestination: FragmentNavigator.Destination?
-        get() = if (pushDestinationStack.isEmpty()) null else pushDestinationStack.peekLast()
-
-    val lastPresentDestination: FragmentNavigator.Destination?
-        get() = if (presentDestinationStack.isEmpty()) null else presentDestinationStack.peekLast()
+    val pushDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
+    val presentDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
 
     private val pushNavigator by lazy { provider.getNavigator(RNPushFragmentNavigator::class.java) }
     private val presentNavigator by lazy { provider.getNavigator(RNPresentFragmentNavigator::class.java) }
-
-    private val pushDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
-    private val presentDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
 
     override fun createDestination() = FragmentNavigator.Destination(this)
 
@@ -73,10 +67,8 @@ class RNFragmentNavigator(
     private fun dismiss() = presentNavigator.popBackStack().apply {
         if (this) {
             // clear push stack
-            lastPresentDestination?.let { last ->
-                pushDestinationStack.removeAll {
-                    it.id > last.id
-                }
+            pushDestinationStack.removeAll {
+                it.id > presentDestinationStack.last.id
             }
             // remove self
             presentDestinationStack.removeLast()

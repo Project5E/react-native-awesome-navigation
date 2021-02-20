@@ -5,17 +5,12 @@ import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
-import com.facebook.react.bridge.Arguments
-import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
 import com.project5e.react.navigation.model.Page
-import com.project5e.react.navigation.navigator.RNFragmentNavigator
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
@@ -31,8 +26,7 @@ open class RNActivity : RNBaseActivity() {
     private val viewModel: RNViewModel
             by lazy { createRNViewModel(application) }
 
-    private val rnNavigator: RNFragmentNavigator
-            by lazy { RNFragmentNavigator(navController.navigatorProvider) }
+    private val dm: DestinationManager by lazy { DestinationManager(navController) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -72,7 +66,7 @@ open class RNActivity : RNBaseActivity() {
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
             val page = state as Page
-            addDestinationAndPush(page)
+            dm.addDestinationAndPush(page)
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
@@ -82,30 +76,8 @@ open class RNActivity : RNBaseActivity() {
 
     private fun setupNavGraph() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        val startDestination = buildDestination(rnNavigator, mainComponentName, launchOptions)
+        val startDestination = dm.buildDestination(mainComponentName, launchOptions)
         navController.setGraph(startDestination)
-    }
-
-    private fun addDestinationAndNavigate(page: Page, args: Bundle?, navOptions: NavOptions?) {
-        val destination = buildDestination(rnNavigator, page.rootName, Arguments.toBundle(page.options))
-        navController.graph.addDestination(destination)
-        navController.navigate(destination.id, args, navOptions)
-    }
-
-    private fun addDestinationAndPush(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(style.pushAnim) }
-    ) {
-        addDestinationAndNavigate(page, args, navOptions)
-    }
-
-    private fun addDestinationAndPresent(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(style.presentAnim) }
-    ) {
-        addDestinationAndNavigate(page, args, navOptions)
     }
 
     private fun removeCurrentScreenIdToStack() {
