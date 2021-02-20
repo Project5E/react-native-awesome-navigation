@@ -1,14 +1,12 @@
 package com.project5e.react.navigation.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.NavOptions
+import androidx.navigation.*
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
@@ -25,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 open class RNRootActivity : RNBaseActivity() {
 
@@ -43,6 +42,10 @@ open class RNRootActivity : RNBaseActivity() {
 
     private val navController: NavController
         get() = navHostFragment.navController
+
+    private val backStack: Deque<NavBackStackEntry>
+        @SuppressLint("RestrictedApi")
+        get() = navController.backStack
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,14 +142,23 @@ open class RNRootActivity : RNBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
             val promise = state as Promise
-            val removeSize = rnNavigator.lastPresentDestination?.id?.let { id ->
-                val subIndex = navController.backStack.map { it.destination.id }.indexOf(id)
-                navController.backStack.size - subIndex
+            // 在执行 navigateUp() 前，计算需要出栈的次数
+            val popBackSize = rnNavigator.lastPresentDestination?.id?.let { id ->
+                val subIndex = backStack.map { it.destination.id }.indexOf(id)
+                backStack.size - subIndex
             }
 
             rnNavigator.popBackType = RNFragmentNavigator.PopBackType.DISMISS
             if (navController.navigateUp()) {
-                removeSize?.let { for (index in 1 until it) navController.backStack.removeLast() }
+                // navigateUp() 方法内会先对 backStack 出栈
+                // 所以 screenIdStack 也先执行一次 removeLast()
+                viewModel.screenIdStack.removeLast()
+                popBackSize?.let {
+                    for (index in 1 until it) {
+                        backStack.removeLast()
+                        viewModel.screenIdStack.removeLast()
+                    }
+                }
 
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
@@ -211,7 +223,7 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun clearStack() {
-        navController.backStack.removeAll { it != navController.backStack.first }
+        backStack.removeAll { it != backStack.first }
 
         viewModel.screenIdStack =
             viewModel.tabs?.pages?.size
