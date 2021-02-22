@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.facebook.react.bridge.Arguments
@@ -15,6 +16,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import com.project5e.react.navigation.NavigationConstants.Companion.COMPONENT_RESULT
 import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
+import com.project5e.react.navigation.NavigationManager.clearInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.registerRNDestination
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
@@ -61,6 +63,17 @@ open class RNRootActivity : RNBaseActivity() {
             addNavigator(createRNFragmentNavigator(this))
         }
         receive()
+    }
+
+    override fun onBackPressed() {
+        val currentDestination = navController.currentDestination
+        if (currentDestination is FragmentNavigator.Destination) {
+            val fragmentClass = classLoader.loadClass(currentDestination.className)
+            if (!RNFragment::class.java.isAssignableFrom(fragmentClass)) {
+                clearInstanceManagerInHost()
+            }
+        }
+        super.onBackPressed()
     }
 
     override fun invokeDefaultOnBackPressed() {
