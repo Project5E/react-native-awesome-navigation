@@ -37,6 +37,7 @@ public class NativeFragment extends Fragment {
         btn.setBackgroundColor(0xFF2196F3);
         btn.setTextColor(Color.WHITE);
         btn.setText("pop");
+//        btn.setOnClickListener(v -> Navigation.findNavController(this.getView()).navigateUp());
         btn.setOnClickListener(v -> getActivity().onBackPressed());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) btn.setElevation(4);
         return btn;

@@ -13,9 +13,9 @@ import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
 import java.util.*
 
-private const val TAG = "HackNavigator"
+private const val TAG = "HackFragmentNavigator"
 
-open class HackNavigator(
+open class HackFragmentNavigator(
     private val context: Context,
     private val manager: FragmentManager,
     private val containerId: Int
@@ -95,26 +95,14 @@ open class HackNavigator(
 
     override fun popBackStack(): Boolean {
         popLifecycleEffect()
-        if (mBackStack.isEmpty()) {
-            return false
-        }
-        if (manager.isStateSaved) {
-            Log.i(TAG, "Ignoring popBackStack() call: FragmentManager has already saved its state")
-            return false
-        }
-        manager.popBackStack(
-            generateBackStackName(mBackStack.size, mBackStack.peekLast()),
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-        mBackStack.removeLast()
-        return true
+        return super.popBackStack()
     }
 
     open fun createWithDisplay(
         ft: FragmentTransaction,
         className: String,
         args: Bundle?,
-        tag: String?
+        tag: String?,
     ): Fragment {
         val frag = instantiateFragment(context, manager, className, args)
         frag.arguments = args
