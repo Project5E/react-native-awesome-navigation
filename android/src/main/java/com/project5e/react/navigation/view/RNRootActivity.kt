@@ -42,7 +42,7 @@ open class RNRootActivity : RNBaseActivity() {
     private val dismissAnimTime: Long
             by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
-    private val dm: DestinationManager by lazy { DestinationManager(navController) }
+    private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -89,10 +89,10 @@ open class RNRootActivity : RNBaseActivity() {
                         startDestination = buildDestinationWithTab(tabBarModuleName)
                     }
                     this is Screen && type == RootType.STACK -> {
-                        startDestination = dm.buildDestination(page)
+                        startDestination = dm.createDestination(page)
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        startDestination = dm.buildDestination(page)
+                        startDestination = dm.createDestination(page)
                     }
                     else -> {
                     }
@@ -118,15 +118,14 @@ open class RNRootActivity : RNBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
-            val page = state as Page
-            dm.addDestinationAndPush(page)
+            dm.push(state as Page)
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
             val page = state as Page
             val animated = page.options?.optBoolean("animated") ?: false
             isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
-            dm.addDestinationAndPresent(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
+            dm.present(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {

@@ -26,7 +26,7 @@ open class RNActivity : RNBaseActivity() {
     private val viewModel: RNViewModel
             by lazy { createRNViewModel(application) }
 
-    private val dm: DestinationManager by lazy { DestinationManager(navController) }
+    private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
 
     private val navController: NavController
         get() = navHostFragment.navController
@@ -66,7 +66,7 @@ open class RNActivity : RNBaseActivity() {
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
             val page = state as Page
-            dm.addDestinationAndPush(page)
+            dm.push(page)
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
             removeCurrentScreenIdToStack()
@@ -76,7 +76,7 @@ open class RNActivity : RNBaseActivity() {
 
     private fun setupNavGraph() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
-        val startDestination = dm.buildDestination(mainComponentName, launchOptions)
+        val startDestination = dm.createRnFragmentDestination(mainComponentName, launchOptions)
         navController.setGraph(startDestination)
     }
 
