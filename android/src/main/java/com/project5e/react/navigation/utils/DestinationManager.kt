@@ -70,18 +70,10 @@ class DestinationManager(private val context: Context, private val navController
     fun createDestination(name: String, args: Bundle?): NavDestination {
         val clazz = getViewControllerClass(name)
         return when {
-            clazz.isAssignableFrom(RNFragment::class.java) -> {
-                createRnFragmentDestination(name, args)
-            }
-            clazz.isAssignableFrom(RNActivity::class.java) -> {
-                createRnActivityDestination(name, args)
-            }
-            clazz.isAssignableFrom(Fragment::class.java) -> {
-                createFragmentDestination(clazz, name, args)
-            }
-            clazz.isAssignableFrom(Activity::class.java) -> {
-                createActivityDestination(clazz, name, args)
-            }
+            RNFragment::class.java.isAssignableFrom(clazz) -> createRnFragmentDestination(name, args)
+            RNActivity::class.java.isAssignableFrom(clazz) -> createRnActivityDestination(name, args)
+            Fragment::class.java.isAssignableFrom(clazz) -> createFragmentDestination(clazz, name, args)
+            Activity::class.java.isAssignableFrom(clazz) -> createActivityDestination(clazz, name, args)
             else -> throw IllegalArgumentException("destination target class must be assignable from Activity or Fragment!")
         }
     }
@@ -148,4 +140,3 @@ class DestinationManager(private val context: Context, private val navController
     }
 
 }
-

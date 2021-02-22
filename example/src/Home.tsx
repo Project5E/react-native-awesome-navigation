@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect} from 'react'
-import {Alert, Button, Platform, View} from 'react-native'
+import {Button, View} from 'react-native'
 import {Navigator, router, setTabBadge, useVisibleEffect} from 'react-native-awesome-navigation'
 
 const Home = props => {
@@ -57,14 +57,10 @@ const Home = props => {
       />
       <Button
         onPress={async () => {
-          if (Platform.OS === 'ios') {
-            const resp = await props.navigator.push('NativeViewController', {
-              title: 'Native',
-            })
-            console.warn(resp)
-          } else {
-            Alert.alert('Push Native', 'Android is coming.')
-          }
+          const resp = await props.navigator.push('NativeViewController', {
+            title: 'Native',
+          })
+          console.warn(resp)
         }}
         title='push native'
       />

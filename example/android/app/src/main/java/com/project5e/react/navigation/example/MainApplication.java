@@ -43,7 +43,8 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
         NavigationManager.install(mReactNativeHost);
-        NavigationManager.setTAG("1van");
+        NavigationManager.setTAG("5e");
+        NavigationManager.register("NativeViewController", NativeFragment.class);
     }
 
 }
