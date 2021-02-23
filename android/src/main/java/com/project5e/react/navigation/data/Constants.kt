@@ -1,4 +1,4 @@
-package com.project5e.react.navigation.model
+package com.project5e.react.navigation.data
 
 const val ARG_NAME = "arg_name"
 const val ARG_COMPONENT_NAME = "arg_component_name"

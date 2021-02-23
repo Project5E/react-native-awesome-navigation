@@ -9,7 +9,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import java.util.*
 
 @Navigator.Name("react_fragment")
-class RNFragmentNavigator(
+class RnFragmentNavigator(
     private val provider: NavigatorProvider,
 ) : Navigator<FragmentNavigator.Destination>() {
 
@@ -22,8 +22,8 @@ class RNFragmentNavigator(
     val pushDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
     val presentDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
 
-    private val pushNavigator by lazy { provider.getNavigator(RNPushFragmentNavigator::class.java) }
-    private val presentNavigator by lazy { provider.getNavigator(RNPresentFragmentNavigator::class.java) }
+    private val pushNavigator by lazy { provider.getNavigator(RnPushFragmentNavigator::class.java) }
+    private val presentNavigator by lazy { provider.getNavigator(RnPresentFragmentNavigator::class.java) }
 
     override fun createDestination() = FragmentNavigator.Destination(this)
 

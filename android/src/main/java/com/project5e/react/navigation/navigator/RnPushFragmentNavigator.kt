@@ -5,5 +5,5 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.Navigator
 
 @Navigator.Name("react_fragment_push")
-class RNPushFragmentNavigator(context: Context, manager: FragmentManager, containerId: Int) :
-    RNBaseFragmentNavigator(context, manager, containerId)
+class RnPushFragmentNavigator(context: Context, manager: FragmentManager, containerId: Int) :
+    RnBaseFragmentNavigator(context, manager, containerId)

@@ -11,16 +11,16 @@ import androidx.navigation.fragment.FragmentNavigator
 import com.facebook.react.bridge.Arguments
 import com.project5e.react.navigation.NavigationManager
 import com.project5e.react.navigation.NavigationManager.registeredDestination
-import com.project5e.react.navigation.model.*
-import com.project5e.react.navigation.navigator.RNFragmentNavigator
-import com.project5e.react.navigation.navigator.RNFragmentNavigator.NavigationType.PRESENT
-import com.project5e.react.navigation.navigator.RNFragmentNavigator.NavigationType.PUSH
-import com.project5e.react.navigation.view.RNActivity
-import com.project5e.react.navigation.view.RNFragment
+import com.project5e.react.navigation.data.*
+import com.project5e.react.navigation.navigator.RnFragmentNavigator
+import com.project5e.react.navigation.navigator.RnFragmentNavigator.NavigationType.PRESENT
+import com.project5e.react.navigation.navigator.RnFragmentNavigator.NavigationType.PUSH
+import com.project5e.react.navigation.view.RnActivity
+import com.project5e.react.navigation.view.RnFragment
 
 class DestinationManager(private val context: Context, private val navController: NavController) {
 
-    val navigator: RNFragmentNavigator = navController.navigatorProvider[RNFragmentNavigator::class]
+    val navigator: RnFragmentNavigator = navController.navigatorProvider[RnFragmentNavigator::class]
 
     val lastPushDestination: FragmentNavigator.Destination?
         get() = if (navigator.pushDestinationStack.isEmpty()) null else navigator.pushDestinationStack.peekLast()
@@ -28,12 +28,12 @@ class DestinationManager(private val context: Context, private val navController
     val lastPresentDestination: FragmentNavigator.Destination?
         get() = if (navigator.presentDestinationStack.isEmpty()) null else navigator.presentDestinationStack.peekLast()
 
-    var navigationType: RNFragmentNavigator.NavigationType? = null
+    var navigationType: RnFragmentNavigator.NavigationType? = null
         set(value) {
             navigator.navigationType = value
             field = value
         }
-    var popBackType: RNFragmentNavigator.PopBackType? = null
+    var popBackType: RnFragmentNavigator.PopBackType? = null
         set(value) {
             navigator.popBackType = value
             field = value
@@ -70,8 +70,8 @@ class DestinationManager(private val context: Context, private val navController
     fun createDestination(name: String, args: Bundle?): NavDestination {
         val clazz = getViewControllerClass(name)
         return when {
-            RNFragment::class.java.isAssignableFrom(clazz) -> createRnFragmentDestination(name, args)
-            RNActivity::class.java.isAssignableFrom(clazz) -> createRnActivityDestination(name, args)
+            RnFragment::class.java.isAssignableFrom(clazz) -> createRnFragmentDestination(name, args)
+            RnActivity::class.java.isAssignableFrom(clazz) -> createRnActivityDestination(name, args)
             Fragment::class.java.isAssignableFrom(clazz) -> createFragmentDestination(clazz, name, args)
             Activity::class.java.isAssignableFrom(clazz) -> createActivityDestination(clazz, name, args)
             else -> throw IllegalArgumentException("destination target class must be assignable from Activity or Fragment!")
@@ -106,13 +106,13 @@ class DestinationManager(private val context: Context, private val navController
     }
 
     fun createRnFragmentDestination(name: String, args: Bundle? = null): FragmentNavigator.Destination {
-        return createFragmentDestination(RNFragment::class.java, name, args).apply {
+        return createFragmentDestination(RnFragment::class.java, name, args).apply {
             addRnArgument(name, args)
         }
     }
 
     fun createRnActivityDestination(name: String, args: Bundle? = null): ActivityNavigator.Destination {
-        return createActivityDestination(RNActivity::class.java, name, args).apply {
+        return createActivityDestination(RnActivity::class.java, name, args).apply {
             addRnArgument(name, args)
         }
     }

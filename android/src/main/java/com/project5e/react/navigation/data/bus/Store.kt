@@ -1,4 +1,4 @@
-package com.project5e.react.navigation.utils
+package com.project5e.react.navigation.data.bus
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -5,7 +5,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactDelegate
 
-open class RNBaseActivity : ReactActivity() {
+open class RnBaseActivity : ReactActivity() {
 
     private class InnerReactActivityDelegate(activity: ReactActivity?, mainComponentName: String?) :
         ReactActivityDelegate(activity, mainComponentName) {

@@ -1,4 +1,4 @@
-package com.project5e.react.navigation.utils
+package com.project5e.react.navigation.data.bus
 
 const val ACTION_REGISTER_REACT_COMPONENT = "action_register_react_component"
 const val ACTION_SET_ROOT = "action_set_root"

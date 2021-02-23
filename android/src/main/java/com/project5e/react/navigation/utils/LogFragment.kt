@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.ReactFragment
-import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
+import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
 
 abstract class LogFragment : ReactFragment() {
 

@@ -14,12 +14,14 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableMap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project5e.react.navigation.R
-import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
-import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
-import com.project5e.react.navigation.model.Page
+import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
+import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
+import com.project5e.react.navigation.data.Page
+import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_SWITCH_TAB
+import com.project5e.react.navigation.data.bus.Store
 import com.project5e.react.navigation.utils.*
-import com.project5e.react.navigation.view.model.RNViewModel
-import com.project5e.react.navigation.view.model.createRNViewModel
+import com.project5e.react.navigation.view.model.RnViewModel
+import com.project5e.react.navigation.view.model.createRnViewModel
 import com.project5e.react.navigation.view.widget.SwipeControllableViewPager
 import java.util.*
 
@@ -27,15 +29,15 @@ data class ImageResolvedAssetSource(val height: Double?, val width: Double?, val
 
 typealias TabIcon = ImageResolvedAssetSource
 
-class RNTabBarFragment : Fragment(), RNComponentLifecycle {
+class RnTabBarFragment : Fragment(), RnComponentLifecycle {
 
     private lateinit var viewPager: SwipeControllableViewPager
     private lateinit var rnTabBar: FragmentContainerView
     private lateinit var tabBar: BottomNavigationView
 
-    private var tabBarRnFragment: RNFragment? = null
+    private var tabBarRnFragment: RnFragment? = null
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
+    private val viewModel: RnViewModel by lazy { createRnViewModel(requireActivity().application) }
 
     // 判断tabBar是否Rn组件
     private val isRnTabBar: Boolean
@@ -108,13 +110,13 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
     private fun setupViewPager() {
         viewPager.isEnabled = false // swipe enable
         viewModel.tabs?.let {
-            viewPager.adapter = RNTabPageAdapter(childFragmentManager, it)
+            viewPager.adapter = RnTabPageAdapter(childFragmentManager, it)
             viewPager.offscreenPageLimit = it.pages.size
         }
     }
 
-    private fun createTabBarRnFragment(): RNFragment =
-        RNFragment().apply {
+    private fun createTabBarRnFragment(): RnFragment =
+        RnFragment().apply {
             arguments = Bundle().also { args ->
                 args.putString(ARG_COMPONENT_NAME, viewModel.tabBarComponentName)
                 args.putBundle(ARG_LAUNCH_OPTIONS, Bundle().also { options ->

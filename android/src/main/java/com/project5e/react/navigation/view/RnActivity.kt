@@ -7,15 +7,19 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.project5e.react.navigation.NavigationException
 import com.project5e.react.navigation.R
-import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
-import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
-import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
-import com.project5e.react.navigation.model.Page
-import com.project5e.react.navigation.utils.*
-import com.project5e.react.navigation.view.model.RNViewModel
-import com.project5e.react.navigation.view.model.createRNViewModel
+import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
+import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
+import com.project5e.react.navigation.data.ARG_OPTIONS_SCREEN_ID
+import com.project5e.react.navigation.data.Page
+import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_POP_NEST
+import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_PUSH_NEST
+import com.project5e.react.navigation.data.bus.Store
+import com.project5e.react.navigation.utils.DestinationManager
+import com.project5e.react.navigation.utils.setGraph
+import com.project5e.react.navigation.view.model.RnViewModel
+import com.project5e.react.navigation.view.model.createRnViewModel
 
-open class RNActivity : RNBaseActivity() {
+open class RnActivity : RnBaseActivity() {
 
     val screenId get() = _screenId
     open var launchOptions: Bundle = Bundle()
@@ -23,8 +27,8 @@ open class RNActivity : RNBaseActivity() {
     private var _screenId: String? = null
     private lateinit var navHostFragment: NavHostFragment
 
-    private val viewModel: RNViewModel
-            by lazy { createRNViewModel(application) }
+    private val viewModel: RnViewModel
+            by lazy { createRnViewModel(application) }
 
     private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
 

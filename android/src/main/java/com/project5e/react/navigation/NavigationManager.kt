@@ -6,7 +6,7 @@ import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
 import com.project5e.react.navigation.utils.LogFragment
-import com.project5e.react.navigation.view.RNFragment
+import com.project5e.react.navigation.view.RnFragment
 import com.project5e.react.navigation.view.model.GlobalStyle
 import java.lang.ref.WeakReference
 
@@ -63,8 +63,8 @@ object NavigationManager {
         registeredDestination[key] = value
     }
 
-    internal fun registerRNDestination(key: String) {
-        register(key, RNFragment::class.java)
+    internal fun registerRnDestination(key: String) {
+        register(key, RnFragment::class.java)
     }
 
     @JvmStatic

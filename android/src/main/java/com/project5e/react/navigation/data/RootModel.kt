@@ -1,4 +1,4 @@
-package com.project5e.react.navigation.model
+package com.project5e.react.navigation.data
 
 import com.facebook.react.bridge.ReadableMap
 

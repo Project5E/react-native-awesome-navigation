@@ -5,21 +5,21 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphNavigator
 import androidx.navigation.NavigatorProvider
 import androidx.navigation.fragment.NavHostFragment
-import com.project5e.react.navigation.navigator.RNFragmentNavigator
-import com.project5e.react.navigation.navigator.RNPresentFragmentNavigator
-import com.project5e.react.navigation.navigator.RNPushFragmentNavigator
+import com.project5e.react.navigation.navigator.RnFragmentNavigator
+import com.project5e.react.navigation.navigator.RnPresentFragmentNavigator
+import com.project5e.react.navigation.navigator.RnPushFragmentNavigator
 
-fun createRNFragmentNavigator(provider: NavigatorProvider) = RNFragmentNavigator(provider)
+fun createRnFragmentNavigator(provider: NavigatorProvider) = RnFragmentNavigator(provider)
 
-fun createRNPushFragmentNavigator(navHostFragment: NavHostFragment) =
-    RNPushFragmentNavigator(
+fun createRnPushFragmentNavigator(navHostFragment: NavHostFragment) =
+    RnPushFragmentNavigator(
         navHostFragment.requireContext(),
         navHostFragment.childFragmentManager,
         navHostFragment.id
     )
 
-fun createRNPresentFragmentNavigator(navHostFragment: NavHostFragment) =
-    RNPresentFragmentNavigator(
+fun createRnPresentFragmentNavigator(navHostFragment: NavHostFragment) =
+    RnPresentFragmentNavigator(
         navHostFragment.requireContext(),
         navHostFragment.childFragmentManager,
         navHostFragment.id

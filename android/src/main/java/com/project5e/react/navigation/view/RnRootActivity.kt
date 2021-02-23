@@ -17,30 +17,31 @@ import com.project5e.react.navigation.NavigationConstants.Companion.COMPONENT_RE
 import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
 import com.project5e.react.navigation.NavigationException
 import com.project5e.react.navigation.NavigationManager.clearInstanceManagerInHost
-import com.project5e.react.navigation.NavigationManager.registerRNDestination
+import com.project5e.react.navigation.NavigationManager.registerRnDestination
 import com.project5e.react.navigation.NavigationManager.resetInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
-import com.project5e.react.navigation.model.*
-import com.project5e.react.navigation.navigator.RNFragmentNavigator
+import com.project5e.react.navigation.data.*
+import com.project5e.react.navigation.data.bus.*
+import com.project5e.react.navigation.navigator.RnFragmentNavigator
 import com.project5e.react.navigation.utils.*
-import com.project5e.react.navigation.view.model.RNViewModel
-import com.project5e.react.navigation.view.model.createRNViewModel
+import com.project5e.react.navigation.view.model.RnViewModel
+import com.project5e.react.navigation.view.model.createRnViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-open class RNRootActivity : RNBaseActivity() {
+open class RnRootActivity : RnBaseActivity() {
 
     private var startDestination: NavDestination? = null
     private var isTabBarPresented: Boolean = false
 
     private lateinit var navHostFragment: NavHostFragment
 
-    private val viewModel: RNViewModel
-            by lazy { createRNViewModel(application) }
+    private val viewModel: RnViewModel
+            by lazy { createRnViewModel(application) }
 
     private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
 
@@ -56,9 +57,9 @@ open class RNRootActivity : RNBaseActivity() {
         setContentView(R.layout.activity_container_nav_host)
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         with(navController.navigatorProvider) {
-            addNavigator(createRNPushFragmentNavigator(navHostFragment))
-            addNavigator(createRNPresentFragmentNavigator(navHostFragment))
-            addNavigator(createRNFragmentNavigator(this))
+            addNavigator(createRnPushFragmentNavigator(navHostFragment))
+            addNavigator(createRnPresentFragmentNavigator(navHostFragment))
+            addNavigator(createRnFragmentNavigator(this))
         }
         receive()
     }
@@ -68,7 +69,7 @@ open class RNRootActivity : RNBaseActivity() {
         var isClearInstanceManagerInHost = false
         if (currentDestination is FragmentNavigator.Destination) {
             val fragmentClass = classLoader.loadClass(currentDestination.className)
-            if (!RNFragment::class.java.isAssignableFrom(fragmentClass)) {
+            if (!RnFragment::class.java.isAssignableFrom(fragmentClass)) {
                 clearInstanceManagerInHost()
                 isClearInstanceManagerInHost = true
             }
@@ -82,7 +83,7 @@ open class RNRootActivity : RNBaseActivity() {
     override fun invokeDefaultOnBackPressed() {
         val currentDestinationId = getCurrentDestinationId()
 
-        dm.popBackType = RNFragmentNavigator.PopBackType.POP
+        dm.popBackType = RnFragmentNavigator.PopBackType.POP
         if (navController.navigateUp()) {
             viewModel.screenIdStack.remove(currentDestinationId.toString())
         }
@@ -92,7 +93,7 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, { state ->
             val data = state as MutableMap<String, ReadableMap?>
 
-            data.keys.forEach { registerRNDestination(it) }
+            data.keys.forEach { registerRnDestination(it) }
             viewModel.navigationOptionCache.putAll(data)
         })
 
@@ -147,7 +148,7 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
             startDestination?.let { destination ->
                 clearStack()
-                dm.navigationType = RNFragmentNavigator.NavigationType.PUSH
+                dm.navigationType = RnFragmentNavigator.NavigationType.PUSH
                 navController.navigate(destination.id)
             }
         })
@@ -155,7 +156,7 @@ open class RNRootActivity : RNBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
             val currentDestinationId = getCurrentDestinationId()
 
-            dm.popBackType = RNFragmentNavigator.PopBackType.POP
+            dm.popBackType = RnFragmentNavigator.PopBackType.POP
             if (navController.navigateUp()) {
                 viewModel.screenIdStack.remove(currentDestinationId.toString())
                 sendComponentResultEvent()
@@ -170,7 +171,7 @@ open class RNRootActivity : RNBaseActivity() {
                 backStack.size - subIndex
             }
 
-            dm.popBackType = RNFragmentNavigator.PopBackType.DISMISS
+            dm.popBackType = RnFragmentNavigator.PopBackType.DISMISS
             if (navController.navigateUp()) {
                 // navigateUp() 方法内会先对 backStack 出栈
                 // 所以 screenIdStack 也先执行一次 removeLast()
@@ -199,7 +200,7 @@ open class RNRootActivity : RNBaseActivity() {
 
             for (i in 0 until count) {
                 val currentDestinationId = getCurrentDestinationId()
-                dm.popBackType = RNFragmentNavigator.PopBackType.POP
+                dm.popBackType = RnFragmentNavigator.PopBackType.POP
                 if (navController.navigateUp()) {
                     viewModel.screenIdStack.remove(currentDestinationId.toString())
                 }
@@ -210,7 +211,7 @@ open class RNRootActivity : RNBaseActivity() {
     private fun buildDestinationWithTab(tabBarComponentName: String?): NavDestination =
         dm.navigator.createDestination().also {
             it.id = ViewCompat.generateViewId()
-            it.className = RNTabBarFragment::class.java.name
+            it.className = RnTabBarFragment::class.java.name
             viewModel.tabBarComponentName = tabBarComponentName
         }
 

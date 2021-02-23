@@ -6,7 +6,7 @@ import com.project5e.react.navigation.NavigationConstants.Companion.VIEW_DID_APP
 import com.project5e.react.navigation.NavigationConstants.Companion.VIEW_DID_DISAPPEAR
 import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
 
-interface RNComponentLifecycle {
+interface RnComponentLifecycle {
     fun viewDidAppear()
     fun viewDidDisappear()
 }

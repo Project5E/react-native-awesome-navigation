@@ -1,9 +1,12 @@
 package com.project5e.react.navigation
 
 import com.facebook.react.bridge.*
-import com.project5e.react.navigation.model.*
-import com.project5e.react.navigation.utils.*
-import com.project5e.react.navigation.view.RNActivity
+import com.project5e.react.navigation.data.*
+import com.project5e.react.navigation.data.bus.*
+import com.project5e.react.navigation.utils.optArray
+import com.project5e.react.navigation.utils.optMap
+import com.project5e.react.navigation.utils.optString
+import com.project5e.react.navigation.view.RnActivity
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
@@ -43,7 +46,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     @ReactMethod
     fun dispatch(screenID: String, action: String, component: String?, options: ReadableMap?, promise: Promise) {
         when (currentActivity) {
-            is RNActivity -> {
+            is RnActivity -> {
                 when (action) {
                     "push" -> Store.dispatch(ACTION_DISPATCH_PUSH_NEST, requirePage(component, options))
                     "pop" -> Store.dispatch(ACTION_DISPATCH_POP_NEST)

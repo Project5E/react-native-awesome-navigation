@@ -14,16 +14,16 @@ import com.project5e.react.navigation.NavigationManager.clearInstanceManagerInHo
 import com.project5e.react.navigation.NavigationManager.resetInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
-import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
-import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
-import com.project5e.react.navigation.model.ARG_OPTIONS_SCREEN_ID
+import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
+import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
+import com.project5e.react.navigation.data.ARG_OPTIONS_SCREEN_ID
 import com.project5e.react.navigation.utils.LogFragment
 import com.project5e.react.navigation.utils.optBoolean
 import com.project5e.react.navigation.utils.optString
-import com.project5e.react.navigation.view.model.RNViewModel
-import com.project5e.react.navigation.view.model.createRNViewModel
+import com.project5e.react.navigation.view.model.RnViewModel
+import com.project5e.react.navigation.view.model.createRnViewModel
 
-open class RNFragment : LogFragment(), RNComponentLifecycle {
+open class RnFragment : LogFragment(), RnComponentLifecycle {
 
     val screenId get() = _screenId
     val mainComponentName get() = _mainComponentName
@@ -33,7 +33,7 @@ open class RNFragment : LogFragment(), RNComponentLifecycle {
     private lateinit var reactRootView: ReactRootView
     private lateinit var toolbar: Toolbar
 
-    private val viewModel: RNViewModel by lazy { createRNViewModel(requireActivity().application) }
+    private val viewModel: RnViewModel by lazy { createRnViewModel(requireActivity().application) }
 
     override fun setArguments(args: Bundle?) {
         args?.getString(ARG_COMPONENT_NAME)?.let { _mainComponentName = it }

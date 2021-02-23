@@ -69,6 +69,15 @@ const Detail = props => {
         title='dismiss'
       />
       <Button
+        onPress={async () => {
+          const resp = await props.navigator.push('NativeViewController', {
+            title: 'Native',
+          })
+          console.warn(resp)
+        }}
+        title='push native'
+      />
+      <Button
         onPress={() => {
           setModalVisible(true)
         }}

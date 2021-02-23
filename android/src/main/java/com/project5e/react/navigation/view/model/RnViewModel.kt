@@ -5,15 +5,15 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import com.facebook.react.bridge.ReadableMap
-import com.project5e.react.navigation.model.Tabs
+import com.project5e.react.navigation.data.Tabs
 
 val rnViewModelStore = ViewModelStore()
 
-fun createRNViewModel(app: Application) =
-    ViewModelProvider(rnViewModelStore, ViewModelProvider.AndroidViewModelFactory(app)).get(RNViewModel::class.java)
+fun createRnViewModel(app: Application) =
+    ViewModelProvider(rnViewModelStore, ViewModelProvider.AndroidViewModelFactory(app)).get(RnViewModel::class.java)
 
 
-class RNViewModel(application: Application) : AndroidViewModel(application) {
+class RnViewModel(application: Application) : AndroidViewModel(application) {
     var tabBarScreenId: String? = null
     var tabBarComponentName: String? = null
     var tabs: Tabs? = null
