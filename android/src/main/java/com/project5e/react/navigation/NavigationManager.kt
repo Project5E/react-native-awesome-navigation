@@ -12,9 +12,13 @@ import java.lang.ref.WeakReference
 
 object NavigationManager {
 
+    private var _reactNativeHost: ReactNativeHost? = null
+
     @SuppressLint("StaticFieldLeak")
     private var _reactInstanceManager: ReactInstanceManager? = null
-    private var _reactNativeHost: ReactNativeHost? = null
+
+    @SuppressLint("StaticFieldLeak")
+    internal lateinit var cacheReactInstanceManager: ReactInstanceManager
 
     internal val registeredDestination: MutableMap<String, Class<out Any?>> = mutableMapOf()
 
@@ -39,8 +43,9 @@ object NavigationManager {
 
     @JvmStatic
     fun install(reactNativeHost: ReactNativeHost) {
-        this._reactNativeHost = reactNativeHost
-        this._reactInstanceManager = reactNativeHost.reactInstanceManager
+        _reactNativeHost = reactNativeHost
+        _reactInstanceManager = reactInstanceManager
+        cacheReactInstanceManager = reactInstanceManager
         setup()
     }
 

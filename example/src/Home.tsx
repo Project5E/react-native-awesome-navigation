@@ -64,7 +64,6 @@ const Home = props => {
         }}
         title='push native'
       />
-
       <Button
         onPress={async () => {
           const resp = await props.navigator.present('Present', {}) //{isFullScreen: true, isTransparency: true, animated: false}

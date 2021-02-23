@@ -18,6 +18,7 @@ import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
 import com.project5e.react.navigation.NavigationException
 import com.project5e.react.navigation.NavigationManager.clearInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.registerRNDestination
+import com.project5e.react.navigation.NavigationManager.resetInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.*
@@ -64,13 +65,18 @@ open class RNRootActivity : RNBaseActivity() {
 
     override fun onBackPressed() {
         val currentDestination = navController.currentDestination
+        var isClearInstanceManagerInHost = false
         if (currentDestination is FragmentNavigator.Destination) {
             val fragmentClass = classLoader.loadClass(currentDestination.className)
             if (!RNFragment::class.java.isAssignableFrom(fragmentClass)) {
                 clearInstanceManagerInHost()
+                isClearInstanceManagerInHost = true
             }
         }
         super.onBackPressed()
+        if (isClearInstanceManagerInHost) {
+            resetInstanceManagerInHost()
+        }
     }
 
     override fun invokeDefaultOnBackPressed() {

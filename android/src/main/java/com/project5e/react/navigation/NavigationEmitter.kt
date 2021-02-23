@@ -7,7 +7,6 @@ import com.project5e.react.navigation.NavigationConstants.Companion.EVENT_TYPE
 import com.project5e.react.navigation.NavigationConstants.Companion.NAVIGATION_EVENT
 import com.project5e.react.navigation.NavigationConstants.Companion.RESULT_DATA
 import com.project5e.react.navigation.NavigationConstants.Companion.SCREEN_ID
-import com.project5e.react.navigation.NavigationManager.reactInstanceManager
 
 /**
  * @param data Types:
@@ -22,6 +21,13 @@ import com.project5e.react.navigation.NavigationManager.reactInstanceManager
  * ReadableArray -> Array
  */
 object NavigationEmitter {
+
+    private val reactInstanceManager
+        get() =
+            if (NavigationManager.reactNativeHost.hasInstance())
+                NavigationManager.reactInstanceManager
+            else
+                NavigationManager.cacheReactInstanceManager
 
     @JvmStatic
     fun sendEvent(eventName: String, data: Any?) {
@@ -65,4 +71,5 @@ object NavigationEmitter {
             }
         })
     }
+
 }
