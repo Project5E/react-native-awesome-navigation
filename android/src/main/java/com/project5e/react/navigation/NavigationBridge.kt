@@ -47,7 +47,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
                 when (action) {
                     "push" -> Store.dispatch(ACTION_DISPATCH_PUSH_NEST, requirePage(component, options))
                     "pop" -> Store.dispatch(ACTION_DISPATCH_POP_NEST)
-                    else -> throw RNNavigationException("action(=$action) error")
+                    else -> throw NavigationException("action(=$action) error")
                 }
             }
             else -> {
@@ -59,7 +59,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
                     "dismiss" -> Store.dispatch(ACTION_DISPATCH_DISMISS, promise)
                     "popPages" -> Store.dispatch(ACTION_DISPATCH_POP_PAGES, options)
                     "switchTab" -> Store.dispatch(ACTION_DISPATCH_SWITCH_TAB, options)
-                    else -> throw RNNavigationException("action(=$action) error")
+                    else -> throw NavigationException("action(=$action) error")
                 }
             }
         }
@@ -77,7 +77,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     private fun parseRoot(root: ReadableMap?): Root? {
         val rootMap = root?.optMap("root")?.takeIf { it.toHashMap().size > 0 }
-            ?: throw RNNavigationException("setRoot must be only one parameter")
+            ?: throw NavigationException("setRoot must be only one parameter")
         return with(rootMap) {
             when {
                 hasKey("tabs") -> {
@@ -89,7 +89,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
                 hasKey("screen") -> {
                     parseNameInScreen(this)?.let { Screen(RootType.SCREEN, it) }
                 }
-                else -> throw RNNavigationException("setRoot parameter error")
+                else -> throw NavigationException("setRoot parameter error")
             }
         }
     }
@@ -116,7 +116,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
         val tabs = root?.optMap("tabs")
         val stacks = tabs?.optArray("children")
         val options = tabs?.optMap("options")
-        stacks ?: throw RNNavigationException("setRoot parameter error, children is undefined")
+        stacks ?: throw NavigationException("setRoot parameter error, children is undefined")
 
         val pages = mutableListOf<Page>()
         for (index in 0 until stacks.size()) {
@@ -129,6 +129,6 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     private fun requirePage(component: String?, options: ReadableMap?) =
-        component?.let { Page(it, options) } ?: throw RNNavigationException("componentName is null")
+        component?.let { Page(it, options) } ?: throw NavigationException("componentName is null")
 
 }

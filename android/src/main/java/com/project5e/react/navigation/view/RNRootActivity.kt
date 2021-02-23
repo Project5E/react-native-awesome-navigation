@@ -3,7 +3,6 @@ package com.project5e.react.navigation.view
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -16,6 +15,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReadableMap
 import com.project5e.react.navigation.NavigationConstants.Companion.COMPONENT_RESULT
 import com.project5e.react.navigation.NavigationEmitter.sendNavigationEvent
+import com.project5e.react.navigation.NavigationException
 import com.project5e.react.navigation.NavigationManager.clearInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.registerRNDestination
 import com.project5e.react.navigation.NavigationManager.style
@@ -40,9 +40,6 @@ open class RNRootActivity : RNBaseActivity() {
 
     private val viewModel: RNViewModel
             by lazy { createRNViewModel(application) }
-
-    private val dismissAnimTime: Long
-            by lazy { resources.getInteger(android.R.integer.config_mediumAnimTime).toLong() }
 
     private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
 
@@ -86,14 +83,14 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun receive() {
-        Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_REGISTER_REACT_COMPONENT)?.observe(this, { state ->
             val data = state as MutableMap<String, ReadableMap?>
 
             data.keys.forEach { registerRNDestination(it) }
             viewModel.navigationOptionCache.putAll(data)
         })
 
-        Store.reducer(ACTION_SET_ROOT)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_SET_ROOT)?.observe(this, { state ->
             with(state as Root) {
                 when {
                     this is Tabs && type == RootType.TABS -> {
@@ -114,14 +111,14 @@ open class RNRootActivity : RNBaseActivity() {
             navController.setGraph(startDestination)
         })
 
-        Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
             val promise = state as Promise
             promise.resolve(Arguments.createMap().also {
                 it.putString(ARG_OPTIONS_SCREEN_ID, getCurrentScreenId())
             })
         })
 
-        Store.reducer(ACTION_SET_RESULT)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_SET_RESULT)?.observe(this, { state ->
             val data = state as ReadableMap
             viewModel.pageResult = data
         })
@@ -130,18 +127,18 @@ open class RNRootActivity : RNBaseActivity() {
     }
 
     private fun receiveDispatch() {
-        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
             dm.push(state as Page)
         })
 
-        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
             val page = state as Page
             val animated = page.options?.optBoolean("animated") ?: false
             isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
             dm.present(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
         })
 
-        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, Observer {
+        Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
             startDestination?.let { destination ->
                 clearStack()
                 dm.navigationType = RNFragmentNavigator.NavigationType.PUSH
@@ -149,7 +146,7 @@ open class RNRootActivity : RNBaseActivity() {
             }
         })
 
-        Store.reducer(ACTION_DISPATCH_POP)?.observe(this, Observer {
+        Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
             val currentDestinationId = getCurrentDestinationId()
 
             dm.popBackType = RNFragmentNavigator.PopBackType.POP
@@ -159,7 +156,7 @@ open class RNRootActivity : RNBaseActivity() {
             }
         })
 
-        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, { state ->
             val promise = state as Promise
             // 在执行 navigateUp() 前，计算需要出栈的次数
             val popBackSize = dm.lastPresentDestination?.id.let { id ->
@@ -181,6 +178,7 @@ open class RNRootActivity : RNBaseActivity() {
 
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
+                        val dismissAnimTime = resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
                         delay(dismissAnimTime)
                         promise.resolve(null)
                         sendComponentResultEvent()
@@ -189,7 +187,7 @@ open class RNRootActivity : RNBaseActivity() {
             }
         })
 
-        Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, { state ->
             val data = state as ReadableMap
             val count = data.optInt("count")
 
@@ -225,7 +223,7 @@ open class RNRootActivity : RNBaseActivity() {
     private fun getCurrentDestinationId(): Int? {
         return navController.currentDestination?.id?.let {
             if (!viewModel.screenIdStack.contains(it.toString()) && navController.graph.startDestination != it) {
-                throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
+                throw NavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
             }
             it
         }

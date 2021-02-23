@@ -3,9 +3,9 @@ package com.project5e.react.navigation.view
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.project5e.react.navigation.NavigationException
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
@@ -64,11 +64,11 @@ open class RNActivity : RNBaseActivity() {
 //    }
 
     private fun receiveDispatch() {
-        Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, Observer { state ->
+        Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, { state ->
             val page = state as Page
             dm.push(page)
         })
-        Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, Observer {
+        Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, {
             removeCurrentScreenIdToStack()
             onBackPressed()
         })
@@ -83,7 +83,7 @@ open class RNActivity : RNBaseActivity() {
     private fun removeCurrentScreenIdToStack() {
         navController.currentDestination?.id?.toString()?.let {
             if (!viewModel.screenIdStack.contains(it)) {
-                throw RNNavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
+                throw NavigationException("currentDestinationId(id = $it) is not found in ScreenIdStack")
             }
             viewModel.screenIdStack.remove(it)
         }

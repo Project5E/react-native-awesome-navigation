@@ -9,11 +9,8 @@ import com.project5e.react.navigation.model.Tabs
 
 val rnViewModelStore = ViewModelStore()
 
-fun createRNViewModel(application: Application): RNViewModel =
-    ViewModelProvider(
-        rnViewModelStore,
-        ViewModelProvider.AndroidViewModelFactory(application)
-    ).get(RNViewModel::class.java)
+fun createRNViewModel(app: Application) =
+    ViewModelProvider(rnViewModelStore, ViewModelProvider.AndroidViewModelFactory(app)).get(RNViewModel::class.java)
 
 
 class RNViewModel(application: Application) : AndroidViewModel(application) {

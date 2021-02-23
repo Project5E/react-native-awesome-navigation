@@ -17,9 +17,7 @@ import com.project5e.react.navigation.R
 import com.project5e.react.navigation.model.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.model.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.model.Page
-import com.project5e.react.navigation.utils.ACTION_DISPATCH_SWITCH_TAB
-import com.project5e.react.navigation.utils.Store
-import com.project5e.react.navigation.utils.optInt
+import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RNViewModel
 import com.project5e.react.navigation.view.model.createRNViewModel
 import com.project5e.react.navigation.view.widget.SwipeControllableViewPager
@@ -68,12 +66,12 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
 
     override fun viewDidAppear() {
         tabBarRnFragment?.viewDidAppear()
-        sendViewAppearEvent(requireActivity(), currentTabScreenId, true)
+        sendViewAppearEvent(activity ?: this, currentTabScreenId, true)
     }
 
     override fun viewDidDisappear() {
         tabBarRnFragment?.viewDidDisappear()
-        sendViewAppearEvent(requireActivity(), currentTabScreenId, false)
+        sendViewAppearEvent(activity ?: this, currentTabScreenId, false)
     }
 
     private fun setupTabBar() {
@@ -129,11 +127,11 @@ class RNTabBarFragment : Fragment(), RNComponentLifecycle {
         (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList
 
     private fun getTabIcon(page: Page): TabIcon {
-        val icon = page.options?.getMap("icon")
-        val height = icon?.getDouble("height")
-        val width = icon?.getDouble("width")
-        val scale = icon?.getDouble("scale")
-        val uri = icon?.getString("uri")
+        val icon = page.options?.optMap("icon")
+        val height = icon?.optDouble("height")
+        val width = icon?.optDouble("width")
+        val scale = icon?.optDouble("scale")
+        val uri = icon?.optString("uri")
         return TabIcon(height, width, scale, uri)
     }
 

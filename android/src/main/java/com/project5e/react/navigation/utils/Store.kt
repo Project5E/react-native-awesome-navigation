@@ -3,7 +3,6 @@ package com.project5e.react.navigation.utils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-
 object Store {
     private val store = HashMap<String, MutableLiveData<Any?>>()
 

@@ -6,7 +6,6 @@ import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
 import com.project5e.react.navigation.utils.LogFragment
-import com.project5e.react.navigation.utils.RNNavigationException
 import com.project5e.react.navigation.view.RNFragment
 import com.project5e.react.navigation.view.model.GlobalStyle
 import java.lang.ref.WeakReference
@@ -41,7 +40,7 @@ object NavigationManager {
     @JvmStatic
     fun install(reactNativeHost: ReactNativeHost) {
         this._reactNativeHost = reactNativeHost
-        this._reactInstanceManager = reactInstanceManager
+        this._reactInstanceManager = reactNativeHost.reactInstanceManager
         setup()
     }
 
@@ -65,14 +64,13 @@ object NavigationManager {
 
     @JvmStatic
     fun requireReactNativeHost(): ReactNativeHost =
-        _reactNativeHost ?: throw RNNavigationException("must call NavigationManager#install first")
+        _reactNativeHost ?: throw NavigationException("must call NavigationManager#install first")
 
     @JvmStatic
     fun clearInstanceManagerInHost() {
         val reactNativeHostClass = ReactNativeHost::class.java
         val mReactInstanceManagerField = reactNativeHostClass.getDeclaredField("mReactInstanceManager")
         mReactInstanceManagerField.isAccessible = true
-
         _reactInstanceManager = mReactInstanceManagerField.get(reactNativeHost) as? ReactInstanceManager?
         mReactInstanceManagerField.set(reactNativeHost, null)
     }
