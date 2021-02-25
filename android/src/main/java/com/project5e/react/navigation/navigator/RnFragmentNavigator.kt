@@ -8,6 +8,9 @@ import androidx.navigation.NavigatorProvider
 import androidx.navigation.fragment.FragmentNavigator
 import java.util.*
 
+const val KEY_PUSH_ID_STACK = "key_push_id_stack"
+const val KEY_PRESENT_ID_STACK = "key_present_id_stack"
+
 @Navigator.Name("react_fragment")
 class RnFragmentNavigator(
     private val provider: NavigatorProvider,
@@ -19,8 +22,9 @@ class RnFragmentNavigator(
     var navigationType: NavigationType? = null
     var popBackType: PopBackType? = null
 
-    val pushDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
-    val presentDestinationStack = ArrayDeque<FragmentNavigator.Destination>()
+    // destination id
+    val pushIdStack = ArrayDeque<Int>()
+    val presentIdStack = ArrayDeque<Int>()
 
     private val pushNavigator by lazy { provider.getNavigator(RnPushFragmentNavigator::class.java) }
     private val presentNavigator by lazy { provider.getNavigator(RnPresentFragmentNavigator::class.java) }
@@ -46,13 +50,32 @@ class RnFragmentNavigator(
         }.apply { recycle() }
     }
 
+    override fun onSaveState(): Bundle {
+        return Bundle().apply {
+            putIntArray(KEY_PUSH_ID_STACK, pushIdStack.toIntArray())
+            putIntArray(KEY_PRESENT_ID_STACK, presentIdStack.toIntArray())
+        }
+    }
+
+    override fun onRestoreState(savedState: Bundle) {
+        super.onRestoreState(savedState)
+        savedState.getIntArray(KEY_PUSH_ID_STACK)?.apply {
+            pushIdStack.clear()
+            forEach { pushIdStack.add(it) }
+        }
+        savedState.getIntArray(KEY_PRESENT_ID_STACK)?.apply {
+            presentIdStack.clear()
+            forEach { presentIdStack.add(it) }
+        }
+    }
+
     private fun push(
         destination: FragmentNavigator.Destination,
         args: Bundle?,
         navOptions: NavOptions?,
         navigatorExtras: Extras?
     ) = pushNavigator.navigate(destination, args, navOptions, navigatorExtras)
-        ?.apply { pushDestinationStack.add(destination) }
+        ?.apply { pushIdStack.add(destination.id) }
 
     private fun present(
         destination: FragmentNavigator.Destination,
@@ -60,18 +83,16 @@ class RnFragmentNavigator(
         navOptions: NavOptions?,
         navigatorExtras: Extras?
     ) = presentNavigator.navigate(destination, args, navOptions, navigatorExtras)
-        ?.apply { presentDestinationStack.add(destination) }
+        ?.apply { presentIdStack.add(destination.id) }
 
-    private fun pop() = pushNavigator.popBackStack().apply { if (this) pushDestinationStack.removeLast() }
+    private fun pop() = pushNavigator.popBackStack().apply { if (this) pushIdStack.removeLast() }
 
     private fun dismiss() = presentNavigator.popBackStack().apply {
         if (this) {
             // clear push stack
-            pushDestinationStack.removeAll {
-                it.id > presentDestinationStack.last.id
-            }
+            pushIdStack.removeAll { it > presentIdStack.last }
             // remove self
-            presentDestinationStack.removeLast()
+            presentIdStack.removeLast()
         }
     }
 

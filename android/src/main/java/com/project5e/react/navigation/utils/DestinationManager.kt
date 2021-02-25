@@ -22,11 +22,8 @@ class DestinationManager(private val context: Context, private val navController
 
     val navigator: RnFragmentNavigator = navController.navigatorProvider[RnFragmentNavigator::class]
 
-    val lastPushDestination: FragmentNavigator.Destination?
-        get() = if (navigator.pushDestinationStack.isEmpty()) null else navigator.pushDestinationStack.peekLast()
-
-    val lastPresentDestination: FragmentNavigator.Destination?
-        get() = if (navigator.presentDestinationStack.isEmpty()) null else navigator.presentDestinationStack.peekLast()
+    val lastPushId: Int? get() = if (navigator.pushIdStack.isEmpty()) null else navigator.pushIdStack.peekLast()
+    val lastPresentId: Int? get() = if (navigator.presentIdStack.isEmpty()) null else navigator.presentIdStack.peekLast()
 
     var navigationType: RnFragmentNavigator.NavigationType? = null
         set(value) {

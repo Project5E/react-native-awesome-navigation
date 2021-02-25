@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import androidx.navigation.NavGraph
 import com.facebook.react.bridge.ReadableMap
 import com.project5e.react.navigation.data.Page
 import com.project5e.react.navigation.data.Tabs
@@ -23,4 +24,5 @@ class RnViewModel(application: Application) : AndroidViewModel(application) {
     val navigationOptionCache: MutableMap<String, ReadableMap?> = mutableMapOf()
     var screenIdStack = mutableListOf<String>()
     var pageResult: ReadableMap? = null
+    var cacheNavGraph: NavGraph? = null
 }

@@ -35,7 +35,6 @@ import java.util.*
 
 open class RnRootActivity : RnBaseActivity() {
 
-    private var startDestination: NavDestination? = null
     private var isTabBarPresented: Boolean = false
 
     private lateinit var navHostFragment: NavHostFragment
@@ -62,7 +61,14 @@ open class RnRootActivity : RnBaseActivity() {
             addNavigator(createRnFragmentNavigator(this))
         }
         receive()
-        startDestination = buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
+        if (savedInstanceState != null) {
+            viewModel.cacheNavGraph?.let { navController.graph = it }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.cacheNavGraph = navController.graph
     }
 
     override fun onBackPressed() {
@@ -113,7 +119,7 @@ open class RnRootActivity : RnBaseActivity() {
                     }
                 }
             }
-            startDestination = buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
+            buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -144,10 +150,10 @@ open class RnRootActivity : RnBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
-            startDestination?.let { destination ->
+            navController.graph.startDestination.let {
                 clearStack()
                 dm.navigationType = RnFragmentNavigator.NavigationType.PUSH
-                navController.navigate(destination.id)
+                navController.navigate(it)
             }
         })
 
@@ -164,7 +170,7 @@ open class RnRootActivity : RnBaseActivity() {
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, { state ->
             val promise = state as Promise
             // 在执行 navigateUp() 前，计算需要出栈的次数
-            val popBackSize = dm.lastPresentDestination?.id.let { id ->
+            val popBackSize = dm.lastPresentId?.let { id ->
                 val subIndex = backStack.map { it.destination.id }.indexOf(id)
                 backStack.size - subIndex
             }
@@ -174,7 +180,7 @@ open class RnRootActivity : RnBaseActivity() {
                 // navigateUp() 方法内会先对 backStack 出栈
                 // 所以 screenIdStack 也先执行一次 removeLast()
                 viewModel.screenIdStack.removeLast()
-                popBackSize.let {
+                popBackSize?.let {
                     for (index in 1 until it) {
                         backStack.removeLast()
                         viewModel.screenIdStack.removeLast()
