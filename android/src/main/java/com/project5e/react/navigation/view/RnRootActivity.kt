@@ -62,6 +62,7 @@ open class RnRootActivity : RnBaseActivity() {
             addNavigator(createRnFragmentNavigator(this))
         }
         receive()
+        startDestination = buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
     }
 
     override fun onBackPressed() {
@@ -102,20 +103,17 @@ open class RnRootActivity : RnBaseActivity() {
                 when {
                     this is Tabs && type == RootType.TABS -> {
                         viewModel.tabs = this
-                        val tabBarModuleName = options?.optString("tabBarModuleName")
-                        startDestination = buildDestinationWithTab(tabBarModuleName)
+                        viewModel.tabBarComponentName = options?.optString("tabBarModuleName")
                     }
                     this is Screen && type == RootType.STACK -> {
-                        startDestination = dm.createDestination(page)
+                        viewModel.page = page
                     }
                     this is Screen && type == RootType.SCREEN -> {
-                        startDestination = dm.createDestination(page)
-                    }
-                    else -> {
+                        viewModel.page = page
                     }
                 }
             }
-            navController.setGraph(startDestination)
+            startDestination = buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -208,12 +206,18 @@ open class RnRootActivity : RnBaseActivity() {
         })
     }
 
-    private fun buildDestinationWithTab(tabBarComponentName: String?): NavDestination =
-        dm.navigator.createDestination().also {
-            it.id = ViewCompat.generateViewId()
-            it.className = RnTabBarFragment::class.java.name
-            viewModel.tabBarComponentName = tabBarComponentName
+    private fun buildStartDestination(): NavDestination? = buildTabsDestination() ?: buildPageDestination()
+
+    private fun buildTabsDestination(): NavDestination? =
+        viewModel.tabs?.run {
+            dm.navigator.createDestination().also {
+                it.id = ViewCompat.generateViewId()
+                it.className = RnTabBarFragment::class.java.name
+            }
         }
+
+    private fun buildPageDestination(): NavDestination? =
+        viewModel.page?.run { dm.createDestination(this) }
 
     private fun clearStack() {
         backStack.removeAll { it != backStack.first }

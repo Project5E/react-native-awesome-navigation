@@ -25,9 +25,7 @@ fun createRnPresentFragmentNavigator(navHostFragment: NavHostFragment) =
         navHostFragment.id
     )
 
-fun NavController.setGraph(startDestination: NavDestination?) {
-    startDestination ?: return
-
+fun NavController.setGraphWithStartDestination(startDestination: NavDestination) {
     val navigator = navigatorProvider.getNavigator(NavGraphNavigator::class.java)
     graph = navigator.createDestination().also {
         it.addDestination(startDestination)

@@ -15,7 +15,7 @@ import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_POP_NEST
 import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_PUSH_NEST
 import com.project5e.react.navigation.data.bus.Store
 import com.project5e.react.navigation.utils.DestinationManager
-import com.project5e.react.navigation.utils.setGraph
+import com.project5e.react.navigation.utils.setGraphWithStartDestination
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
 
@@ -81,7 +81,7 @@ open class RnActivity : RnBaseActivity() {
     private fun setupNavGraph() {
         check(!TextUtils.isEmpty(mainComponentName)) { "Cannot loadApp if component name is null" }
         val startDestination = dm.createRnFragmentDestination(mainComponentName, launchOptions)
-        navController.setGraph(startDestination)
+        navController.setGraphWithStartDestination(startDestination)
     }
 
     private fun removeCurrentScreenIdToStack() {
