@@ -30,13 +30,13 @@ react-native-navigation 与 native-navigation 分别基于 `Single Activity + Mu
 
 `Talk is cheap, show me the features.`
 
-- [ ] 
-- [ ] test
-- [ ] test
-- [ ] test
-- [ ] test
-- [ ] test
-- [ ] test
+* 特性
+* 特性
+* 特性
+* 特性
+* 特性
+* 特性
+* 特性
 
 # Get Started
 
