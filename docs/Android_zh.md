@@ -30,7 +30,7 @@ react-native-navigation 与 native-navigation 分别基于 `Single Activity + Mu
 
 `Talk is cheap, show me the features.`
 
-- [ ] test
+- [ ] 
 - [ ] test
 - [ ] test
 - [ ] test
@@ -49,9 +49,7 @@ react-native-navigation 与 native-navigation 分别基于 `Single Activity + Mu
 可以在现有项目中 ReactFragment / ReactActivity 并继承 RnFragment / RnActivity，再全局替换`com.facebook.react.ReactFragment`
 和 `com.facebook.react.ReactActivity`。
 
-## Usage
-
-### 页面编写
+## 页面编写
 
 (建议优先使用 Fragment，而非 Activity)
 
@@ -59,13 +57,13 @@ react-native-navigation 与 native-navigation 分别基于 `Single Activity + Mu
 
 创建非 RN 页面，不需要做任何工作，随意就好。
 
-### 页面注册
+## 页面注册
 
 原生端：在 android 的 `Application#onCreate()` 中使用 `NavigationManager#register(key, class)`
 
 RN 端：在 rn 的 index 文件中使用 `Register#registerComponent(key, componentClass)`
 
-### 页面导航
+## 页面导航
 
 原生端：
 
@@ -85,7 +83,7 @@ RN 端：
 - pop `props.navigator.pop()`
 - dismiss `props.navigator.dismiss()`
 
-### API
+## API
 
 ```java
 ## NavigationManager
