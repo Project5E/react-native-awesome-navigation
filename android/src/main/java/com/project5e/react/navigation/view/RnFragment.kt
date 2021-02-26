@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.facebook.react.ReactRootView
@@ -27,6 +29,8 @@ open class RnFragment : LogFragment(), RnComponentLifecycle {
 
     val screenId get() = _screenId
     val mainComponentName get() = _mainComponentName
+
+    val navController: NavController get() = Navigation.findNavController(requireView())
 
     private lateinit var _screenId: String
     private lateinit var _mainComponentName: String

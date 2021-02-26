@@ -21,19 +21,17 @@ import com.project5e.react.navigation.view.model.createRnViewModel
 
 open class RnActivity : RnBaseActivity() {
 
+    val navController: NavController get() = navHostFragment.navController
+    val dm: DestinationManager by lazy { DestinationManager(this, navController) }
+
     val screenId get() = _screenId
     open var launchOptions: Bundle = Bundle()
+
     private var _mainComponentName: String = ""
     private var _screenId: String? = null
     private lateinit var navHostFragment: NavHostFragment
 
-    private val viewModel: RnViewModel
-            by lazy { createRnViewModel(application) }
-
-    private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
-
-    private val navController: NavController
-        get() = navHostFragment.navController
+    private val viewModel: RnViewModel by lazy { createRnViewModel(application) }
 
     override fun getMainComponentName(): String {
         return _mainComponentName

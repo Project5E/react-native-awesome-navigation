@@ -35,21 +35,13 @@ import java.util.*
 
 open class RnRootActivity : RnBaseActivity() {
 
+    val navController: NavController get() = navHostFragment.navController
+    val destinationManager: DestinationManager by lazy { DestinationManager(this, navController) }
+
     private var isTabBarPresented: Boolean = false
-
     private lateinit var navHostFragment: NavHostFragment
-
-    private val viewModel: RnViewModel
-            by lazy { createRnViewModel(application) }
-
-    private val dm: DestinationManager by lazy { DestinationManager(this, navController) }
-
-    private val navController: NavController
-        get() = navHostFragment.navController
-
-    private val backStack: Deque<NavBackStackEntry>
-        @SuppressLint("RestrictedApi")
-        get() = navController.backStack
+    private val viewModel: RnViewModel by lazy { createRnViewModel(application) }
+    private val backStack: Deque<NavBackStackEntry> @SuppressLint("RestrictedApi") get() = navController.backStack
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +82,7 @@ open class RnRootActivity : RnBaseActivity() {
     override fun invokeDefaultOnBackPressed() {
         val currentDestinationId = getCurrentDestinationId()
 
-        dm.popBackType = RnFragmentNavigator.PopBackType.POP
+        destinationManager.popBackType = RnFragmentNavigator.PopBackType.POP
         if (navController.navigateUp()) {
             viewModel.screenIdStack.remove(currentDestinationId.toString())
         }
@@ -139,20 +131,20 @@ open class RnRootActivity : RnBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
-            dm.push(state as Page)
+            destinationManager.push(state as Page)
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
             val page = state as Page
             val animated = page.options?.optBoolean("animated") ?: false
             isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
-            dm.present(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
+            destinationManager.present(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
             navController.graph.startDestination.let {
                 clearStack()
-                dm.navigationType = RnFragmentNavigator.NavigationType.PUSH
+                destinationManager.navigationType = RnFragmentNavigator.NavigationType.PUSH
                 navController.navigate(it)
             }
         })
@@ -160,7 +152,7 @@ open class RnRootActivity : RnBaseActivity() {
         Store.reducer(ACTION_DISPATCH_POP)?.observe(this, {
             val currentDestinationId = getCurrentDestinationId()
 
-            dm.popBackType = RnFragmentNavigator.PopBackType.POP
+            destinationManager.popBackType = RnFragmentNavigator.PopBackType.POP
             if (navController.navigateUp()) {
                 viewModel.screenIdStack.remove(currentDestinationId.toString())
                 sendComponentResultEvent()
@@ -170,12 +162,12 @@ open class RnRootActivity : RnBaseActivity() {
         Store.reducer(ACTION_DISPATCH_DISMISS)?.observe(this, { state ->
             val promise = state as Promise
             // 在执行 navigateUp() 前，计算需要出栈的次数
-            val popBackSize = dm.lastPresentId?.let { id ->
+            val popBackSize = destinationManager.lastPresentId?.let { id ->
                 val subIndex = backStack.map { it.destination.id }.indexOf(id)
                 backStack.size - subIndex
             }
 
-            dm.popBackType = RnFragmentNavigator.PopBackType.DISMISS
+            destinationManager.popBackType = RnFragmentNavigator.PopBackType.DISMISS
             if (navController.navigateUp()) {
                 // navigateUp() 方法内会先对 backStack 出栈
                 // 所以 screenIdStack 也先执行一次 removeLast()
@@ -204,7 +196,7 @@ open class RnRootActivity : RnBaseActivity() {
 
             for (i in 0 until count) {
                 val currentDestinationId = getCurrentDestinationId()
-                dm.popBackType = RnFragmentNavigator.PopBackType.POP
+                destinationManager.popBackType = RnFragmentNavigator.PopBackType.POP
                 if (navController.navigateUp()) {
                     viewModel.screenIdStack.remove(currentDestinationId.toString())
                 }
@@ -216,14 +208,14 @@ open class RnRootActivity : RnBaseActivity() {
 
     private fun buildTabsDestination(): NavDestination? =
         viewModel.tabs?.run {
-            dm.navigator.createDestination().also {
+            destinationManager.navigator.createDestination().also {
                 it.id = ViewCompat.generateViewId()
                 it.className = RnTabBarFragment::class.java.name
             }
         }
 
     private fun buildPageDestination(): NavDestination? =
-        viewModel.page?.run { dm.createDestination(this) }
+        viewModel.page?.run { destinationManager.createDestination(this) }
 
     private fun clearStack() {
         backStack.removeAll { it != backStack.first }
