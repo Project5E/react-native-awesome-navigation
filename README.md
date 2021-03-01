@@ -57,9 +57,9 @@ Run `react-native link react-native-awesome-navigation` after which you should b
 
 # Documentation
 
-- [Android](/docs/Android.md)
+- [Android](/docs/Android_zh.md)
 
-- [iOS](/docs/iOS.md)
+- [iOS](/docs/iOS_zh.md)
 
 # Usage
 

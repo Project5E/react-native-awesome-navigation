@@ -101,15 +101,6 @@ Home.navigationItem = {
 
 ```
 
-### iOS
-
-需要在AppDelegate 中记录bridge 同时注册对应原生的`ViewController`，该`ViewController` 需要继承`ALCNativeViewController`
-```
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  [ALCNavigationManager shared].bridge = bridge;
-  [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
-```
-
 ## 导航
 
 目前支持`push`, `pop`, `popToRoot`, `present`, `dismiss`, `switchTab`

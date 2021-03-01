@@ -17,26 +17,30 @@ native-navigation 与前者大同小异，两者对比个人更看好它，从�
 
 两者也都有我不太满意的地方，且同样是偏向于服务纯 RN 或主 RN 的项目，就像是仅仅为 RN 页面提供原生待遇而生的，没有提供任何用于原生的路由导航的特性。
 
-react-native-navigation 与 native-navigation 分别基于 `Single Activity + Multi View` `Single Activity + Multi Fragment`
-这两种思想作为页面骨架的。可以参考开源库 [scene][scene], [Fragmentation][Fragmentation]
+react-native-navigation 与 native-navigation 分别采用 `Single Activity + Multi View` `Single Activity + Multi Fragment`
+这两种思想作为页面骨架的设计。可以参考开源库 [scene][scene], [Fragmentation][Fragmentation]
 
 然而~ 纵使有千万个造轮子的理由，也抵不过我们就是想造一个属于自己心目中完美的路由导航库。
 
-所以~ 它必须可以无痛迁移，随时切换。原生开发无感知，没有多余规则。（正在编写...）
+所以~ 它必须可以无痛迁移，随时切换。原生开发无感知，没有多余规则。
 
 ## Introduction
 
-这是一个用于 ReactNative 混合开发的原生路由导航库，纯 Kotlin 编写，（正在编写...）
+这是一个用于 ReactNative 混合开发的原生路由导航库，纯 Kotlin + Jetpack 编写，轻量、高性能、自由、原生态。
+
+基于 `Single Activity + Multi Fragment` 的思想设计，以 Fragment 为页面控制器负责页面视图的交互和展示，以 Activity 为导航容器控制导航和页面栈的管理。
+
+基于 Jetpack Navigation 为导航引擎，实现 Android 和 RN 双端均可控制导航。
 
 `Talk is cheap, show me the features.`
 
-* 特性
-* 特性
-* 特性
-* 特性
-* 特性
-* 特性
-* 特性
+- 支持多容器
+- 支持 Multi Stack（嵌套栈）
+- 支持 Activity，支持 Fragment，支持 RN 组件页面，支持纯原生页面，并支持混搭导航
+- 支持双端导航
+- 支持 Activity 重建的恢复（旋转屏幕）
+- 统一 Activity 和 Fragment 生命周期，并与 RN 组件生命周期相关联
+- Android 端迁移零成本（直接替换包命）
 
 # Get Started
 
