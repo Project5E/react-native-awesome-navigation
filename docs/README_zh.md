@@ -44,6 +44,18 @@ dependencies {
 }
 ```
 
+## iOS 中配置
+
+使用 React Native Link (React Native 0.59 and lower)
+
+运行 `react-native link react-native-awesome-navigation`
+
+# Documentation
+
+- [Android](/docs/Android_zh.md)
+
+- [iOS](/docs/iOS_zh.md)
+
 ## 使用
 
 ```ts
@@ -278,12 +290,6 @@ data 是返回的数据
     console.log('reclick');
   })
 ```
-
-### 商业App 中的应用
-
-<h3 align="center">
-  <img src="../barcode.png"/><br/>
-</h3>
 
 ## Contributing
 

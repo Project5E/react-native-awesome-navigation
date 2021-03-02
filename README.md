@@ -57,9 +57,9 @@ Run `react-native link react-native-awesome-navigation` after which you should b
 
 # Documentation
 
-- [Android](/docs/Android_zh.md)
+- [Android](/docs/Android.md)
 
-- [iOS](/docs/iOS_zh.md)
+- [iOS](/docs/iOS.md)
 
 # Usage
 
@@ -284,12 +284,6 @@ Resopse click tabbar repeatly，this is only for each tab bar first page.
     console.log('reclick');
   })
 ```
-
-### Usage on commercial application
-
-<h3 align="center">
-  <img src="barcode.png"/><br/>
-</h3>
 
 ## Contributing
 
