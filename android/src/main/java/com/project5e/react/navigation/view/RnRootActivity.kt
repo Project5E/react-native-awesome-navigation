@@ -192,7 +192,7 @@ open class RnRootActivity : RnBaseActivity() {
 
         Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, { state ->
             val data = state as ReadableMap
-            val count = data.optInt("count")
+            val count = data.optInt("count") ?: 0
 
             for (i in 0 until count) {
                 val currentDestinationId = getCurrentDestinationId()

@@ -1,6 +1,6 @@
 package com.project5e.react.navigation.view
 
-import android.graphics.drawable.Drawable
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,7 +16,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
-import com.project5e.react.navigation.data.Page
 import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_SWITCH_TAB
 import com.project5e.react.navigation.data.bus.Store
 import com.project5e.react.navigation.utils.*
@@ -24,10 +23,6 @@ import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
 import com.project5e.react.navigation.view.widget.SwipeControllableViewPager
 import java.util.*
-
-data class ImageResolvedAssetSource(val height: Double?, val width: Double?, val scale: Double?, val uri: String?)
-
-typealias TabIcon = ImageResolvedAssetSource
 
 class RnTabBarFragment : Fragment(), RnComponentLifecycle {
 
@@ -86,17 +81,21 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
             }
             Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
                 val data = state as ReadableMap
-                val index = data.optInt("index")
+                val index = data.optInt("index") ?: 0
                 viewModel.currentTabIndex = index
                 viewPager.setCurrentItem(index, false)
             })
         } else {
             tabBar.visibility = View.VISIBLE
             viewModel.tabs?.pages?.forEachIndexed { index, page ->
-                val tabIcon = getTabIcon(page)
-                tabBar.menu.add(Menu.NONE, Menu.NONE, index, page.rootName)
-                    .setIcon(Drawable.createFromPath(tabIcon.uri))
-                    .setShowAsAction(SHOW_AS_ACTION_ALWAYS)
+                val icon = page.options?.optMap("icon")
+                val imageSource = getImageSource(requireContext(), icon)
+                imageSource.load(requireContext(), {
+                    it ?: return@load
+                    tabBar.menu.add(Menu.NONE, Menu.NONE, index, page.rootName)
+                        .setIcon(BitmapDrawable(requireContext().resources, it))
+                        .setShowAsAction(SHOW_AS_ACTION_ALWAYS)
+                })
             }
             tabBar.setOnNavigationItemSelectedListener {
                 val index = it.order
@@ -128,16 +127,4 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
     private fun pageOptionList(): ArrayList<Bundle?> =
         (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList
 
-    private fun getTabIcon(page: Page): TabIcon {
-        val icon = page.options?.optMap("icon")
-        val height = icon?.optDouble("height")
-        val width = icon?.optDouble("width")
-        val scale = icon?.optDouble("scale")
-        val uri = icon?.optString("uri")
-        return TabIcon(height, width, scale, uri)
-    }
-
 }
-
-
-
