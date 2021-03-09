@@ -40,7 +40,8 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
     }
 
     @ReactMethod
-    fun setTabBadge(badge: ReadableArray) {
+    fun setTabBadge(data: ReadableArray) {
+        Store.dispatch(ACTION_SET_TAB_BADGE, data)
     }
 
     @ReactMethod

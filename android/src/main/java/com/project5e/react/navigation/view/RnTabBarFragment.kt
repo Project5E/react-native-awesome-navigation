@@ -9,14 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.Observer
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
+import com.project5e.react.navigation.data.TabBadge
 import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_SWITCH_TAB
+import com.project5e.react.navigation.data.bus.ACTION_SET_TAB_BADGE
 import com.project5e.react.navigation.data.bus.Store
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RnViewModel
@@ -54,6 +56,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         super.onViewCreated(view, savedInstanceState)
         setupTabBar()
         setupViewPager()
+        receive()
     }
 
     override fun onDestroyView() {
@@ -71,6 +74,25 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         sendViewAppearEvent(activity ?: this, currentTabScreenId, false)
     }
 
+    private fun receive() {
+        if (isRnTabBar) {
+            Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), { state ->
+                val data = state as ReadableMap
+                val index = data.optInt("index") ?: 0
+                viewModel.currentTabIndex = index
+                viewPager.setCurrentItem(index, false)
+            })
+        } else {
+            Store.reducer(ACTION_SET_TAB_BADGE)?.observe(requireActivity()) { state ->
+                val badgeArray = state as ReadableArray? ?: return@observe
+
+                repeat(badgeArray.size()) {
+                    badgeArray.getMap(it)?.apply { TabBadge(this).bindTabBar(tabBar) }
+                }
+            }
+        }
+    }
+
     private fun setupTabBar() {
         if (isRnTabBar) {
             rnTabBar.visibility = View.VISIBLE
@@ -79,12 +101,6 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
                     .replace(rnTabBar.id, it)
                     .commitNowAllowingStateLoss()
             }
-            Store.reducer(ACTION_DISPATCH_SWITCH_TAB)?.observe(requireActivity(), Observer { state ->
-                val data = state as ReadableMap
-                val index = data.optInt("index") ?: 0
-                viewModel.currentTabIndex = index
-                viewPager.setCurrentItem(index, false)
-            })
         } else {
             tabBar.visibility = View.VISIBLE
             viewModel.tabs?.pages?.forEachIndexed { index, page ->
