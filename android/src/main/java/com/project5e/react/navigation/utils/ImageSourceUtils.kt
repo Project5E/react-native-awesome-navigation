@@ -10,6 +10,7 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.views.imagehelper.ImageSource
 
 fun getImageSource(context: Context, resolvedAssetSource: ReadableMap?): ImageSource {
@@ -27,11 +28,15 @@ fun ImageSource.load(
     val request = ImageRequestBuilder.newBuilderWithSource(uri).build()
     Fresco.getImagePipeline().fetchDecodedImage(request, context).subscribe(object : BaseBitmapDataSubscriber() {
         override fun onNewResultImpl(bitmap: Bitmap?) {
-            onSucceed?.invoke(bitmap)
+            UiThreadUtil.runOnUiThread {
+                onSucceed?.invoke(bitmap)
+            }
         }
 
         override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>>?) {
-            onFailure?.invoke((dataSource))
+            UiThreadUtil.runOnUiThread {
+                onFailure?.invoke((dataSource))
+            }
         }
 
     }, CallerThreadExecutor.getInstance())
