@@ -58,8 +58,14 @@ dependencies {
 
 ## 使用
 
+在index 文件中使用如下，如果想要创建其他文件并在index 中引用也是可以。
+
 ```ts
-import { registerComponent, setRoot } from 'react-native-awesome-navigation';
+import { Register, setStyle } from 'react-native-awesome-navigation';
+
+import Home from './src/Home'
+import TabBar from './src/TabBar'
+import Setting from './src/Setting'
 
 // 设置全局样式
 setStyle({
@@ -72,34 +78,45 @@ setStyle({
   backIcon: Image.resolveAssetSource(CloseIcon),
 })
 
-beforeRegister()
+Register.beforeRegister()
 
 // 注册组件，然后设置根页面
 
-registerComponent('Home', Home);
-registerComponent('Setting', Setting);
-registerComponent('Detail', Detail);
-registerComponent('Present', Present);
-registerComponent('NoNavigationBar', NoNavigationBar);
+Register.registerComponent('Home', Home);
+Register.registerComponent('Setting', Setting);
+Register.registerComponent('Detail', Detail);
+Register.registerComponent('Present', Present);
+Register.registerComponent('NoNavigationBar', NoNavigationBar);
 
-setRoot({
-  root: {
+Register.setRoot({
+ root: {
     tabs: {
-      children: [
-        {
-          component: 'Home',
-          title: '主页',
-          icon: Image.resolveAssetSource(require('./src/image/Home.png')),
-        },
-        {
-          component: 'Setting',
-          title: '设置',
-          icon: Image.resolveAssetSource(require('./src/image/Profile.png')),
-        },
-      ],
-    },
-  },
-});
+        children: [
+          {
+            stack: {
+              root: {
+                screen: {
+                  moduleName: 'Home',
+                },
+              },
+              options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
+            },
+          },
+          {
+            stack: {
+              root: {
+                screen: {
+                  moduleName: 'Setting',
+                },
+              },
+              options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Profile.png'))},
+            },
+          },
+        ],
+        options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
+      },
+ },
+})
 ```
 
 支持原生页面与RN 页面混搭
@@ -135,7 +152,7 @@ props.navigator.pop()
 
 `pop` 多页
 ```
-props.navigator.popPages(2) // pop 两页
+props.navigator.popPages(2) // pop 两页(当前仅支持`push` 的页面，不支持`present` 页面)
 ```
 
 `present`，与`push` 类似，第二个为传参，第三个为配置，后两个参数可不传
@@ -194,7 +211,7 @@ setStyle({
   navigationBarItemColor: 'FF84A9',
   tabBarColor: '#FFFFFF',
   tabBarItemColor: '#FF84A9',
-  backIcon: Image.resolveAssetSource(CloseIcon),
+  backIcon: Image.resolveAssetSource(require('./src/image/Profile.png')),
 })
 ```
 
@@ -245,8 +262,8 @@ useVisibleEffect(
 
 注册的时候为页面加入路径
 ```ts
-registerComponent('Home', Home, '/home')
-registerComponent('Setting', Setting)
+Register.registerComponent('Home', Home, '/home')
+Register.registerComponent('Setting', Setting)
 ```
 
 使用前在首页激活
@@ -283,7 +300,7 @@ data 是返回的数据
 
 ### useReClick
 
-响应重复点击tabbar 事件，仅用于每一个tab 的首页
+响应重复点击tabbar 事件，仅用于每一个tab 的首页(仅iOS)
 
 ```ts
   useReClick(props.screenID, () => {

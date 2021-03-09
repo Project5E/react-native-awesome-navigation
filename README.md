@@ -63,8 +63,14 @@ Run `react-native link react-native-awesome-navigation` after which you should b
 
 # Usage
 
+Put following code in `index` file or you can also copy following code to individual file and import it in `index` also works, as you wish.
+
 ```ts
-import { registerComponent, setRoot } from 'react-native-awesome-navigation';
+import { Register, setStyle } from 'react-native-awesome-navigation';
+
+import Home from './src/Home'
+import TabBar from './src/TabBar'
+import Setting from './src/Setting'
 
 // setting global style
 setStyle({
@@ -74,37 +80,48 @@ setStyle({
   navigationBarItemColor: 'FF84A9',
   tabBarColor: '#FFFFFF',
   tabBarItemColor: '#FF84A9',
-  backIcon: Image.resolveAssetSource(CloseIcon),
+  backIcon: Image.resolveAssetSource(require('./src/image/Profile.png')),
 })
 
-beforeRegister()
+Register.beforeRegister()
 
 // register component，and set root page
 
-registerComponent('Home', Home);
-registerComponent('Setting', Setting);
-registerComponent('Detail', Detail);
-registerComponent('Present', Present);
-registerComponent('NoNavigationBar', NoNavigationBar);
+Register.registerComponent('Home', Home);
+Register.registerComponent('Setting', Setting);
+Register.registerComponent('Detail', Detail);
+Register.registerComponent('Present', Present);
+Register.registerComponent('NoNavigationBar', NoNavigationBar);
 
-setRoot({
-  root: {
+Register.setRoot({
+ root: {
     tabs: {
-      children: [
-        {
-          component: 'Home',
-          title: 'MainPage',
-          icon: Image.resolveAssetSource(require('./src/image/Home.png')),
-        },
-        {
-          component: 'Setting',
-          title: 'Setting',
-          icon: Image.resolveAssetSource(require('./src/image/Profile.png')),
-        },
-      ],
-    },
-  },
-});
+        children: [
+          {
+            stack: {
+              root: {
+                screen: {
+                  moduleName: 'Home',
+                },
+              },
+              options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
+            },
+          },
+          {
+            stack: {
+              root: {
+                screen: {
+                  moduleName: 'Setting',
+                },
+              },
+              options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Profile.png'))},
+            },
+          },
+        ],
+        options: {tabBarModuleName: 'TabBar'}, // custom tabbar
+      },
+ },
+})
 ```
 
 Support native page and RN page mash up Currently offer two native style setting Setting title bar title and whether
@@ -146,9 +163,27 @@ Set value before `pop`
 props.navigator.setResult({qwe: 123})
 props.navigator.pop()
 ```
-The `present` is similar with push, the 2nd is parameter, 3rd parameter is full screen or not.
+
+`pop` multi pages (currently only support all `push` pages not for `present` pages)
+```
+props.navigator.popPages(2) // pop 2 pages
+```
+
+The `present` is similar with push, the 2nd is a nullable parameter, the 3rd parameter is for config screen and nullable.
 ```ts
-props.navigator.present('Present', undefined, true)
+props.navigator.present('Present', undefined, {isFullScreen: true})
+```
+
+Like `push`, support asynchronous
+```
+const resp = await props.navigator.present('Present', undefined, {isFullScreen: true})
+
+interface PresentOption {
+  isFullScreen?: boolean // Only for iOS, `present` a full screen or not
+  isTransparency?: boolean // is transparency background or not
+  animated?: boolean // play animation or not
+  isTabBarPresented?: boolean // label custom TabBar Prensent or not
+}
 ```
 
 `dismiss` present
@@ -239,8 +274,8 @@ useVisibleEffect(
 
 Adding route when register
 ```ts
-registerComponent('Home', Home, '/home')
-registerComponent('Setting', Setting)
+Register.registerComponent('Home', Home, '/home')
+Register.registerComponent('Setting', Setting)
 ```
 
 Activiting at first page
@@ -277,7 +312,7 @@ Data is back value.
 
 ### useReClick
 
-Resopse click tabbar repeatly，this is only for each tab bar first page.
+Resopse click tabbar repeatly，this is only for each tab bar first page. (iOS only)
 
 ```ts
   useReClick(props.screenID, () => {
