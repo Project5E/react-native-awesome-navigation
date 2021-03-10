@@ -18,6 +18,7 @@ import com.project5e.react.navigation.utils.DestinationManager
 import com.project5e.react.navigation.utils.setGraphWithStartDestination
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
+import org.json.JSONObject
 
 open class RnActivity : RnBaseActivity() {
 

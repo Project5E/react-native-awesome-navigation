@@ -4,14 +4,15 @@ import {AppRegistry} from 'react-native'
 import store from './store'
 import {router} from './router'
 import {
-  NavigationBridge,
+  COMPONENT_RESULT,
+  EVENT_TYPE,
   EventEmitter,
   NAVIGATION_EVENT,
-  COMPONENT_RESULT,
-  SCREEN_ID,
-  EVENT_TYPE,
+  NavigationBridge,
   RESULT_DATA,
+  SCREEN_ID,
 } from './navigationModule'
+import type {Root} from './interface'
 
 export interface NavigationProps {
   navigator: Navigator
@@ -77,7 +78,7 @@ export class Register {
     AppRegistry.registerComponent(appKey, () => withComponent)
   }
 
-  static setRoot = (tree: {[key: string]: string}) => {
-    NavigationBridge.setRoot(tree)
+  static setRoot = (hierarchy: Root) => {
+    NavigationBridge.setRoot(hierarchy)
   }
 }

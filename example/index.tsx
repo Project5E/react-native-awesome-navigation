@@ -7,10 +7,6 @@ import Present from './src/Present'
 import NoNavigationBar from './src/NoNavigationBar'
 import TabBar from './src/TabBar'
 
-import CloseIcon from './src/image/Close.png'
-import HomeIcon from './src/image/Home.png'
-import SettingIcon from './src/image/Profile.png'
-
 // router.activate('alc://')
 
 setStyle({
@@ -20,8 +16,8 @@ setStyle({
   navigationBarItemColor: 'FF84A9',
   tabBarColor: '#FFFFFF',
   tabBarItemColor: '#FF84A9',
-  backIcon: Image.resolveAssetSource(CloseIcon),
   tabBarDotColor: '#FF84A9',
+  backIcon: Image.resolveAssetSource(require('./src/image/Close.png')),
 })
 
 Register.beforeRegister()
@@ -35,41 +31,21 @@ Register.registerComponent('TabBar', TabBar)
 
 Register.setRoot({
   root: {
-    tabs: {
+    bottomTabs: {
       children: [
         {
-          stack: {
-            root: {
-              screen: {
-                moduleName: 'Home',
-              },
-            },
-            options: {title: '主页', icon: Image.resolveAssetSource(HomeIcon)},
+          component: {
+            name: 'Home',
+            options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
           },
-        },
-        {
-          stack: {
-            root: {
-              screen: {
-                moduleName: 'Setting',
-              },
-            },
-            options: {title: '设置', icon: Image.resolveAssetSource(SettingIcon)},
+        }, {
+          component: {
+            name: 'Setting',
+            options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Setting.png'))},
           },
         },
       ],
-      options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
+      options: {tabBarModuleName: 'TabBar'},
     },
-    // stack: {
-    //   root: {
-    //     screen: {
-    //       moduleName: 'Setting',
-    //     },
-    //   },
-    //   options: {title: '设置', icon: Image.resolveAssetSource(SettingIcon)},
-    // },
-    // screen: {
-    //   moduleName: 'Home',
-    // },
   },
 })
