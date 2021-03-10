@@ -7,11 +7,16 @@ import android.view.Menu
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.view.forEach
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project5e.react.navigation.R
 import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
@@ -24,6 +29,7 @@ import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
 import com.project5e.react.navigation.view.widget.SwipeControllableViewPager
+import q.rorbin.badgeview.QBadgeView
 import java.util.*
 
 class RnTabBarFragment : Fragment(), RnComponentLifecycle {
@@ -33,6 +39,8 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
     private lateinit var tabBar: BottomNavigationView
 
     private var tabBarRnFragment: RnFragment? = null
+
+    private val badgeViewList: MutableList<QBadgeView> = mutableListOf()
 
     private val viewModel: RnViewModel by lazy { createRnViewModel(requireActivity().application) }
 
@@ -87,7 +95,9 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
                 val badgeArray = state as ReadableArray? ?: return@observe
 
                 repeat(badgeArray.size()) {
-                    badgeArray.getMap(it)?.apply { TabBadge(this).bindTabBar(tabBar) }
+                    badgeArray.getMap(it)?.apply {
+                        TabBadge(this).bind(badgeViewList)
+                    }
                 }
             }
         }
@@ -96,6 +106,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
     private fun setupTabBar() {
         if (isRnTabBar) {
             rnTabBar.visibility = View.VISIBLE
+
             tabBarRnFragment = createTabBarRnFragment().also {
                 childFragmentManager.beginTransaction()
                     .replace(rnTabBar.id, it)
@@ -103,14 +114,20 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
             }
         } else {
             tabBar.visibility = View.VISIBLE
+
             viewModel.tabs?.pages?.forEachIndexed { index, page ->
                 val icon = page.options?.optMap("icon")
                 val imageSource = getImageSource(requireContext(), icon)
                 imageSource.load(requireContext(), {
                     it ?: return@load
+
                     tabBar.menu.add(Menu.NONE, Menu.NONE, index, page.rootName)
                         .setIcon(BitmapDrawable(requireContext().resources, it))
                         .setShowAsAction(SHOW_AS_ACTION_ALWAYS)
+
+                    if (tabBar.menu.size == viewModel.tabs!!.pages.size) {
+                        setupTabBadge()
+                    }
                 })
             }
             tabBar.setOnNavigationItemSelectedListener {
@@ -118,6 +135,32 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
                 viewModel.currentTabIndex = index
                 viewPager.setCurrentItem(index, false)
                 return@setOnNavigationItemSelectedListener true
+            }
+        }
+    }
+
+    private fun setupTabBadge() {
+        // 从 BottomNavigationView 中获得 BottomNavigationMenuView
+        val menuView = tabBar.getChildAt(0) as BottomNavigationMenuView
+        menuView.post {
+            // 从 BottomNavigationMenuView 中遍历 BottomNavigationItemView
+            menuView.forEach {
+                val tab = it as BottomNavigationItemView
+                // 从子tab中获得其中显示图片的ImageView
+                val tabIcon: ImageView = tab.findViewById(com.google.android.material.R.id.icon)
+                // 获得图标的宽度
+                val iconWidth = tabIcon.width
+                // 获得tab的宽度/2
+                val tabWidth = tab.width / 2
+                // 计算badge要距离右边的距离
+                val spaceWidth = tabWidth - iconWidth
+
+                badgeViewList.add(
+                    QBadgeView(context).apply {
+                        bindTarget(tab)
+                        setGravityOffset(spaceWidth - 4f, 4f, false)
+                    }
+                )
             }
         }
     }

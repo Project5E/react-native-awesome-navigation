@@ -2,34 +2,47 @@ package com.project5e.react.navigation.data
 
 import android.text.TextUtils
 import com.facebook.react.bridge.ReadableMap
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project5e.react.navigation.utils.optBoolean
 import com.project5e.react.navigation.utils.optInt
 import com.project5e.react.navigation.utils.optString
-import com.project5e.react.navigation.utils.showBadge
+import q.rorbin.badgeview.QBadgeView
 
 data class TabBadge(
     val index: Int,
     val hidden: Boolean,
     val text: String?,
-    val dot: Boolean,
+    val dot: Boolean?,
 ) {
     constructor(map: ReadableMap) : this(
         map.optInt("index") ?: 0,
         map.optBoolean("hidden") ?: false,
         map.optString("text"),
-        map.optBoolean("dot") ?: false,
+        map.optBoolean("dot"),
     )
 
-    fun bindTabBar(bottomNavigationView: BottomNavigationView) {
-        if (dot) {
-            showBadge(bottomNavigationView, index, -1)
-            return
-        }
-        if (TextUtils.isDigitsOnly(text)) {
-            showBadge(bottomNavigationView, index, text!!.toInt())
-        } else {
-            showBadge(bottomNavigationView, index, text!!)
+    fun bind(views: MutableList<QBadgeView>) {
+        if (index > views.size - 1) throw IndexOutOfBoundsException()
+        val badgeView = views[index]
+        when {
+            hidden -> {
+                badgeView.hide(true)
+                return
+            }
+            dot == true -> {
+                badgeView.badgeNumber = -1
+                return
+            }
+            text == null -> {
+                return
+            }
+            TextUtils.isDigitsOnly(text) -> {
+                badgeView.badgeNumber = text.toInt()
+                return
+            }
+            !TextUtils.isDigitsOnly(text) -> {
+                badgeView.badgeText = text
+                return
+            }
         }
     }
 
