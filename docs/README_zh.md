@@ -62,12 +62,13 @@ dependencies {
 
 ```ts
 import { Register, setStyle } from 'react-native-awesome-navigation';
+import {Image} from 'react-native'
 
 import Home from './src/Home'
 import TabBar from './src/TabBar'
 import Setting from './src/Setting'
 
-// 设置全局样式
+// setting global style
 setStyle({
   hideBackTitle: true,
   hideNavigationBarShadow: true,
@@ -75,47 +76,37 @@ setStyle({
   navigationBarItemColor: 'FF84A9',
   tabBarColor: '#FFFFFF',
   tabBarItemColor: '#FF84A9',
-  backIcon: Image.resolveAssetSource(CloseIcon),
+  backIcon: Image.resolveAssetSource(require('./src/image/Profile.png')),
 })
 
 Register.beforeRegister()
 
-// 注册组件，然后设置根页面
+// register component，and set root page
 
 Register.registerComponent('Home', Home);
 Register.registerComponent('Setting', Setting);
-Register.registerComponent('Detail', Detail);
-Register.registerComponent('Present', Present);
-Register.registerComponent('NoNavigationBar', NoNavigationBar);
+Register.registerComponent('TabBar', TabBar)
 
 Register.setRoot({
- root: {
-    tabs: {
-        children: [
-          {
-            stack: {
-              root: {
-                screen: {
-                  moduleName: 'Home',
-                },
-              },
-              options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
-            },
+  root: {
+    bottomTabs: {
+      children: [
+        {
+          component: {
+            name: 'Home',
+            options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
           },
-          {
-            stack: {
-              root: {
-                screen: {
-                  moduleName: 'Setting',
-                },
-              },
-              options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Profile.png'))},
-            },
+        },
+        {
+          component: {
+            name: 'Setting',
+            options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Setting.png'))},
           },
-        ],
-        options: {tabBarModuleName: 'TabBar'}, // 自定义tabbar
-      },
- },
+        },
+      ],
+      options: {tabBarModuleName: 'TabBar'},
+    },
+  },
 })
 ```
 
@@ -186,7 +177,7 @@ props.navigator.switchTab(0)
 
 每一个页面都会被注入各自所属的navigator 含有每页页面唯一的screenID 以及页面的module 名 通过navigator 来进行路由操作
 
-## 全局样式
+## 全局样式（仅iOS）
 目前有以下全局样式，后续会增加更多
 ```ts
 interface GlobalStyle {
@@ -258,7 +249,7 @@ useVisibleEffect(
   )
 ```
 
-## 路径导航 -- 支持DeepLink
+## 路径导航 -- 支持DeepLink（仅iOS）
 
 注册的时候为页面加入路径
 ```ts

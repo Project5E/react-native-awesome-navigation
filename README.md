@@ -67,6 +67,7 @@ Put following code in `index` file or you can also copy following code to indivi
 
 ```ts
 import { Register, setStyle } from 'react-native-awesome-navigation';
+import {Image} from 'react-native'
 
 import Home from './src/Home'
 import TabBar from './src/TabBar'
@@ -89,38 +90,28 @@ Register.beforeRegister()
 
 Register.registerComponent('Home', Home);
 Register.registerComponent('Setting', Setting);
-Register.registerComponent('Detail', Detail);
-Register.registerComponent('Present', Present);
-Register.registerComponent('NoNavigationBar', NoNavigationBar);
+Register.registerComponent('TabBar', TabBar)
 
 Register.setRoot({
- root: {
-    tabs: {
-        children: [
-          {
-            stack: {
-              root: {
-                screen: {
-                  moduleName: 'Home',
-                },
-              },
-              options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
-            },
+  root: {
+    bottomTabs: {
+      children: [
+        {
+          component: {
+            name: 'Home',
+            options: {title: '主页', icon: Image.resolveAssetSource(require('./src/image/Home.png'))},
           },
-          {
-            stack: {
-              root: {
-                screen: {
-                  moduleName: 'Setting',
-                },
-              },
-              options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Profile.png'))},
-            },
+        },
+        {
+          component: {
+            name: 'Setting',
+            options: {title: '设置', icon: Image.resolveAssetSource(require('./src/image/Setting.png'))},
           },
-        ],
-        options: {tabBarModuleName: 'TabBar'}, // custom tabbar
-      },
- },
+        },
+      ],
+      options: {tabBarModuleName: 'TabBar'},
+    },
+  },
 })
 ```
 
@@ -132,16 +123,6 @@ Home.navigationItem = {
   hideNavigationBar: false,
 }
 
-```
-
-### iOS
-
-Bridge should be record in AppDelegate. At same time register relevant native ViewController，the ViewController should
-inherit ALCNativeViewController.
-```
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  [ALCNavigationManager shared].bridge = bridge;
-  [[ALCNavigationManager shared] registerNativeModule:@"NativeViewController" forController:[ThisIsViewController class]];
 ```
 
 ## Navigation
@@ -198,7 +179,7 @@ props.navigator.switchTab(0)
 
 Every page will be enrolled their own navigator, navigator have a unique screenID and module name ,through navigator to manipulate page.
 
-## Global style
+## Global style（just iOS）
 
 Currently include styles follows，continue updating.
 ```ts
@@ -270,7 +251,7 @@ useVisibleEffect(
   )
 ```
 
-## Support DeepLink
+## Support DeepLink（just iOS）
 
 Adding route when register
 ```ts
