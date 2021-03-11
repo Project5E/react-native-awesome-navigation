@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavGraph
 import com.facebook.react.bridge.ReadableMap
+import com.project5e.react.navigation.data.react.BottomTabs
 import com.project5e.react.navigation.data.react.Root
 
 val rnViewModelStore = ViewModelStore()
@@ -23,4 +24,7 @@ class RnViewModel(application: Application) : AndroidViewModel(application) {
     var screenIdStack = mutableListOf<String>()
     var pageResult: ReadableMap? = null
     var cacheNavGraph: NavGraph? = null
+
+    val bottomTabs: BottomTabs?
+        get() = root.value?.bottomTabs
 }

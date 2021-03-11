@@ -27,6 +27,7 @@ import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_SWITCH_TAB
 import com.project5e.react.navigation.data.bus.ACTION_SET_TAB_BADGE
 import com.project5e.react.navigation.data.bus.Store
 import com.project5e.react.navigation.utils.*
+import com.project5e.react.navigation.utils.Mapper.toRnMap
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
 import com.project5e.react.navigation.view.widget.SwipeControllableViewPager
@@ -50,7 +51,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         get() = !TextUtils.isEmpty(rnTabBarName)
 
     private val rnTabBarName
-        get() = viewModel.root.value?.bottomTabs?.options?.tabBarModuleName
+        get() = viewModel.bottomTabs?.options?.tabBarModuleName
 
     // 当前Tab的ScreenId
     private val currentTabScreenId: String
@@ -119,17 +120,17 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         } else {
             tabBar.visibility = View.VISIBLE
 
-            viewModel.root.value?.bottomTabs?.children?.forEachIndexed { index, child ->
-                val icon = child.component.options?.icon
+            viewModel.bottomTabs?.children?.map { it.component }?.forEachIndexed { index, component ->
+                val icon = component.options?.icon
                 val imageSource = getImageSource(requireContext(), icon)
                 imageSource.load(requireContext(), {
                     it ?: return@load
 
-                    tabBar.menu.add(Menu.NONE, Menu.NONE, index, child.component.name)
+                    tabBar.menu.add(Menu.NONE, Menu.NONE, index, component.name)
                         .setIcon(BitmapDrawable(requireContext().resources, it))
                         .setShowAsAction(SHOW_AS_ACTION_ALWAYS)
 
-                    if (tabBar.menu.size == viewModel.root.value?.bottomTabs?.children?.size) {
+                    if (tabBar.menu.size == viewModel.bottomTabs?.children?.size) {
                         setupTabBadge()
                     }
                 })
@@ -171,7 +172,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
 
     private fun setupViewPager() {
         viewPager.isEnabled = false // swipe enable
-        viewModel.root.value?.bottomTabs?.children?.let {
+        viewModel.bottomTabs?.children?.map { it.component }?.let {
             viewPager.adapter = RnTabPageAdapter(childFragmentManager, it)
             viewPager.offscreenPageLimit = it.size
         }
@@ -188,7 +189,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         }
 
     private fun pageOptionList(): ArrayList<Bundle?> =
-        (viewModel.root.value?.bottomTabs?.children?.map { Arguments.toBundle(convert(it.component.options)) }
+        (viewModel.bottomTabs?.children?.map { Arguments.toBundle(it.component.options.toRnMap()) }
             ?: mutableListOf()) as ArrayList
 
 }

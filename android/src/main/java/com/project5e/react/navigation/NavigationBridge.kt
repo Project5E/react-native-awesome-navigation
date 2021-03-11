@@ -4,7 +4,7 @@ import com.facebook.react.bridge.*
 import com.project5e.react.navigation.data.DestinationArgument
 import com.project5e.react.navigation.data.bus.*
 import com.project5e.react.navigation.data.react.RootWrapper
-import com.project5e.react.navigation.utils.parse
+import com.project5e.react.navigation.utils.Mapper.toObj
 import com.project5e.react.navigation.view.RnActivity
 
 class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -22,7 +22,7 @@ class NavigationBridge(reactContext: ReactApplicationContext) : ReactContextBase
 
     @ReactMethod
     fun setRoot(data: ReadableMap) {
-        val root = parse<RootWrapper>(data)?.root ?: throw NavigationException("root is null")
+        val root = data.toObj<RootWrapper>()?.root ?: throw NavigationException("root is null")
         if (root.bottomTabs == null && root.component == null) throw NavigationException("setRoot must be only one parameter")
 
         Store.dispatch(ACTION_REGISTER_REACT_COMPONENT, optionsCache)

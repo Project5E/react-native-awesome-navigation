@@ -10,27 +10,9 @@ data class Root(
 )
 
 data class BottomTabs(
-    val children: Array<ComponentWrapper>,
+    val children: List<ComponentWrapper>,
     val options: BottomTabsOptions?,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BottomTabs
-
-        if (!children.contentEquals(other.children)) return false
-        if (options != other.options) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = children.contentHashCode()
-        result = 31 * result + (options?.hashCode() ?: 0)
-        return result
-    }
-}
+)
 
 data class ComponentWrapper(
     val component: Component

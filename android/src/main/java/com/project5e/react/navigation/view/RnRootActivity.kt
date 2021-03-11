@@ -28,6 +28,7 @@ import com.project5e.react.navigation.data.bus.*
 import com.project5e.react.navigation.data.react.Root
 import com.project5e.react.navigation.navigator.RnFragmentNavigator
 import com.project5e.react.navigation.utils.*
+import com.project5e.react.navigation.utils.Mapper.toRnMap
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
 import kotlinx.coroutines.Dispatchers
@@ -210,7 +211,7 @@ open class RnRootActivity : RnBaseActivity() {
         root.component?.run {
             destinationManager.createDestination(
                 component.name,
-                Arguments.toBundle(convert(component.options))
+                Arguments.toBundle(component.options.toRnMap())
             )
         }
 
@@ -218,7 +219,7 @@ open class RnRootActivity : RnBaseActivity() {
         backStack.removeAll { it != backStack.first }
 
         viewModel.screenIdStack =
-            viewModel.root.value?.bottomTabs?.children?.size
+            viewModel.bottomTabs?.children?.size
                 // with tab bar
                 ?.let { it -> viewModel.screenIdStack.subList(0, it) }
                     // without tab bar
@@ -236,7 +237,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun getCurrentScreenId(): String {
-        return viewModel.root.value?.bottomTabs?.children?.size
+        return viewModel.bottomTabs?.children?.size
             // with tab bar
             ?.let { tabSize ->
                 if (viewModel.screenIdStack.size == tabSize) {
@@ -252,7 +253,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun getScreenId(index: Int): String {
-        return viewModel.root.value?.bottomTabs?.children?.size
+        return viewModel.bottomTabs?.children?.size
             // with tab bar
             ?.let { tabSize ->
                 if (viewModel.screenIdStack.size == tabSize) {
@@ -283,7 +284,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun isWithRnTabBar(): Boolean {
-        return TextUtils.isEmpty(viewModel.root.value?.bottomTabs?.options?.tabBarModuleName) && viewModel.tabBarScreenId != null
+        return TextUtils.isEmpty(viewModel.bottomTabs?.options?.tabBarModuleName) && viewModel.tabBarScreenId != null
     }
 
 }
