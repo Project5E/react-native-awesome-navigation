@@ -9,15 +9,15 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.views.imagehelper.ImageSource
+import com.project5e.react.navigation.data.react.ImageResolvedAssetSource
 
-fun getImageSource(context: Context, resolvedAssetSource: ReadableMap?): ImageSource {
-    val uri = resolvedAssetSource?.optString("uri")
-    val width = resolvedAssetSource?.optDouble("width") ?: 0.0
-    val height = resolvedAssetSource?.optDouble("height") ?: 0.0
-    return ImageSource(context, uri, width, height)
+fun getImageSource(context: Context, source: ImageResolvedAssetSource?): ImageSource {
+    val uri = source?.uri
+    val width = source?.width ?: 0.0
+    val height = source?.height ?: 0.0
+    return ImageSource(context, uri, width.toDouble(), height.toDouble())
 }
 
 fun ImageSource.load(

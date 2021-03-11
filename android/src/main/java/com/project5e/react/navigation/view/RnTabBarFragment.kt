@@ -2,6 +2,7 @@ package com.project5e.react.navigation.view
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
@@ -46,7 +47,10 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
 
     // 判断tabBar是否Rn组件
     private val isRnTabBar: Boolean
-        get() = viewModel.tabBarComponentName != null
+        get() = !TextUtils.isEmpty(rnTabBarName)
+
+    private val rnTabBarName
+        get() = viewModel.root.value?.bottomTabs?.options?.tabBarModuleName
 
     // 当前Tab的ScreenId
     private val currentTabScreenId: String
@@ -115,17 +119,17 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         } else {
             tabBar.visibility = View.VISIBLE
 
-            viewModel.tabs?.pages?.forEachIndexed { index, page ->
-                val icon = page.options?.optMap("icon")
+            viewModel.root.value?.bottomTabs?.children?.forEachIndexed { index, child ->
+                val icon = child.component.options?.icon
                 val imageSource = getImageSource(requireContext(), icon)
                 imageSource.load(requireContext(), {
                     it ?: return@load
 
-                    tabBar.menu.add(Menu.NONE, Menu.NONE, index, page.rootName)
+                    tabBar.menu.add(Menu.NONE, Menu.NONE, index, child.component.name)
                         .setIcon(BitmapDrawable(requireContext().resources, it))
                         .setShowAsAction(SHOW_AS_ACTION_ALWAYS)
 
-                    if (tabBar.menu.size == viewModel.tabs!!.pages.size) {
+                    if (tabBar.menu.size == viewModel.root.value?.bottomTabs?.children?.size) {
                         setupTabBadge()
                     }
                 })
@@ -167,16 +171,16 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
 
     private fun setupViewPager() {
         viewPager.isEnabled = false // swipe enable
-        viewModel.tabs?.let {
+        viewModel.root.value?.bottomTabs?.children?.let {
             viewPager.adapter = RnTabPageAdapter(childFragmentManager, it)
-            viewPager.offscreenPageLimit = it.pages.size
+            viewPager.offscreenPageLimit = it.size
         }
     }
 
     private fun createTabBarRnFragment(): RnFragment =
         RnFragment().apply {
             arguments = Bundle().also { args ->
-                args.putString(ARG_COMPONENT_NAME, viewModel.tabBarComponentName)
+                args.putString(ARG_COMPONENT_NAME, rnTabBarName)
                 args.putBundle(ARG_LAUNCH_OPTIONS, Bundle().also { options ->
                     options.putSerializable("tabs", pageOptionList())
                 })
@@ -184,6 +188,7 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
         }
 
     private fun pageOptionList(): ArrayList<Bundle?> =
-        (viewModel.tabs?.pages?.map { Arguments.toBundle(it.options) } ?: mutableListOf()) as ArrayList
+        (viewModel.root.value?.bottomTabs?.children?.map { Arguments.toBundle(convert(it.component.options)) }
+            ?: mutableListOf()) as ArrayList
 
 }

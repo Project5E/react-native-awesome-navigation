@@ -10,7 +10,7 @@ import com.project5e.react.navigation.R
 import com.project5e.react.navigation.data.ARG_COMPONENT_NAME
 import com.project5e.react.navigation.data.ARG_LAUNCH_OPTIONS
 import com.project5e.react.navigation.data.ARG_OPTIONS_SCREEN_ID
-import com.project5e.react.navigation.data.Page
+import com.project5e.react.navigation.data.DestinationArgument
 import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_POP_NEST
 import com.project5e.react.navigation.data.bus.ACTION_DISPATCH_PUSH_NEST
 import com.project5e.react.navigation.data.bus.Store
@@ -18,7 +18,6 @@ import com.project5e.react.navigation.utils.DestinationManager
 import com.project5e.react.navigation.utils.setGraphWithStartDestination
 import com.project5e.react.navigation.view.model.RnViewModel
 import com.project5e.react.navigation.view.model.createRnViewModel
-import org.json.JSONObject
 
 open class RnActivity : RnBaseActivity() {
 
@@ -68,8 +67,7 @@ open class RnActivity : RnBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH_NEST)?.observe(this, { state ->
-            val page = state as Page
-            dm.push(page)
+            dm.push(state as DestinationArgument)
         })
         Store.reducer(ACTION_DISPATCH_POP_NEST)?.observe(this, {
             removeCurrentScreenIdToStack()

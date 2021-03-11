@@ -141,6 +141,7 @@ open class RnFragment : LogFragment(), RnComponentLifecycle {
         }
     }
 
-    private fun isNotTabBarComponent() = _mainComponentName != viewModel.tabBarComponentName
+    private fun isNotTabBarComponent() =
+        _mainComponentName != viewModel.root.value?.bottomTabs?.options?.tabBarModuleName
 
 }

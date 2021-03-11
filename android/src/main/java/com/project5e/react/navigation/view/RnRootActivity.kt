@@ -2,6 +2,7 @@ package com.project5e.react.navigation.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
@@ -21,8 +22,10 @@ import com.project5e.react.navigation.NavigationManager.registerRnDestination
 import com.project5e.react.navigation.NavigationManager.resetInstanceManagerInHost
 import com.project5e.react.navigation.NavigationManager.style
 import com.project5e.react.navigation.R
-import com.project5e.react.navigation.data.*
+import com.project5e.react.navigation.data.ARG_OPTIONS_SCREEN_ID
+import com.project5e.react.navigation.data.DestinationArgument
 import com.project5e.react.navigation.data.bus.*
+import com.project5e.react.navigation.data.react.Root
 import com.project5e.react.navigation.navigator.RnFragmentNavigator
 import com.project5e.react.navigation.utils.*
 import com.project5e.react.navigation.view.model.RnViewModel
@@ -98,20 +101,9 @@ open class RnRootActivity : RnBaseActivity() {
 
         Store.reducer(ACTION_SET_ROOT)?.observe(this, { state ->
             with(state as Root) {
-                when {
-                    this is Tabs && type == RootType.TABS -> {
-                        viewModel.tabs = this
-                        viewModel.tabBarComponentName = options?.optString("tabBarModuleName")
-                    }
-                    this is Screen && type == RootType.STACK -> {
-                        viewModel.page = page
-                    }
-                    this is Screen && type == RootType.SCREEN -> {
-                        viewModel.page = page
-                    }
-                }
+                viewModel.root.value = this
+                buildStartDestination(this)?.apply { navController.setGraphWithStartDestination(this) }
             }
-            buildStartDestination()?.apply { navController.setGraphWithStartDestination(this) }
         })
 
         Store.reducer(ACTION_CURRENT_ROUTE)?.observe(this, { state ->
@@ -131,14 +123,14 @@ open class RnRootActivity : RnBaseActivity() {
 
     private fun receiveDispatch() {
         Store.reducer(ACTION_DISPATCH_PUSH)?.observe(this, { state ->
-            destinationManager.push(state as Page)
+            destinationManager.push(state as DestinationArgument)
         })
 
         Store.reducer(ACTION_DISPATCH_PRESENT)?.observe(this, { state ->
-            val page = state as Page
-            val animated = page.options?.optBoolean("animated") ?: false
-            isTabBarPresented = page.options?.optBoolean("isTabBarPresented") ?: false
-            destinationManager.present(page, null, if (animated) navOptions { anim(style.presentAnim) } else null)
+            val data = state as DestinationArgument
+            val animated = data.rnArgs?.optBoolean("animated") ?: false
+            isTabBarPresented = data.rnArgs?.optBoolean("isTabBarPresented") ?: false
+            destinationManager.present(data.copy(navOptions = if (animated) navOptions { anim(style.presentAnim) } else null))
         })
 
         Store.reducer(ACTION_DISPATCH_POP_TO_ROOT)?.observe(this, {
@@ -191,8 +183,8 @@ open class RnRootActivity : RnBaseActivity() {
         })
 
         Store.reducer(ACTION_DISPATCH_POP_PAGES)?.observe(this, { state ->
-            val data = state as ReadableMap
-            val count = data.optInt("count") ?: 0
+            val data = state as DestinationArgument
+            val count = data.rnArgs?.optInt("count") ?: 0
 
             for (i in 0 until count) {
                 val currentDestinationId = getCurrentDestinationId()
@@ -204,24 +196,29 @@ open class RnRootActivity : RnBaseActivity() {
         })
     }
 
-    private fun buildStartDestination(): NavDestination? = buildTabsDestination() ?: buildPageDestination()
+    private fun buildStartDestination(root: Root) = buildTabsDestination(root) ?: buildPageDestination(root)
 
-    private fun buildTabsDestination(): NavDestination? =
-        viewModel.tabs?.run {
+    private fun buildTabsDestination(root: Root): NavDestination? =
+        root.bottomTabs?.run {
             destinationManager.navigator.createDestination().also {
                 it.id = ViewCompat.generateViewId()
                 it.className = RnTabBarFragment::class.java.name
             }
         }
 
-    private fun buildPageDestination(): NavDestination? =
-        viewModel.page?.run { destinationManager.createDestination(this) }
+    private fun buildPageDestination(root: Root): NavDestination? =
+        root.component?.run {
+            destinationManager.createDestination(
+                component.name,
+                Arguments.toBundle(convert(component.options))
+            )
+        }
 
     private fun clearStack() {
         backStack.removeAll { it != backStack.first }
 
         viewModel.screenIdStack =
-            viewModel.tabs?.pages?.size
+            viewModel.root.value?.bottomTabs?.children?.size
                 // with tab bar
                 ?.let { it -> viewModel.screenIdStack.subList(0, it) }
                     // without tab bar
@@ -239,7 +236,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun getCurrentScreenId(): String {
-        return viewModel.tabs?.pages?.size
+        return viewModel.root.value?.bottomTabs?.children?.size
             // with tab bar
             ?.let { tabSize ->
                 if (viewModel.screenIdStack.size == tabSize) {
@@ -255,7 +252,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun getScreenId(index: Int): String {
-        return viewModel.tabs?.pages?.size
+        return viewModel.root.value?.bottomTabs?.children?.size
             // with tab bar
             ?.let { tabSize ->
                 if (viewModel.screenIdStack.size == tabSize) {
@@ -286,7 +283,7 @@ open class RnRootActivity : RnBaseActivity() {
     }
 
     private fun isWithRnTabBar(): Boolean {
-        return viewModel.tabs != null && viewModel.tabBarScreenId != null
+        return TextUtils.isEmpty(viewModel.root.value?.bottomTabs?.options?.tabBarModuleName) && viewModel.tabBarScreenId != null
     }
 
 }

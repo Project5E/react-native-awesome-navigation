@@ -119,5 +119,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    implementation 'com.google.code.gson:gson:2.8.6'
     api 'q.rorbin:badgeview:1.1.3'
 }

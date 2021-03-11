@@ -36,33 +36,37 @@ class DestinationManager(private val context: Context, private val navController
             field = value
         }
 
-    fun push(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(NavigationManager.style.pushAnim) }
-    ) {
-        navigateWithAdd(page, args, navOptions) {
-            when (this) {
-                is FragmentNavigator.Destination -> navigator.navigationType = PUSH
-                is ActivityNavigator.Destination -> navigator.navigationType = null
-            }
+    fun push(args: DestinationArgument) {
+        args.name ?: throw IllegalArgumentException("name not found.")
+
+        val destination = createDestination(args.name, Arguments.toBundle(args.rnArgs))
+        when (destination) {
+            is FragmentNavigator.Destination -> navigator.navigationType = PUSH
+            is ActivityNavigator.Destination -> navigator.navigationType = null
         }
+        navController.graph.addDestination(destination)
+        navController.navigate(
+            destination.id,
+            args.args,
+            args.navOptions ?: navOptions { anim(NavigationManager.style.pushAnim) }
+        )
     }
 
-    fun present(
-        page: Page,
-        args: Bundle? = null,
-        navOptions: NavOptions? = navOptions { anim(NavigationManager.style.presentAnim) }
-    ) {
-        navigateWithAdd(page, args, navOptions) {
-            when (this) {
-                is FragmentNavigator.Destination -> navigator.navigationType = PRESENT
-                is ActivityNavigator.Destination -> navigator.navigationType = null
-            }
-        }
-    }
+    fun present(args: DestinationArgument) {
+        args.name ?: throw IllegalArgumentException("name not found.")
 
-    fun createDestination(page: Page) = createDestination(page.rootName, Arguments.toBundle(page.options))
+        val destination = createDestination(args.name, Arguments.toBundle(args.rnArgs))
+        when (destination) {
+            is FragmentNavigator.Destination -> navigator.navigationType = PRESENT
+            is ActivityNavigator.Destination -> navigator.navigationType = null
+        }
+        navController.graph.addDestination(destination)
+        navController.navigate(
+            destination.id,
+            args.args,
+            args.navOptions ?: navOptions { anim(NavigationManager.style.presentAnim) }
+        )
+    }
 
     fun createDestination(name: String, args: Bundle?): NavDestination {
         val clazz = getViewControllerClass(name)
@@ -123,17 +127,6 @@ class DestinationManager(private val context: Context, private val navController
         addArgument(ARG_LAUNCH_OPTIONS, NavArgumentBuilder().apply {
             defaultValue = (args ?: Bundle()).apply { putString(ARG_OPTIONS_SCREEN_ID, id.toString()) }
         }.build())
-    }
-
-    private fun navigateWithAdd(
-        page: Page,
-        args: Bundle?,
-        navOptions: NavOptions?,
-        applyDestination: (NavDestination.() -> Unit) = { }
-    ) {
-        val destination = createDestination(page).apply(applyDestination)
-        navController.graph.addDestination(destination)
-        navController.navigate(destination.id, args, navOptions)
     }
 
 }
