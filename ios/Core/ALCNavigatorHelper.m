@@ -32,15 +32,12 @@
     NSMutableArray *controllers = [NSMutableArray array];
     NSMutableArray *tabOptions = [NSMutableArray array];
     for (NSDictionary *tab in tabs) {
-        NSDictionary *stack = tab[@"stack"];
-        NSDictionary *screen = tab[@"screen"];
-        NSDictionary *icon = stack[@"options"][@"icon"];
-        [tabOptions addObject:stack[@"options"]];
+        NSDictionary *component = tab[@"component"];
+        NSDictionary *icon = component[@"options"][@"icon"];
+        [tabOptions addObject:component[@"options"]];
         UIViewController *vc;
-        if (stack) {
-            vc = [self createNavigationControllerWithLayout:stack];
-        } else if (screen) {
-            vc = [self createScreenControllerWithLayout:screen];
+        if (component) {
+            vc = [self createNavigationControllerWithLayout:component];
         } else {
             NSAssert(false, @"error");
         }
@@ -62,7 +59,7 @@
 
 - (ALCNavigationController *)createNavigationControllerWithLayout:(NSDictionary *)layout {
     NSDictionary *options = layout[@"options"];
-    NSString *moduleName = layout[@"root"][@"screen"][@"moduleName"];
+    NSString *moduleName = layout[@"name"];
     NSString *title = options[@"title"];
     UIViewController *viewController = [[ALCNavigationManager shared] fetchViewController:moduleName params:nil];
     ALCNavigationController *nav = [[ALCNavigationController alloc] initWithRootViewController:viewController];

@@ -45,7 +45,7 @@ Register.setRoot({
           },
         },
       ],
-      options: {tabBarModuleName: 'TabBar'},
+      // options: {tabBarModuleName: 'TabBar'},
     },
   },
 })
