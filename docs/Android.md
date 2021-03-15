@@ -18,14 +18,27 @@ Jetpack Navigation as engin to make both Android and RN is able to manage naviga
 
 # Get Started
 
-`Application#onCreate()` add `NavigationManager.install(mReactNativeHost);`
+1. Update MainApplication
+
+add `NavigationManager.install(mReactNativeHost);` in `Application#onCreate()`.
+See [example/MainApplication.java](../example/android/app/src/main/java/com/project5e/react/navigation/example/MainApplication.java)
+
+2. Update MainActivity
 
 MainActivity extends RnRootActivity.
 
-### migrating existed project
+```diff
+-import com.facebook.react.ReactActivity;
++import com.project5e.react.navigation.view.RnRootActivity;
 
-For existing project, ReactFragment / ReactActivity extends RnFragment / RnActivity，globally replace `com.facebook.react.ReactFragment`
-and `com.facebook.react.ReactActivity`.
+-public class MainActivity extends ReactActivity {
++public class MainActivity extends RnRootActivity {
+-    @Override
+-    protected String getMainComponentName() {
+-        return "yourproject";
+-    }
+}
+```
 
 ## Page editting
 

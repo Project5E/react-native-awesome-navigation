@@ -44,14 +44,27 @@ react-native-navigation 与 native-navigation 分别采用 `Single Activity + Mu
 
 # Get Started
 
+1. 更新 MainApplication
+
 在 `Application#onCreate()` 中加入 `NavigationManager.install(mReactNativeHost);`
+参与 [example/MainApplication.java](../example/android/app/src/main/java/com/project5e/react/navigation/example/MainApplication.java)
 
-并让 MainActivity 继承 RnRootActivity。
+2. 更新 MainActivity
 
-### 迁移到现有项目
+让 MainActivity 继承 RnRootActivity，删除原有的 getMainComponentName() 方法。
 
-可以在现有项目中创建命名为 ReactFragment / ReactActivity 类并继承 RnFragment / RnActivity，再全局替换`com.facebook.react.ReactFragment`
-和 `com.facebook.react.ReactActivity`。
+```diff
+-import com.facebook.react.ReactActivity;
++import com.project5e.react.navigation.view.RnRootActivity;
+
+-public class MainActivity extends ReactActivity {
++public class MainActivity extends RnRootActivity {
+-    @Override
+-    protected String getMainComponentName() {
+-        return "yourproject";
+-    }
+}
+```
 
 ## 页面编写
 
