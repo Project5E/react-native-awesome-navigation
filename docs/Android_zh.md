@@ -50,7 +50,7 @@ react-native-navigation 与 native-navigation 分别采用 `Single Activity + Mu
 
 ### 迁移到现有项目
 
-可以在现有项目中 ReactFragment / ReactActivity 并继承 RnFragment / RnActivity，再全局替换`com.facebook.react.ReactFragment`
+可以在现有项目中创建命名为 ReactFragment / ReactActivity 类并继承 RnFragment / RnActivity，再全局替换`com.facebook.react.ReactFragment`
 和 `com.facebook.react.ReactActivity`。
 
 ## 页面编写
