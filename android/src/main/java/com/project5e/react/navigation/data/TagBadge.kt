@@ -21,7 +21,7 @@ data class TabBadge(
     )
 
     fun bind(views: MutableList<QBadgeView>) {
-        if (index > views.size - 1) throw IndexOutOfBoundsException()
+        if (index > views.size - 1) throw IndexOutOfBoundsException("index > tabs.size")
         val badgeView = views[index]
         when {
             hidden -> {

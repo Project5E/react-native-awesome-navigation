@@ -99,9 +99,11 @@ class RnTabBarFragment : Fragment(), RnComponentLifecycle {
             Store.reducer(ACTION_SET_TAB_BADGE)?.observe(requireActivity()) { state ->
                 val badgeArray = state as ReadableArray? ?: return@observe
 
-                repeat(badgeArray.size()) {
-                    badgeArray.getMap(it)?.apply {
-                        TabBadge(this).bind(badgeViewList)
+                tabBar.post {
+                    repeat(badgeArray.size()) {
+                        badgeArray.getMap(it)?.apply {
+                            TabBadge(this).bind(badgeViewList)
+                        }
                     }
                 }
             }
